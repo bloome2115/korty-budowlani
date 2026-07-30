@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korty Tenisowe Budowlani Lublin | GoRun Akademia Tenisa</title>
+  <meta name="description" content="4 korty mączkowe w sercu Lublina. Rezerwacja online bez rejestracji. Lekcje tenisa, liga amatorska. Andrzeja Struga 8, Lublin.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #1A2744;
+      --clay:      #C8622A;
+      --orange:    #E8722A;
+      --cream:     #F5F0E8;
+      --white:     #FFFFFF;
+      --free-bg:   #EAF3DE;
+      --free-fg:   #3B6D11;
+      --busy-bg:   #FCF0EB;
+      --busy-fg:   #993C1D;
+      --text:      #1A2744;
+      --muted:     #888;
+      --border:    #eee;
+      --font-body: 'Outfit', system-ui, sans-serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 14px;
+    }
+
+    /* ─── NAVBAR ─── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      height: 116px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      transition: height 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .navbar.scrolled {
+      height: 96px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.32);
+    }
+
+    .navbar .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logos {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-logos img {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .navbar-logos img {
+      height: 80px;
+    }
+
+    .logos-divider {
+      width: 2px;
+      height: 72px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .logos-divider {
+      height: 56px;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      color: rgba(255,255,255,0.70);
+      font-size: 19px;
+      font-weight: 400;
+      padding: 10px 22px;
+      border-radius: 8px;
+      letter-spacing: 0.2px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .navbar-menu a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 4px;
+      gap: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .lang-switch span {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: rgba(255,255,255,0.45);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .lang-switch span.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .btn-reserve-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(200, 98, 42, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav::after {
+      content: '→';
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-reserve-nav:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav:hover::after {
+      transform: translateX(4px);
+    }
+
+    .btn-reserve-nav:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(200, 98, 42, 0.4);
+    }
+
+    .btn-reserve-nav:hover {
+      background: #b5571f;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(200, 98, 42, 0.45);
+    }
+
+    .btn-reserve-nav:hover::after {
+      transform: translateX(3px);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 2px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/img/Zdjecie_kortu_2_poprawione.png');
+      background-size: cover;
+      background-position: center top;
+      transform: scale(1.03);
+      transition: transform 8s ease;
+    }
+
+    .hero-bg.loaded { transform: scale(1); }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(10, 18, 35, 0.88) 0%,
+        rgba(10, 18, 35, 0.70) 38%,
+        rgba(10, 18, 35, 0.25) 65%,
+        rgba(10, 18, 35, 0.05) 100%
+      );
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 80px 0;
+    }
+
+    .hero-inner .container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-text { animation: fadeInUp 0.7s ease both; }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+
+    .hero-text h1 {
+      font-family: var(--font-body);
+      font-size: 54px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero-text h1 em { font-style: normal; color: var(--orange); }
+
+    .hero-text p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.72);
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .hero-sub2 {
+      font-size: 15px !important;
+      color: rgba(255,255,255,0.52) !important;
+      margin-bottom: 32px !important;
+    }
+
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .hero-badges span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.2px;
+    }
+
+    .hero-badges span i {
+      color: var(--clay);
+      font-size: 14px;
+    }
+
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--clay);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-primary:hover { background: #b5571f; transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: 13px 24px;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .btn-outline:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
+
+    /* Widget dostępności */
+    .availability-widget {
+      background: rgba(255,255,255,0.97);
+      border-radius: 14px;
+      padding: 26px 28px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.7s 0.2s ease both;
+    }
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .widget-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .widget-live {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--free-fg);
+      font-weight: 500;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--free-fg);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .widget-date { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+
+    .court-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .court-row:last-of-type { border-bottom: none; }
+
+    .court-name { font-size: 14px; font-weight: 500; color: var(--navy); min-width: 52px; }
+
+    .court-slots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .slot { font-size: 12px; padding: 4px 9px; border-radius: 4px; }
+    .slot-free { background: var(--free-bg); color: var(--free-fg); }
+    .slot-busy { background: var(--busy-bg); color: var(--busy-fg); }
+
+    .widget-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: #bbb;
+      text-align: center;
+    }
+
+    .widget-slider-wrap {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .widget-slider {
+      width: 100%;
+      accent-color: var(--clay);
+      cursor: pointer;
+      height: 4px;
+    }
+
+    .widget-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .widget-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .legend-dot-free { background: var(--free-bg); border: 1px solid var(--free-fg); }
+    .legend-dot-busy { background: var(--busy-bg); border: 1px solid var(--busy-fg); }
+
+    .widget-cta {
+      display: block;
+      width: 100%;
+      background: var(--clay);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 14px;
+      transition: background 0.15s;
+    }
+
+    .widget-cta:hover { background: #b5571f; }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar { background: var(--navy); }
+
+    .stats-bar .container { display: flex; }
+
+    .stat-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 28px 20px;
+      position: relative;
+    }
+
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 48px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+    }
+
+    .stat-icon-wrap {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon { font-size: 36px; color: var(--clay); }
+    .stat-value { font-size: 17px; font-weight: 500; color: #fff; line-height: 1.1; }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* ─── OFERTA ─── */
+    .oferta { background: var(--white); padding: 80px 0; }
+
+    .section-header { margin-bottom: 32px; }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--clay);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: var(--font-body);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .section-sub { font-size: 15px; color: var(--muted); max-width: 520px; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
+    .card.featured { border-color: rgba(200, 98, 42, 0.35); }
+
+    .featured-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #FDF0E8;
+      color: var(--clay);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      background: #FDF0E8;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .card.featured .card-icon { background: #FDF0E8; }
+    .card-icon i { font-size: 28px; color: var(--clay); }
+    .card.featured .card-icon i { font-size: 28px; color: var(--clay); }
+
+    .card-title { font-size: 17px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; flex: 1; }
+    .card-price { margin-bottom: 20px; }
+    .price-amount { font-size: 30px; font-weight: 500; color: var(--clay); }
+    .price-per { font-size: 13px; color: #bbb; margin-left: 4px; }
+
+    .card-features {
+      list-style: none;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .card-features li { font-size: 13px; color: #666; display: flex; align-items: center; gap: 8px; }
+    .card-features li i { color: var(--free-fg); font-size: 15px; flex-shrink: 0; }
+
+    .card-btn {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+
+    .card.featured .card-btn { background: var(--navy); }
+    .card-btn:hover { opacity: 0.88; }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section { background: var(--navy); padding: 80px 0; text-align: center; }
+
+    .cta-section h2 {
+      font-family: var(--font-body);
+      font-size: 38px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .cta-section h2 em { font-style: normal; color: var(--clay); }
+
+    .cta-section p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.55);
+      max-width: 440px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .btn-cta-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 36px;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(200, 98, 42, 0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-cta-main::after {
+      content: '→';
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-cta-main:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-cta-main:hover::after { transform: translateX(4px); }
+    .btn-cta-main:active { transform: translateY(0); }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 52px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand {}
+
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .footer-logos img { height: 40px; width: auto; object-fit: contain; }
+
+    .footer-logos-divider {
+      width: 2px;
+      height: 30px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .footer-contact-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-contact-list li {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .footer-contact-list li i {
+      font-size: 15px;
+      color: var(--clay);
+      flex-shrink: 0;
+    }
+
+    .footer-contact-list a {
+      color: rgba(255,255,255,0.55);
+      transition: color 0.15s;
+    }
+
+    .footer-contact-list a:hover { color: #fff; }
+
+    .footer-bloome {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .footer-bloome-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .footer-bloome-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 1px;
+    }
+
+    .footer-bloome-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      margin-top: 4px;
+    }
+
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bloome { align-items: flex-start; }
+    }
+
+    /* ─── ANIMACJE ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── MOBILE MENU ─── */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--navy);
+      padding: 16px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mobile-menu .btn-reserve-nav {
+      margin-top: 16px;
+      text-align: center;
+      display: block;
+      padding: 12px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .navbar-menu, .lang-switch, .btn-reserve-nav { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-inner .container { grid-template-columns: 1fr; }
+      .availability-widget { display: none; }
+      .hero-text h1 { font-size: 34px; }
+
+      .stats-bar .container { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+      .stat-item:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.08); }
+
+      .cards-grid { grid-template-columns: 1fr; gap: 16px; }
+      .cta-badges { gap: 16px; }
+    }
+
+    @media (max-width: 520px) {
+      .hero-text h1 { font-size: 28px; }
+      .stat-item { flex: 1 1 100%; border-right: none; }
+      .section-title { font-size: 26px; }
+      .cta-section h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── NAVBAR ─── -->
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-logos">
+          <a href="index.html">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Tenis Budowlani Lublin" height="100">
+          </a>
+          <div class="logos-divider"></div>
+          <a href="index.html">
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86">
+          </a>
+        </div>
+
+        <ul class="navbar-menu">
+          <li><a href="#oferta">Oferta</a></li>
+          <li><a href="#cennik">Cennik</a></li>
+          <li><a href="#liga">Liga</a></li>
+          <li><a href="#o-nas">O nas</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+
+        <div class="navbar-right">
+          <div class="lang-switch" onclick="toggleLang()">
+            <span class="active" id="lang-pl">PL</span>
+            <span id="lang-en">EN</span>
+          </div>
+          <a href="rezerwacja.html">
+            <button class="btn-reserve-nav">Zarezerwuj kort</button>
+          </a>
+          </a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#oferta" onclick="toggleMenu()">Oferta</a>
+      <a href="#cennik" onclick="toggleMenu()">Cennik</a>
+      <a href="#liga" onclick="toggleMenu()">Liga</a>
+      <a href="#o-nas" onclick="toggleMenu()">O nas</a>
+      <a href="#kontakt" onclick="toggleMenu()">Kontakt</a>
+      <a href="rezerwacja.html" class="btn-reserve-nav">Zarezerwuj kort →</a>
+    </div>
+  </header>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <div class="container">
+        <div class="hero-text">
+          <div class="hero-eyebrow">Lublin · Korty tenisowe Budowlani</div>
+          <h1>Graj w miejscu<br><em>z wyjątkową atmosferą</em></h1>
+          <p>4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.</p>
+          <p class="hero-sub2">Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.</p>
+          <div class="hero-btns">
+            <a href="rezerwacja.html"><button class="btn-primary">Zarezerwuj kort →</button></a>
+            <a href="#oferta"><button class="btn-outline">Zobacz ofertę</button></a>
+          </div>
+          <div class="hero-badges">
+            <span><i class="ti ti-check"></i> Szybka rezerwacja online</span>
+            <span><i class="ti ti-check"></i> Bez rejestracji</span>
+            <span><i class="ti ti-check"></i> Płatność na miejscu</span>
+          </div>
+        </div>
+
+        <div class="availability-widget">
+          <div class="widget-header">
+            <div class="widget-title">Dostępność dziś</div>
+            <div class="widget-live"><div class="live-dot"></div> na żywo</div>
+          </div>
+          <div class="widget-date" id="widget-date">ładowanie...</div>
+
+          <div id="widget-courts"></div>
+
+          <div class="widget-slider-wrap">
+            <input type="range" class="widget-slider" id="widget-slider"
+              min="0" max="10" value="2" step="1">
+          </div>
+
+          <div class="widget-legend">
+            <div class="widget-legend-item">
+              <div class="legend-dot legend-dot-free"></div> Wolny
+            </div>
+            <div class="widget-legend-item">
+              <div class="legend-dot legend-dot-busy"></div> Zajęty
+            </div>
+          </div>
+
+          <div class="widget-footer">dane pobierane z Google Calendar</div>
+          <a href="rezerwacja.html"><button class="widget-cta">Sprawdź wszystkie terminy →</button></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS BAR ─── -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stat-item">
+        <div class="stat-icon-wrap"><i class="ti ti-ball-tennis stat-icon"></i></div>
+        <div>
+          <div class="stat-value">4 korty</div>
+          <div class="stat-label">mączkowe, zewnętrzne</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrap"><i class="ti ti-clock stat-icon"></i></div>
+        <div>
+          <div class="stat-value">8:00 – 22:00</div>
+          <div class="stat-label">godziny otwarcia</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrap"><i class="ti ti-credit-card stat-icon"></i></div>
+        <div>
+          <div class="stat-value">Gotówka i karta</div>
+          <div class="stat-label">płatność na miejscu</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrap"><i class="ti ti-award stat-icon"></i></div>
+        <div>
+          <div class="stat-value">Od 1974 roku</div>
+          <div class="stat-label">tradycja i doświadczenie</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── OFERTA ─── -->
+  <section class="oferta" id="oferta">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nasza oferta</h2>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon"><i class="ti ti-ball-tennis"></i></div>
+          <div class="card-title">Wynajem kortu</div>
+          <p class="card-desc">4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.</p>
+          <div class="card-price">
+            <span class="price-amount">60 zł</span>
+            <span class="price-per">/ godzina</span>
+          </div>
+          <ul class="card-features">
+            <li><i class="ti ti-check"></i> Rezerwacja online 24/7</li>
+            <li><i class="ti ti-check"></i> Bez rejestracji konta</li>
+            <li><i class="ti ti-check"></i> Płatność na miejscu</li>
+            <li><i class="ti ti-check"></i> Sprzęt do wypożyczenia</li>
+          </ul>
+          <a href="rezerwacja.html"><button class="card-btn">Zarezerwuj kort →</button></a>
+        </div>
+
+        <div class="card featured">
+          <div class="featured-badge">Popularne</div>
+          <div class="card-icon"><i class="ti ti-user"></i></div>
+          <div class="card-title">Lekcje tenisa</div>
+          <p class="card-desc">Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.</p>
+          <div class="card-price">
+            <span class="price-amount">120 zł</span>
+            <span class="price-per">/ 60 min</span>
+          </div>
+          <ul class="card-features">
+            <li><i class="ti ti-check"></i> Każdy poziom zaawansowania</li>
+            <li><i class="ti ti-check"></i> Dzieci i dorośli</li>
+            <li><i class="ti ti-check"></i> Zajęcia grupowe i indywidualne</li>
+            <li><i class="ti ti-check"></i> Piłki wliczone w cenę</li>
+          </ul>
+          <a href="#kontakt"><button class="card-btn">Zapisz się →</button></a>
+        </div>
+
+        <div class="card">
+          <div class="card-icon"><i class="ti ti-trophy"></i></div>
+          <div class="card-title">Liga tenisa</div>
+          <p class="card-desc">Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.</p>
+          <div class="card-price">
+            <span class="price-amount">150 zł</span>
+            <span class="price-per">/ sezon</span>
+          </div>
+          <ul class="card-features">
+            <li><i class="ti ti-check"></i> Mecze w dogodnych terminach</li>
+            <li><i class="ti ti-check"></i> Tabela i statystyki online</li>
+            <li><i class="ti ti-check"></i> Podział na grupy poziomów</li>
+            <li><i class="ti ti-check"></i> Nagrody dla najlepszych</li>
+          </ul>
+          <a href="#kontakt"><button class="card-btn">Dołącz do ligi →</button></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Zarezerwuj kort<br><em>już dziś</em></h2>
+      <p>Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.</p>
+      <a href="rezerwacja.html"><button class="btn-cta-main">Zarezerwuj kort</button></a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer" id="kontakt">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Kolumna 1: Marki -->
+        <div class="footer-brand">
+          <div class="footer-logos">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin">
+            <div class="footer-logos-divider"></div>
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa">
+          </div>
+          <p class="footer-tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
+        </div>
+
+        <!-- Kolumna 2: Adres i godziny -->
+        <div>
+          <div class="footer-col-title">Lokalizacja</div>
+          <ul class="footer-contact-list">
+            <li><i class="ti ti-map-pin"></i> ul. Andrzeja Struga 8, Lublin</li>
+            <li><i class="ti ti-clock"></i> Pon–Nd: 8:00 – 22:00</li>
+          </ul>
+        </div>
+
+        <!-- Kolumna 3: Telefon i email -->
+        <div>
+          <div class="footer-col-title">Kontakt</div>
+          <ul class="footer-contact-list">
+            <li><i class="ti ti-phone"></i> <a href="tel:+48000000000">+48 000 000 000</a></li>
+            <li><i class="ti ti-mail"></i> <a href="mailto:kontakt@kortylublin.pl">kontakt@kortylublin.pl</a></li>
+          </ul>
+        </div>
+
+        <!-- Kolumna 3: Bloome -->
+        <div class="footer-bloome">
+          <div class="footer-bloome-label">Projekt i realizacja</div>
+          <div class="footer-bloome-name">Bloome</div>
+          <div class="footer-bloome-sub">web design & development</div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── JAVASCRIPT ─── -->
+  <script>
+    // Hamburger menu
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    }
+
+    // Przełącznik języka (placeholder)
+    function toggleLang() {
+      document.getElementById('lang-pl').classList.toggle('active');
+      document.getElementById('lang-en').classList.toggle('active');
+    }
+
+    // Data w widgecie
+    const days = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
+    const months = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+    const now = new Date();
+    document.getElementById('widget-date').textContent =
+      `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+    // Ken Burns effect na hero
+    window.addEventListener('load', () => {
+      document.getElementById('hero-bg').classList.add('loaded');
+    });
+
+    // ── Widget dostępności z suwakiem ──
+    // Dane kortów: 0 = wolny, 1 = zajęty (godziny 8:00–21:00, 14 slotów)
+    const courtData = [
+      { name: 'Kort 1', slots: [0,0,1,0,0,1,1,0,0,1,0,0,1,0] },
+      { name: 'Kort 2', slots: [1,1,0,0,1,0,0,1,1,0,0,1,0,0] },
+      { name: 'Kort 3', slots: [0,1,1,0,0,0,1,1,0,0,1,0,0,1] },
+      { name: 'Kort 4', slots: [0,0,0,1,0,1,0,0,1,1,0,0,1,0] },
+    ];
+
+    const VISIBLE = 4;   // ile slotów widać naraz
+    const TOTAL   = 14;  // godziny 8:00–21:00
+    const START_H = 8;   // pierwsza godzina
+
+    function hourLabel(offset) {
+      return `${START_H + offset}:00`;
+    }
+
+    function renderCourts(startIdx) {
+      const container = document.getElementById('widget-courts');
+      container.innerHTML = courtData.map(court => {
+        const visibleSlots = court.slots.slice(startIdx, startIdx + VISIBLE);
+        const slotsHTML = visibleSlots.map((busy, i) => {
+          const cls = busy ? 'slot slot-busy' : 'slot slot-free';
+          return `<span class="${cls}">${hourLabel(startIdx + i)}</span>`;
+        }).join('');
+        return `
+          <div class="court-row">
+            <span class="court-name">${court.name}</span>
+            <div class="court-slots">${slotsHTML}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateWidget(val) {
+      renderCourts(+val);
+    }
+
+    // Inicjalizacja — ustaw suwak tak żeby startował od bieżącej godziny
+    const sliderEl = document.getElementById('widget-slider');
+    const nowHour  = new Date().getHours();
+    const initVal  = Math.min(Math.max(nowHour - START_H, 0), TOTAL - VISIBLE);
+    sliderEl.max   = TOTAL - VISIBLE;  // max = 10 (14-4)
+    sliderEl.value = initVal;
+    sliderEl.addEventListener('input', e => updateWidget(e.target.value));
+    updateWidget(initVal);
+    window.addEventListener('scroll', () => {
+      document.querySelector('.navbar')
+        .classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+
+</body>
+</html>

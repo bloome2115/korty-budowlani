@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezerwacja kortu | Budowlani Lublin · GoRun Akademia Tenisa</title>
+  <meta name="description" content="Zarezerwuj kort mączkowy online. Wybierz dzień, godzinę i kort. Bez rejestracji, płatność na miejscu. Andrzeja Struga 8, Lublin.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --orange: #E8722A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --free-bg:#EAF3DE; --free-fg:#3B6D11;
+      --busy-bg:#FCF0EB; --busy-fg:#993C1D;
+      --text:#1A2744; --muted:#888; --border:#eee;
+      --font-body:'Outfit',system-ui,sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); font-weight: 400; color: var(--text); background: var(--cream); line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 14px; }
+
+    /* ─── NAVBAR ─── */
+    .navbar { position: sticky; top: 0; z-index: 100; background: var(--navy); height: 116px; display: flex; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.15); transition: height 0.25s ease, box-shadow 0.25s ease; }
+    .navbar.scrolled { height: 96px; box-shadow: 0 4px 32px rgba(0,0,0,0.32); }
+    .navbar .container { width: 100%; max-width: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+    .navbar-logos { display: flex; align-items: center; gap: 20px; }
+    .navbar-logos img { height: 100px; width: auto; object-fit: contain; transition: height 0.25s ease; }
+    .navbar.scrolled .navbar-logos img { height: 80px; }
+    .logos-divider { width: 2px; height: 72px; background: rgba(255,255,255,0.2); border-radius: 2px; transition: height 0.25s ease; }
+    .navbar.scrolled .logos-divider { height: 56px; }
+    .navbar-menu { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .navbar-menu a { color: rgba(255,255,255,0.70); font-size: 19px; padding: 10px 22px; border-radius: 8px; letter-spacing: 0.2px; transition: background 0.15s, color 0.15s; }
+    .navbar-menu a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .navbar-right { display: flex; align-items: center; gap: 20px; }
+    .lang-switch { display: flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 24px; padding: 4px; cursor: pointer; user-select: none; }
+    .lang-switch span { font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px; color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s; }
+    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+    .btn-reserve-nav { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg,#d96b2e,#b5501a); color: #fff; border: none; border-radius: 12px; padding: 15px 30px; font-size: 16px; font-weight: 500; white-space: nowrap; letter-spacing: 0.3px; transition: all 0.2s ease; box-shadow: 0 4px 18px rgba(200,98,42,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
+    .btn-reserve-nav:hover { background: linear-gradient(135deg,#e07535,#c45c20); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,98,42,0.6), inset 0 1px 0 rgba(255,255,255,0.15); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.75); border-radius: 2px; }
+
+    /* ─── PAGE HEADER ─── */
+    .page-head { padding: 48px 0 12px; }
+    .page-eyebrow { font-size: 12px; font-weight: 500; color: var(--clay); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+    .page-title { font-size: 38px; font-weight: 600; color: var(--navy); line-height: 1.15; }
+    .page-sub { font-size: 15px; color: var(--muted); margin-top: 8px; max-width: 520px; }
+
+    .booking { padding: 24px 0 80px; }
+    .panel { background: var(--white); border-radius: 14px; padding: 24px; border: 0.5px solid rgba(0,0,0,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.05); margin-bottom: 24px; }
+    .panel-label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+
+    /* ─── DATA ─── */
+    .date-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+    .date-btn { flex: 0 0 auto; min-width: 66px; padding: 12px 8px; border-radius: 10px; border: 1px solid #ddd; background: var(--white); color: var(--navy); cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; }
+    .date-btn:hover { border-color: var(--clay); }
+    .date-btn.active { border-color: var(--clay); background: var(--clay); color: #fff; }
+    .date-btn .d-day { font-size: 11px; opacity: 0.7; text-transform: capitalize; }
+    .date-btn .d-num { font-size: 20px; font-weight: 600; line-height: 1.2; }
+    .date-btn .d-mon { font-size: 10px; opacity: 0.65; }
+    .other-date { margin-top: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .other-date-toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--clay); cursor: pointer; padding: 6px 0; }
+    .other-date-toggle i { font-size: 16px; }
+    .date-input { padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--navy); display: none; }
+    .date-input.show { display: inline-block; }
+
+    /* ─── MAPKA + SIATKA layout ─── */
+    .map-grid-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: stretch; }
+    @media (max-width: 820px) { .map-grid-wrap { grid-template-columns: 1fr; } }
+    .court-map { background: var(--white); border-radius: 14px; padding: 18px; border: 0.5px solid rgba(0,0,0,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+    .court-map svg { width: 100%; height: auto; display: block; margin: auto 0; }
+    .map-court { cursor: pointer; transition: opacity 0.15s; }
+    .map-court:hover .court-fill, .map-court.hot .court-fill { fill: var(--clay); }
+    .map-court:hover .court-num, .map-court.hot .court-num { fill: #fff; }
+    .map-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+    /* ─── OŚ CZASU ─── */
+    .grid-head-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+    .timeline { position: relative; }
+    .tl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .tl-name { flex: 0 0 64px; font-size: 13px; font-weight: 500; color: var(--navy); transition: color 0.15s; }
+    .tl-row.hot .tl-name { color: var(--clay); }
+    .tl-track { position: relative; flex: 1; display: flex; height: 44px; border-radius: 8px; overflow: hidden; border: 1px solid #e3e3e3; transition: box-shadow 0.15s; }
+    .tl-cell { flex: 1; border-right: 1px solid rgba(0,0,0,0.07); background: var(--free-bg); cursor: pointer; transition: background 0.1s; }
+    .tl-cell:last-child { border-right: none; }
+    .tl-cell:hover:not(.busy) { background: #dcebc8; }
+    .tl-cell.busy { background: var(--busy-bg); cursor: not-allowed; }
+    .tl-cell.selected { background: var(--clay); }
+    .tl-cell.in-range { background: rgba(200,98,42,0.4); }
+    .tl-row.hot .tl-track { box-shadow: 0 0 0 2px var(--clay); }
+    .tl-axis { display: flex; margin: 4px 0 0 74px; position: relative; height: 18px; }
+    .tl-tick { position: absolute; transform: translateX(-50%); font-size: 10px; color: var(--muted); top: 0; }
+    .tl-scroll-wrap { position: relative; }
+    .slider-row { margin: 18px 0 0 74px; }
+    .tl-slider { width: 100%; accent-color: var(--clay); cursor: pointer; height: 4px; }
+    .slider-hint { font-size: 11px; color: #bbb; margin: 6px 0 0 74px; }
+
+    .legend { display: flex; gap: 16px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .legend-free { background: var(--free-bg); border: 1px solid var(--free-fg); }
+    .legend-busy { background: var(--busy-bg); border: 1px solid var(--busy-fg); }
+    .legend-sel  { background: var(--clay); }
+
+    /* ─── SUMMARY ─── */
+    .summary-panel { background: var(--navy); border-radius: 14px; padding: 24px; color: #fff; margin-bottom: 24px; }
+    .summary-panel.hidden { display: none; }
+    .summary-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+    .summary-facts { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 18px; }
+    .summary-fact .sf-k { font-size: 11px; color: rgba(255,255,255,0.45); }
+    .summary-fact .sf-v { font-size: 16px; font-weight: 500; }
+    .dur-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+    .dur-opts { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .dur-btn { font-size: 14px; padding: 9px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #fff; cursor: pointer; transition: all 0.15s; }
+    .dur-btn.active { background: var(--clay); border-color: var(--clay); }
+    .dur-btn:disabled { color: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.12); cursor: not-allowed; }
+    .dur-warning { font-size: 13px; color: #FCC9B5; background: rgba(153,60,29,0.35); border: 1px solid rgba(252,201,181,0.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: none; }
+    .dur-warning.show { display: block; }
+    .price-breakdown { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 18px; }
+    .pb-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .pb-total { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 16px; font-weight: 500; color: #fff; }
+    .pb-total span:last-child { color: var(--orange); }
+    .btn-next { background: linear-gradient(135deg,#d96b2e,#b5501a); color: #fff; border: none; border-radius: 10px; padding: 13px 28px; font-size: 15px; font-weight: 500; transition: all 0.2s ease; box-shadow: 0 4px 18px rgba(200,98,42,0.4); }
+    .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,98,42,0.5); }
+    .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ─── FORM ─── */
+    .form-panel.hidden { display: none; }
+    .form-title { font-size: 18px; font-weight: 600; margin-bottom: 18px; color: var(--navy); }
+    .field-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .req { color: var(--clay); } .opt { color: #bbb; font-weight: 400; }
+    .field { width: 100%; padding: 11px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; margin-bottom: 16px; box-sizing: border-box; transition: border-color 0.15s; }
+    .field:focus { outline: none; border-color: var(--clay); }
+    .field.invalid { border-color: var(--busy-fg); }
+    .gear-title { font-size: 13px; font-weight: 500; margin: 6px 0 12px; }
+    .gear-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .gear-name { font-size: 14px; font-weight: 500; } .gear-price { font-size: 12px; color: #aaa; }
+    .stepper { display: flex; align-items: center; gap: 14px; }
+    .step-btn { width: 32px; height: 32px; border-radius: 8px; font-size: 18px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .step-minus { border: 1px solid #ddd; background: #fff; color: var(--navy); }
+    .step-plus { border: 1px solid var(--clay); background: var(--clay); color: #fff; }
+    .step-q { font-size: 15px; font-weight: 500; min-width: 18px; text-align: center; }
+    .notes-toggle { font-size: 13px; color: var(--muted); cursor: pointer; margin: 18px 0 8px; display: flex; align-items: center; gap: 6px; }
+    .notes-field { display: none; } .notes-field.show { display: block; }
+    .consent { display: flex; align-items: flex-start; gap: 8px; margin: 18px 0 20px; }
+    .consent span { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .btn-confirm { width: 100%; background: linear-gradient(135deg,#d96b2e,#b5501a); color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 500; transition: all 0.2s ease; box-shadow: 0 4px 18px rgba(200,98,42,0.4); }
+    .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,98,42,0.5); }
+    .pay-note { text-align: center; font-size: 12px; color: #aaa; margin-top: 12px; }
+
+    /* ─── SUCCESS ─── */
+    .success-panel { text-align: center; padding: 40px 24px; }
+    .success-panel.hidden { display: none; }
+    .success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--free-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+    .success-icon i { font-size: 34px; color: var(--free-fg); }
+    .success-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .success-msg { font-size: 14px; color: var(--muted); max-width: 360px; margin: 0 auto 24px; line-height: 1.6; }
+    .success-card { background: var(--cream); border-radius: 12px; padding: 18px; max-width: 360px; margin: 0 auto 24px; text-align: left; }
+    .sc-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+    .sc-row .sc-k { color: var(--muted); } .sc-row .sc-v { font-weight: 500; } .sc-row .sc-v.price { color: var(--clay); }
+
+    /* ─── FOOTER ─── */
+    .footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.08); padding: 52px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+    .footer-logos { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .footer-logos img { height: 40px; width: auto; object-fit: contain; }
+    .footer-logos-divider { width: 2px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.6; max-width: 220px; }
+    .footer-col-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .footer-contact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-contact-list li { display: flex; align-items: center; gap: 9px; font-size: 13px; color: rgba(255,255,255,0.55); }
+    .footer-contact-list li i { font-size: 15px; color: var(--clay); flex-shrink: 0; }
+    .footer-contact-list a { color: rgba(255,255,255,0.55); transition: color 0.15s; }
+    .footer-contact-list a:hover { color: #fff; }
+    .footer-bloome { display: flex; flex-direction: column; align-items: flex-end; }
+    .footer-bloome-label { font-size: 11px; color: rgba(255,255,255,0.25); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .footer-bloome-name { font-size: 22px; font-weight: 600; color: rgba(255,255,255,0.65); letter-spacing: 1px; }
+    .footer-bloome-sub { font-size: 11px; color: rgba(255,255,255,0.25); margin-top: 4px; }
+    .footer-bottom { padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    .mobile-menu { display: none; flex-direction: column; background: var(--navy); padding: 16px 24px 24px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: rgba(255,255,255,0.75); font-size: 15px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .mobile-menu .btn-reserve-nav { margin-top: 16px; text-align: center; display: block; padding: 12px; }
+
+    @media (max-width: 900px) {
+      .navbar-menu, .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
+      .hamburger { display: flex; }
+      .page-title { font-size: 30px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bloome { align-items: flex-start; }
+    }
+    @media (max-width: 520px) { .page-title { font-size: 26px; } .summary-facts { gap: 16px; } }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── NAVBAR ─── -->
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-logos">
+          <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Tenis Budowlani Lublin" height="100"></a>
+          <div class="logos-divider"></div>
+          <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86"></a>
+        </div>
+        <ul class="navbar-menu">
+          <li><a href="index.html#oferta">Oferta</a></li>
+          <li><a href="index.html#cennik">Cennik</a></li>
+          <li><a href="index.html#liga">Liga</a></li>
+          <li><a href="index.html#o-nas">O nas</a></li>
+          <li><a href="index.html#kontakt">Kontakt</a></li>
+        </ul>
+        <div class="navbar-right">
+          <div class="lang-switch" onclick="toggleLang()">
+            <span class="active" id="lang-pl">PL</span><span id="lang-en">EN</span>
+          </div>
+          <a href="index.html"><button class="btn-reserve-nav">Strona główna</button></a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></div>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#oferta" onclick="toggleMenu()">Oferta</a>
+      <a href="index.html#cennik" onclick="toggleMenu()">Cennik</a>
+      <a href="index.html#liga" onclick="toggleMenu()">Liga</a>
+      <a href="index.html#o-nas" onclick="toggleMenu()">O nas</a>
+      <a href="index.html#kontakt" onclick="toggleMenu()">Kontakt</a>
+      <a href="index.html" class="btn-reserve-nav">Strona główna</a>
+    </div>
+  </header>
+
+  <div class="page-head">
+    <div class="container">
+      <div class="page-eyebrow">Rezerwacja online</div>
+      <h1 class="page-title">Zarezerwuj kort</h1>
+      <p class="page-sub">Wybierz dzień, godzinę i kort. Bez rejestracji, płatność na miejscu — rezerwacja zajmuje mniej niż minutę.</p>
+    </div>
+  </div>
+
+  <section class="booking">
+    <div class="container">
+
+      <!-- KROK 1: Data -->
+      <div class="panel">
+        <div class="panel-label">1 · Wybierz dzień</div>
+        <div class="date-strip" id="date-strip"></div>
+        <div class="other-date">
+          <span class="other-date-toggle" onclick="toggleDateInput()"><i class="ti ti-calendar"></i> Inna data</span>
+          <input type="date" class="date-input" id="date-input">
+        </div>
+      </div>
+
+      <!-- KROK 2: Mapka + Siatka -->
+      <div class="map-grid-wrap">
+
+        <!-- MAPKA -->
+        <div class="court-map">
+          <div class="panel-label">Układ kortów</div>
+          <svg viewBox="0 0 263 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plan kortów: kort 4 u góry poziomo, korty 1-3 na dole pionowo, północ u góry">
+            <!-- Róża wiatrów -->
+            <g transform="translate(28,28)">
+              <line x1="0" y1="-14" x2="0" y2="14" stroke="#1A2744" stroke-width="1.2"/>
+              <line x1="-14" y1="0" x2="14" y2="0" stroke="#1A2744" stroke-width="1.2"/>
+              <polygon points="0,-18 -3.5,-8 3.5,-8" fill="#1A2744"/>
+              <text x="0" y="-21" text-anchor="middle" font-size="9" font-weight="600" fill="#1A2744" font-family="Outfit,sans-serif">N</text>
+              <text x="0" y="27" text-anchor="middle" font-size="8" fill="#888" font-family="Outfit,sans-serif">S</text>
+              <text x="21" y="3" text-anchor="middle" font-size="8" fill="#888" font-family="Outfit,sans-serif">E</text>
+              <text x="-21" y="3" text-anchor="middle" font-size="8" fill="#888" font-family="Outfit,sans-serif">W</text>
+            </g>
+
+            <!--
+              JEDEN wzór kortu (pole zewn. 73×145, pole gry 53×121) — +~21% względem startu.
+              Linie pola gry (lokalnie, początek w lewym-górnym rogu pola):
+                rect 0,0 → 53,121 | singiel x=8,45 | siatka y=60.5
+                serwisowe y=39,82 | środkowa serwisowa x=26.5
+              Numer kortu: lokalnie (26.5, 22) — w górnej ćwiartce, z odstępem od linii serwisowej.
+              Kort 4 = ten sam wzór obrócony o -90°, wycentrowany nad Kortem 2.
+            -->
+
+            <!-- Górny obszar: Kort 4 — ten sam kort obrócony o -90° -->
+            <g class="map-court" data-court="3" onclick="selectCourtFromMap(3)" onmouseenter="hoverMap(3,true)" onmouseleave="hoverMap(3,false)">
+              <g transform="translate(95,33) rotate(-90 36.5 72.5)">
+                <rect class="court-fill" x="0" y="0" width="73" height="145" rx="4" fill="#E8A98F" stroke="#993C1D" stroke-width="1"/>
+                <g transform="translate(10,12)" fill="none" stroke="#fff" stroke-width="1.1">
+                  <rect x="0" y="0" width="53" height="121"/>
+                  <line x1="8" y1="0" x2="8" y2="121"/>
+                  <line x1="45" y1="0" x2="45" y2="121"/>
+                  <line x1="0" y1="60.5" x2="53" y2="60.5"/>
+                  <line x1="8" y1="39" x2="45" y2="39"/>
+                  <line x1="8" y1="82" x2="45" y2="82"/>
+                  <line x1="26.5" y1="39" x2="26.5" y2="82"/>
+                  <!-- numer w lokalnym (26.5,22) pola gry, obrócony by stał prosto -->
+                  <text class="court-num" x="26.5" y="22" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="600" fill="#fff" font-family="Outfit,sans-serif" transform="rotate(90 26.5 22)">4</text>
+                </g>
+              </g>
+            </g>
+
+            <!-- Dolny obszar: Korty 3,2,1 (pionowe), IDENTYCZNE, od lewej 3-2-1 -->
+            <!-- Kort 3 -->
+            <g class="map-court" data-court="2" onclick="selectCourtFromMap(2)" onmouseenter="hoverMap(2,true)" onmouseleave="hoverMap(2,false)">
+              <rect class="court-fill" x="16" y="148" width="73" height="145" rx="4" fill="#E8A98F" stroke="#993C1D" stroke-width="1"/>
+              <g transform="translate(26,160)" fill="none" stroke="#fff" stroke-width="1.1">
+                <rect x="0" y="0" width="53" height="121"/>
+                <line x1="8" y1="0" x2="8" y2="121"/>
+                <line x1="45" y1="0" x2="45" y2="121"/>
+                <line x1="0" y1="60.5" x2="53" y2="60.5"/>
+                <line x1="8" y1="39" x2="45" y2="39"/>
+                <line x1="8" y1="82" x2="45" y2="82"/>
+                <line x1="26.5" y1="39" x2="26.5" y2="82"/>
+                <text class="court-num" x="26.5" y="22" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="600" fill="#fff" font-family="Outfit,sans-serif">3</text>
+              </g>
+            </g>
+            <!-- Kort 2 -->
+            <g class="map-court" data-court="1" onclick="selectCourtFromMap(1)" onmouseenter="hoverMap(1,true)" onmouseleave="hoverMap(1,false)">
+              <rect class="court-fill" x="95" y="148" width="73" height="145" rx="4" fill="#E8A98F" stroke="#993C1D" stroke-width="1"/>
+              <g transform="translate(105,160)" fill="none" stroke="#fff" stroke-width="1.1">
+                <rect x="0" y="0" width="53" height="121"/>
+                <line x1="8" y1="0" x2="8" y2="121"/>
+                <line x1="45" y1="0" x2="45" y2="121"/>
+                <line x1="0" y1="60.5" x2="53" y2="60.5"/>
+                <line x1="8" y1="39" x2="45" y2="39"/>
+                <line x1="8" y1="82" x2="45" y2="82"/>
+                <line x1="26.5" y1="39" x2="26.5" y2="82"/>
+                <text class="court-num" x="26.5" y="22" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="600" fill="#fff" font-family="Outfit,sans-serif">2</text>
+              </g>
+            </g>
+            <!-- Kort 1 -->
+            <g class="map-court" data-court="0" onclick="selectCourtFromMap(0)" onmouseenter="hoverMap(0,true)" onmouseleave="hoverMap(0,false)">
+              <rect class="court-fill" x="174" y="148" width="73" height="145" rx="4" fill="#E8A98F" stroke="#993C1D" stroke-width="1"/>
+              <g transform="translate(184,160)" fill="none" stroke="#fff" stroke-width="1.1">
+                <rect x="0" y="0" width="53" height="121"/>
+                <line x1="8" y1="0" x2="8" y2="121"/>
+                <line x1="45" y1="0" x2="45" y2="121"/>
+                <line x1="0" y1="60.5" x2="53" y2="60.5"/>
+                <line x1="8" y1="39" x2="45" y2="39"/>
+                <line x1="8" y1="82" x2="45" y2="82"/>
+                <line x1="26.5" y1="39" x2="26.5" y2="82"/>
+                <text class="court-num" x="26.5" y="22" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="600" fill="#fff" font-family="Outfit,sans-serif">1</text>
+              </g>
+            </g>
+          </svg>
+          <div class="map-hint">Najedź na kort, aby podświetlić go w grafiku. Kliknij, aby wybrać.</div>
+        </div>
+
+        <!-- SIATKA / OŚ CZASU -->
+        <div class="panel" style="margin-bottom:0;">
+          <div class="grid-head-row">
+            <div class="panel-label" style="margin-bottom:0;">2 · Wybierz kort i godzinę</div>
+          </div>
+
+          <div class="tl-scroll-wrap">
+            <div class="timeline" id="timeline"></div>
+            <div class="tl-axis" id="tl-axis"></div>
+            <div class="slider-row">
+              <input type="range" class="tl-slider" id="tl-slider" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="slider-hint">Przesuń suwak lub przeciągnij oś palcem, aby zobaczyć inne godziny (8:00–22:00)</div>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="legend-dot legend-free"></span> Wolny</div>
+            <div class="legend-item"><span class="legend-dot legend-busy"></span> Zajęty</div>
+            <div class="legend-item"><span class="legend-dot legend-sel"></span> Twój wybór</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:24px;"></div>
+
+      <!-- KROK 3: Podsumowanie -->
+      <div class="summary-panel hidden" id="summary-panel">
+        <div class="summary-label">Twój wybór</div>
+        <div class="summary-facts" id="summary-facts"></div>
+        <div class="dur-label">Długość gry</div>
+        <div class="dur-opts" id="dur-opts"></div>
+        <div class="dur-warning" id="dur-warning"></div>
+        <div class="price-breakdown" id="price-breakdown"></div>
+        <button class="btn-next" id="btn-next" onclick="goToForm()">Przejdź do danych →</button>
+      </div>
+
+      <!-- KROK 4: Formularz -->
+      <div class="panel form-panel hidden" id="form-panel">
+        <div class="form-title">Twoje dane</div>
+        <label class="field-label">Imię i nazwisko <span class="req">*</span></label>
+        <input type="text" class="field" id="f-name" placeholder="np. Anna Kowalska">
+        <label class="field-label">Telefon <span class="req">*</span></label>
+        <input type="tel" class="field" id="f-phone" placeholder="np. 600 100 200">
+        <label class="field-label">E-mail <span class="opt">(opcjonalnie, na potwierdzenie)</span></label>
+        <input type="email" class="field" id="f-email" placeholder="np. anna@email.pl">
+        <div class="gear-title">Wypożyczenie sprzętu <span class="opt">(opcjonalnie)</span></div>
+        <div class="gear-row">
+          <div><div class="gear-name">Rakieta tenisowa</div><div class="gear-price" id="price-racket-label"></div></div>
+          <div class="stepper"><button class="step-btn step-minus" onclick="step('racket',-1)">−</button><span class="step-q" id="racket-q">0</span><button class="step-btn step-plus" onclick="step('racket',1)">+</button></div>
+        </div>
+        <div class="gear-row" style="margin-bottom:6px;">
+          <div><div class="gear-name">Tuba piłek (3 szt.)</div><div class="gear-price" id="price-balls-label"></div></div>
+          <div class="stepper"><button class="step-btn step-minus" onclick="step('balls',-1)">−</button><span class="step-q" id="balls-q">0</span><button class="step-btn step-plus" onclick="step('balls',1)">+</button></div>
+        </div>
+        <div class="notes-toggle" onclick="toggleNotes()"><i class="ti ti-plus" id="notes-icon"></i> Dodatkowe uwagi</div>
+        <textarea class="field notes-field" id="notes-field" placeholder="np. gram z dzieckiem, proszę o niższą siatkę" rows="2"></textarea>
+        <div class="consent"><input type="checkbox" id="f-consent" style="margin-top:3px;"><span>Akceptuję regulamin kortów. Anulowanie bezpłatne do 24h przed terminem.</span></div>
+        <button class="btn-confirm" onclick="confirmBooking()">Potwierdź rezerwację</button>
+        <div class="pay-note">Płatność gotówką lub kartą na miejscu</div>
+      </div>
+
+      <!-- KROK 5: Sukces -->
+      <div class="panel success-panel hidden" id="success-panel">
+        <div class="success-icon"><i class="ti ti-check"></i></div>
+        <div class="success-title">Rezerwacja potwierdzona!</div>
+        <div class="success-msg" id="success-msg"></div>
+        <div class="success-card" id="success-card"></div>
+        <a href="index.html"><button class="btn-next">Wróć na stronę główną</button></a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer" id="kontakt">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logos">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin">
+            <div class="footer-logos-divider"></div>
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa">
+          </div>
+          <p class="footer-tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Lokalizacja</div>
+          <ul class="footer-contact-list">
+            <li><i class="ti ti-map-pin"></i> ul. Andrzeja Struga 8, Lublin</li>
+            <li><i class="ti ti-clock"></i> Pon–Nd: 8:00 – 22:00</li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Kontakt</div>
+          <ul class="footer-contact-list">
+            <li><i class="ti ti-phone"></i> <a href="tel:+48000000000">+48 000 000 000</a></li>
+            <li><i class="ti ti-mail"></i> <a href="mailto:kontakt@kortylublin.pl">kontakt@kortylublin.pl</a></li>
+          </ul>
+        </div>
+        <div class="footer-bloome">
+          <div class="footer-bloome-label">Projekt i realizacja</div>
+          <div class="footer-bloome-name">Bloome</div>
+          <div class="footer-bloome-sub">web design &amp; development</div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================
+       KONFIGURACJA — wszystko do zmiany w jednym miejscu
+       ========================================================= */
+    const COURTS  = ['Kort 1', 'Kort 2', 'Kort 3', 'Kort 4'];
+    const START_H = 8;
+    const END_H   = 22;
+    const VISIBLE = 6;          // ile 30-min slotów widać naraz (= 3h)
+    const MIN_MIN = 60;
+
+    const PRICE = { hour: 60, racket: 10, balls: 15 };  // ceny placeholder
+
+    /* =========================================================
+       DANE DOSTĘPNOŚCI — PLACEHOLDER (docelowo Google Calendar)
+       ========================================================= */
+    const SLOT_COUNT = (END_H - START_H) * 2;
+    const SLOTS = [];
+    for (let h = START_H; h < END_H; h++) { SLOTS.push(h + ':00'); SLOTS.push(h + ':30'); }
+    const availability = COURTS.map((_, ci) =>
+      SLOTS.map((_, si) => (((si * 7 + ci * 5) % 9) < 3) ? 1 : 0)
+    );
+
+    /* =========================================================
+       STAN
+       ========================================================= */
+    let view = 0, selDate = 0, selCourt = null, selSlot = null, selDur = MIN_MIN;
+    const qty = { racket: 0, balls: 0 };
+
+    const dayNames = ['niedz','pon','wt','śr','czw','pt','sob'];
+    const monNames = ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
+    const fullDays = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
+    const fullMons = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+
+    const MAX_VIEW = SLOT_COUNT - VISIBLE;
+
+    /* =========================================================
+       DATA
+       ========================================================= */
+    function buildDates() {
+      const strip = document.getElementById('date-strip');
+      strip.innerHTML = '';
+      const today = new Date();
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(today); d.setDate(today.getDate() + i);
+        const btn = document.createElement('button');
+        btn.className = 'date-btn' + (i === selDate ? ' active' : '');
+        btn.innerHTML = '<div class="d-day">' + dayNames[d.getDay()] + '</div><div class="d-num">' + d.getDate() + '</div><div class="d-mon">' + monNames[d.getMonth()] + '</div>';
+        btn.onclick = () => { selDate = i; resetSelection(); buildDates(); render(); };
+        strip.appendChild(btn);
+      }
+    }
+
+    function toggleDateInput() {
+      const inp = document.getElementById('date-input');
+      inp.classList.toggle('show');
+      if (inp.classList.contains('show')) inp.focus();
+    }
+
+    document.getElementById('date-input').addEventListener('change', function () {
+      if (!this.value) return;
+      const picked = new Date(this.value + 'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const diff = Math.round((picked - today) / 86400000);
+      if (diff < 0) { alert('Wybierz dzisiejszą lub przyszłą datę.'); return; }
+      selDate = diff;
+      resetSelection();
+      buildDates();
+      render();
+    });
+
+    function selectedDateObj() { const d = new Date(); d.setDate(d.getDate() + selDate); return d; }
+
+    /* =========================================================
+       OŚ CZASU
+       ========================================================= */
+    function render() {
+      const tl = document.getElementById('timeline');
+      tl.innerHTML = '';
+      const slotsNeeded = selDur / 30;
+
+      COURTS.forEach((court, ci) => {
+        const row = document.createElement('div');
+        row.className = 'tl-row';
+        row.dataset.court = ci;
+
+        const name = document.createElement('div');
+        name.className = 'tl-name';
+        name.textContent = court;
+        row.appendChild(name);
+
+        const track = document.createElement('div');
+        track.className = 'tl-track';
+        for (let i = view; i < view + VISIBLE; i++) {
+          const cell = document.createElement('div');
+          const isBusy = availability[ci][i] === 1;
+          const isStart = (selCourt === ci && selSlot === i);
+          const inRange = (selCourt === ci && selSlot !== null && i > selSlot && i < selSlot + slotsNeeded);
+          cell.className = 'tl-cell' + (isBusy ? ' busy' : '') + (isStart ? ' selected' : '') + (inRange && !isBusy ? ' in-range' : '');
+          if (!isBusy) {
+            cell.onclick = () => { selCourt = ci; selSlot = i; selDur = MIN_MIN; showSummary(); render(); };
+          }
+          track.appendChild(cell);
+        }
+        row.onmouseenter = () => hoverMap(ci, true);
+        row.onmouseleave = () => hoverMap(ci, false);
+        row.appendChild(track);
+        tl.appendChild(row);
+      });
+
+      renderAxis();
+      syncMapHot();
+    }
+
+    // godziny NAD liniami podziału (granicami komórek)
+    function renderAxis() {
+      const axis = document.getElementById('tl-axis');
+      axis.innerHTML = '';
+      for (let k = 0; k <= VISIBLE; k++) {
+        const slotIdx = view + k;
+        if (slotIdx > SLOT_COUNT) break;
+        const label = (slotIdx < SLOTS.length) ? SLOTS[slotIdx] : (END_H + ':00');
+        const tick = document.createElement('div');
+        tick.className = 'tl-tick';
+        tick.style.left = (k / VISIBLE * 100) + '%';
+        tick.textContent = label;
+        axis.appendChild(tick);
+      }
+    }
+
+    /* =========================================================
+       SUWAK + SWIPE
+       ========================================================= */
+    const slider = document.getElementById('tl-slider');
+    slider.max = MAX_VIEW;
+    slider.addEventListener('input', e => { view = +e.target.value; render(); });
+
+    (function () {
+      const tl = document.getElementById('timeline');
+      let startX = 0, startView = 0, dragging = false;
+      tl.addEventListener('touchstart', e => { dragging = true; startX = e.touches[0].clientX; startView = view; }, { passive: true });
+      tl.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        const dx = e.touches[0].clientX - startX;
+        const trackEl = tl.querySelector('.tl-track');
+        const cellW = trackEl ? trackEl.offsetWidth / VISIBLE : 50;
+        const shift = Math.round(-dx / cellW);
+        const nv = Math.min(Math.max(startView + shift, 0), MAX_VIEW);
+        if (nv !== view) { view = nv; slider.value = view; render(); }
+      }, { passive: true });
+      tl.addEventListener('touchend', () => { dragging = false; }, { passive: true });
+    })();
+
+    /* =========================================================
+       MAPKA <-> SIATKA
+       ========================================================= */
+    function hoverMap(courtIdx, on) {
+      const mapG = document.querySelector('.map-court[data-court="' + courtIdx + '"]');
+      if (mapG) mapG.classList.toggle('hot', on);
+      const row = document.querySelector('.tl-row[data-court="' + courtIdx + '"]');
+      if (row) row.classList.toggle('hot', on);
+    }
+
+    function syncMapHot() {
+      document.querySelectorAll('.map-court').forEach(g => g.classList.remove('hot'));
+      if (selCourt !== null) {
+        const g = document.querySelector('.map-court[data-court="' + selCourt + '"]');
+        if (g) g.classList.add('hot');
+      }
+    }
+
+    function selectCourtFromMap(courtIdx) {
+      for (let i = view; i < view + VISIBLE; i++) {
+        if (availability[courtIdx][i] === 0) { selCourt = courtIdx; selSlot = i; selDur = MIN_MIN; showSummary(); render(); return; }
+      }
+    }
+
+    /* =========================================================
+       WALIDACJA — mieści się? + sierota Z OBU STRON
+       ========================================================= */
+    function durationFits(courtIdx, startIdx, durMin) {
+      const need = durMin / 30;
+      for (let k = 0; k < need; k++) {
+        const idx = startIdx + k;
+        if (idx >= SLOT_COUNT || availability[courtIdx][idx] === 1) return false;
+      }
+      return true;
+    }
+
+    // sierota PO rezerwacji: 1 wolny slot, za nim zajęty
+    function orphanAfter(courtIdx, startIdx, durMin) {
+      const after = startIdx + durMin / 30;
+      if (after >= SLOT_COUNT) return false;            // brzeg dnia = OK
+      const a1 = availability[courtIdx][after];
+      const a2 = (after + 1 < SLOT_COUNT) ? availability[courtIdx][after + 1] : 1;
+      return (a1 === 0 && a2 === 1);
+    }
+
+    // sierota PRZED rezerwacją: zajęty -> 1 wolny -> Ty
+    function orphanBefore(courtIdx, startIdx) {
+      const before = startIdx - 1;
+      if (before < 0) return false;                     // brzeg dnia = OK
+      if (availability[courtIdx][before] === 1) return false; // przylega do zajętości
+      const before2 = (before - 1 >= 0) ? availability[courtIdx][before - 1] : 1;
+      return (availability[courtIdx][before] === 0 && before2 === 1);
+    }
+
+    function leavesOrphan(courtIdx, startIdx, durMin) {
+      return orphanAfter(courtIdx, startIdx, durMin) || orphanBefore(courtIdx, startIdx);
+    }
+
+    /* =========================================================
+       PODSUMOWANIE + DŁUGOŚĆ + CENA
+       ========================================================= */
+    function showSummary() {
+      document.getElementById('summary-panel').classList.remove('hidden');
+      const d = selectedDateObj();
+      const facts = [
+        ['Data', dayNames[d.getDay()] + ', ' + d.getDate() + ' ' + monNames[d.getMonth()]],
+        ['Kort', COURTS[selCourt]],
+        ['Start', SLOTS[selSlot]]
+      ];
+      document.getElementById('summary-facts').innerHTML = facts.map(([k, v]) =>
+        '<div class="summary-fact"><div class="sf-k">' + k + '</div><div class="sf-v">' + v + '</div></div>').join('');
+      renderDurations();
+      renderPrice();
+    }
+
+    function renderDurations() {
+      const opts = document.getElementById('dur-opts');
+      const warn = document.getElementById('dur-warning');
+      opts.innerHTML = '';
+      warn.classList.remove('show');
+
+      const durations = [60, 90, 120];
+      durations.forEach(dur => {
+        const fits = durationFits(selCourt, selSlot, dur);
+        const orphan = fits && leavesOrphan(selCourt, selSlot, dur);
+        const b = document.createElement('button');
+        b.className = 'dur-btn' + (selDur === dur ? ' active' : '');
+        b.textContent = dur + ' min';
+        b.disabled = !fits || orphan;
+        if (!b.disabled) b.onclick = () => { selDur = dur; showSummary(); render(); };
+        opts.appendChild(b);
+      });
+
+      if (leavesOrphan(selCourt, selSlot, selDur)) {
+        warn.innerHTML = buildOrphanHint(selCourt, selSlot, selDur);
+        warn.classList.add('show');
+      }
+
+      const ok = durationFits(selCourt, selSlot, selDur) && !leavesOrphan(selCourt, selSlot, selDur);
+      document.getElementById('btn-next').disabled = !ok;
+    }
+
+    // Buduje kontekstową podpowiedź: co konkretnie zrobić, by uniknąć sieroty
+    function buildOrphanHint(courtIdx, startIdx, durMin) {
+      const base = 'Ten wybór zostawiłby 30 minut, których nikt nie wykorzysta. ';
+      const tips = [];
+
+      // sierota PO rezerwacji → przedłużenie o 30 min wchłonie lukę?
+      if (orphanAfter(courtIdx, startIdx, durMin)) {
+        if (durationFits(courtIdx, startIdx, durMin + 30) && !leavesOrphan(courtIdx, startIdx, durMin + 30)) {
+          tips.push('przedłużyć grę do ' + (durMin + 30) + ' min');
+        }
+        // albo zacząć 30 min później (slot startowy +1), jeśli nadal się mieści
+        if (durationFits(courtIdx, startIdx + 1, durMin) && !leavesOrphan(courtIdx, startIdx + 1, durMin)) {
+          tips.push('zacząć 30 minut później');
+        }
+      }
+
+      // sierota PRZED rezerwacją → zacząć 30 min wcześniej zasypie lukę?
+      if (orphanBefore(courtIdx, startIdx)) {
+        if (startIdx - 1 >= 0 && availability[courtIdx][startIdx - 1] === 0 &&
+            durationFits(courtIdx, startIdx - 1, durMin) && !leavesOrphan(courtIdx, startIdx - 1, durMin)) {
+          tips.push('zacząć 30 minut wcześniej');
+        }
+        // albo przedłużyć z wcześniejszym startem
+        if (startIdx - 1 >= 0 && availability[courtIdx][startIdx - 1] === 0 &&
+            durationFits(courtIdx, startIdx - 1, durMin + 30) && !leavesOrphan(courtIdx, startIdx - 1, durMin + 30)) {
+          tips.push('zacząć wcześniej i grać dłużej');
+        }
+      }
+
+      if (tips.length === 0) return base + 'Wybierz inną godzinę lub kort.';
+
+      // składamy ładną listę: "Możesz: a, b lub c."
+      let joined;
+      if (tips.length === 1) joined = tips[0];
+      else joined = tips.slice(0, -1).join(', ') + ' lub ' + tips[tips.length - 1];
+      return base + 'Możesz <strong>' + joined + '</strong>.';
+    }
+
+    function courtPrice() { return Math.round(selDur / 60 * PRICE.hour); }
+    function totalPrice() { return courtPrice() + qty.racket * PRICE.racket + qty.balls * PRICE.balls; }
+
+    function renderPrice() {
+      const lines = [];
+      lines.push(rowHtml('Kort (' + selDur + ' min)', courtPrice()));
+      if (qty.racket > 0) lines.push(rowHtml('Rakieta × ' + qty.racket, qty.racket * PRICE.racket));
+      if (qty.balls > 0)  lines.push(rowHtml('Tuba piłek × ' + qty.balls, qty.balls * PRICE.balls));
+      document.getElementById('price-breakdown').innerHTML =
+        lines.join('') + '<div class="pb-total"><span>Razem</span><span>' + totalPrice() + ' zł</span></div>';
+      function rowHtml(k, v) { return '<div class="pb-row"><span>' + k + '</span><span>' + v + ' zł</span></div>'; }
+    }
+
+    /* =========================================================
+       SPRZĘT / NAWIGACJA
+       ========================================================= */
+    function step(item, dir) { qty[item] = Math.max(0, qty[item] + dir); document.getElementById(item + '-q').textContent = qty[item]; renderPrice(); }
+    function toggleNotes() {
+      const f = document.getElementById('notes-field'); const ic = document.getElementById('notes-icon');
+      f.classList.toggle('show'); ic.className = f.classList.contains('show') ? 'ti ti-minus' : 'ti ti-plus';
+    }
+    function goToForm() {
+      document.getElementById('form-panel').classList.remove('hidden');
+      document.getElementById('form-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function confirmBooking() {
+      const name = document.getElementById('f-name').value.trim();
+      const phone = document.getElementById('f-phone').value.trim();
+      const consent = document.getElementById('f-consent').checked;
+      let ok = true;
+      document.getElementById('f-name').classList.toggle('invalid', !name);
+      document.getElementById('f-phone').classList.toggle('invalid', !phone);
+      if (!name || !phone) ok = false;
+      if (!consent) { alert('Zaznacz akceptację regulaminu, aby kontynuować.'); ok = false; }
+      if (!ok) return;
+
+      /* TUTAJ w przyszłości: fetch POST do Google Apps Script -> zapis do Calendar */
+
+      const d = selectedDateObj();
+      const baseMin = parseInt(SLOTS[selSlot]) * 60 + (SLOTS[selSlot].includes(':30') ? 30 : 0);
+      const endMin = baseMin + selDur;
+      const endLabel = Math.floor(endMin / 60) + ':' + (endMin % 60 === 0 ? '00' : '30');
+
+      document.getElementById('success-msg').textContent =
+        'Czekamy na Ciebie w ' + fullDays[d.getDay()] + ', ' + d.getDate() + ' ' + fullMons[d.getMonth()] +
+        ' o ' + SLOTS[selSlot] + ' na ' + COURTS[selCourt].toLowerCase() + '.';
+
+      document.getElementById('success-card').innerHTML =
+        scRow('Kort', COURTS[selCourt]) +
+        scRow('Termin', d.getDate() + ' ' + monNames[d.getMonth()] + ', ' + SLOTS[selSlot] + '–' + endLabel) +
+        (qty.racket > 0 ? scRow('Rakieta', qty.racket + ' szt.') : '') +
+        (qty.balls > 0 ? scRow('Tuba piłek', qty.balls + ' szt.') : '') +
+        scRowP('Do zapłaty', totalPrice() + ' zł');
+
+      document.getElementById('summary-panel').classList.add('hidden');
+      document.getElementById('form-panel').classList.add('hidden');
+      document.getElementById('success-panel').classList.remove('hidden');
+      document.getElementById('success-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      function scRow(k, v) { return '<div class="sc-row"><span class="sc-k">' + k + '</span><span class="sc-v">' + v + '</span></div>'; }
+      function scRowP(k, v) { return '<div class="sc-row"><span class="sc-k">' + k + '</span><span class="sc-v price">' + v + '</span></div>'; }
+    }
+
+    function resetSelection() {
+      selCourt = null; selSlot = null; selDur = MIN_MIN; qty.racket = 0; qty.balls = 0;
+      document.getElementById('racket-q').textContent = '0';
+      document.getElementById('balls-q').textContent = '0';
+      document.getElementById('summary-panel').classList.add('hidden');
+      document.getElementById('form-panel').classList.add('hidden');
+      document.getElementById('success-panel').classList.add('hidden');
+    }
+
+    function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
+    function toggleLang() { document.getElementById('lang-pl').classList.toggle('active'); document.getElementById('lang-en').classList.toggle('active'); }
+    window.addEventListener('scroll', () => { document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 10); });
+
+    /* INIT */
+    document.getElementById('price-racket-label').textContent = PRICE.racket + ' zł / szt.';
+    document.getElementById('price-balls-label').textContent = PRICE.balls + ' zł / szt.';
+    const nowHour = new Date().getHours();
+    view = Math.min(Math.max((nowHour - START_H) * 2, 0), MAX_VIEW);
+    slider.value = view;
+    buildDates();
+    render();
+  </script>
+
+</body>
+</html>
