@@ -430,9 +430,24 @@
 
     .court-slots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
 
-    .slot { font-size: 12px; padding: 4px 9px; border-radius: 4px; }
-    .slot-free { background: var(--free-bg); color: var(--free-fg); }
-    .slot-busy { background: var(--busy-bg); color: var(--busy-fg); }
+    .slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .slot-halves {
+      display: flex;
+      width: 36px;
+      height: 14px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .slot-half { flex: 1; }
+    .slot-half-free { background: var(--free-bg); }
+    .slot-half-busy { background: var(--busy-bg); }
+    .slot-label { font-size: 11px; color: var(--muted); }
 
     .widget-footer {
       margin-top: 14px;
@@ -1154,17 +1169,17 @@
     });
 
     // ── Widget dostępności z suwakiem ──
-    // Dane kortów: 0 = wolny, 1 = zajęty (godziny 8:00–21:00, 14 slotów)
-    const courtData = [
-      { name: 'Kort 1', slots: [0,0,1,0,0,1,1,0,0,1,0,0,1,0] },
-      { name: 'Kort 2', slots: [1,1,0,0,1,0,0,1,1,0,0,1,0,0] },
-      { name: 'Kort 3', slots: [0,1,1,0,0,0,1,1,0,0,1,0,0,1] },
-      { name: 'Kort 4', slots: [0,0,0,1,0,1,0,0,1,1,0,0,1,0] },
-    ];
+    // Backend — Google Apps Script Web App (ten sam co w rezerwacja.html)
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
+    const COURT_NAMES = ['Kort 1', 'Kort 2', 'Kort 3', 'Kort 4'];
 
     const VISIBLE = 4;   // ile slotów widać naraz
     const TOTAL   = 14;  // godziny 8:00–21:00
     const START_H = 8;   // pierwsza godzina
+
+    // Zaczynamy z pustymi (pozornie "wolnymi") danymi, dopóki nie
+    // przyjdzie prawdziwa odpowiedź z serwera — patrz loadTodayAvailability()
+    let courtData = COURT_NAMES.map(name => ({ name, slots: new Array(TOTAL * 2).fill(0) }));
 
     function hourLabel(offset) {
       return `${START_H + offset}:00`;
@@ -1173,21 +1188,89 @@
     function renderCourts(startIdx) {
       const container = document.getElementById('widget-courts');
       container.innerHTML = courtData.map(court => {
-        const visibleSlots = court.slots.slice(startIdx, startIdx + VISIBLE);
-        const slotsHTML = visibleSlots.map((busy, i) => {
-          const cls = busy ? 'slot slot-busy' : 'slot slot-free';
-          return `<span class="${cls}">${hourLabel(startIdx + i)}</span>`;
-        }).join('');
+        const cellsHTML = [];
+        for (let h = startIdx; h < startIdx + VISIBLE; h++) {
+          const firstHalfBusy = court.slots[h * 2];
+          const secondHalfBusy = court.slots[h * 2 + 1];
+          cellsHTML.push(`
+            <span class="slot">
+              <span class="slot-halves">
+                <span class="slot-half ${firstHalfBusy ? 'slot-half-busy' : 'slot-half-free'}"></span>
+                <span class="slot-half ${secondHalfBusy ? 'slot-half-busy' : 'slot-half-free'}"></span>
+              </span>
+              <span class="slot-label">${hourLabel(h)}</span>
+            </span>`);
+        }
         return `
           <div class="court-row">
             <span class="court-name">${court.name}</span>
-            <div class="court-slots">${slotsHTML}</div>
+            <div class="court-slots">${cellsHTML.join('')}</div>
           </div>`;
       }).join('');
     }
 
     function updateWidget(val) {
       renderCourts(+val);
+    }
+
+    /* =========================================================
+       POBIERANIE PRAWDZIWEJ DOSTĘPNOŚCI (dokładnie ta sama logika
+       stref czasowych co w rezerwacja.html — tam jest dokładniejszy
+       komentarz, jeśli chcesz przypomnieć sobie dlaczego tak to działa)
+       ========================================================= */
+    function toISODateString(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function warsawHour(date) {
+      const fmt = new Intl.DateTimeFormat('pl-PL', {
+        timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false,
+      });
+      const parts = fmt.formatToParts(date);
+      const map = {};
+      parts.forEach(p => { map[p.type] = p.value; });
+      return { hour: parseInt(map.hour, 10), minute: parseInt(map.minute, 10) };
+    }
+
+    // Indeks 30-minutowego slotu (0 = 8:00–8:30, 1 = 8:30–9:00, ...) —
+    // ta sama jednostka co w rezerwacja.html, żeby połówki kratek
+    // odzwierciedlały rzeczywiste 30-minutowe bloki z kalendarza.
+    function slotIndex30FromDate(date) {
+      const t = warsawHour(date);
+      return (t.hour - START_H) * 2 + (t.minute >= 30 ? 1 : 0);
+    }
+
+    function build30MinGrid(busyByCourt) {
+      const slotCount = TOTAL * 2; // 28 półgodzinnych slotów w oknie 8:00–22:00
+      const grid = COURT_NAMES.map(() => new Array(slotCount).fill(0));
+      Object.keys(busyByCourt || {}).forEach(courtKey => {
+        const ci = parseInt(courtKey, 10) - 1;
+        if (ci < 0 || ci >= COURT_NAMES.length) return;
+        (busyByCourt[courtKey] || []).forEach(range => {
+          const startIdx = slotIndex30FromDate(new Date(range.start));
+          const endIdx = slotIndex30FromDate(new Date(range.end));
+          for (let i = Math.max(startIdx, 0); i < Math.min(endIdx, slotCount); i++) grid[ci][i] = 1;
+        });
+      });
+      return grid;
+    }
+
+    async function loadTodayAvailability() {
+      try {
+        const res = await fetch(WEB_APP_URL + '?action=availability&date=' + toISODateString(new Date()));
+        const data = await res.json();
+        const grid = build30MinGrid(data.busy);
+        courtData = COURT_NAMES.map((name, i) => ({ name, slots: grid[i] }));
+        updateWidget(sliderEl.value);
+      } catch (err) {
+        // Widget na stronie głównej to tylko podgląd — jeśli zapytanie
+        // się nie uda, nie przeszkadzamy klientowi błędem, po prostu
+        // zostawiamy poprzedni stan i logujemy do konsoli dla nas.
+        console.error('Nie udało się pobrać dostępności do widgetu:', err);
+      }
     }
 
     // Inicjalizacja — ustaw suwak tak żeby startował od bieżącej godziny
@@ -1198,6 +1281,7 @@
     sliderEl.value = initVal;
     sliderEl.addEventListener('input', e => updateWidget(e.target.value));
     updateWidget(initVal);
+    loadTodayAvailability();
     window.addEventListener('scroll', () => {
       document.querySelector('.navbar')
         .classList.toggle('scrolled', window.scrollY > 10);
