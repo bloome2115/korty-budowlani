@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -415,7 +416,8 @@
         <div class="notes-toggle" onclick="toggleNotes()"><i class="ti ti-plus" id="notes-icon"></i> Dodatkowe uwagi</div>
         <textarea class="field notes-field" id="notes-field" placeholder="np. gram z dzieckiem, proszę o niższą siatkę" rows="2"></textarea>
         <div class="consent"><input type="checkbox" id="f-consent" style="margin-top:3px;"><span>Akceptuję regulamin kortów. Anulowanie bezpłatne do 24h przed terminem.</span></div>
-        <button class="btn-confirm" onclick="confirmBooking()">Potwierdź rezerwację</button>
+        <div id="turnstile-container" style="display:none;"></div>
+        <button class="btn-confirm" id="btn-confirm-book" onclick="confirmBooking()">Potwierdź rezerwację</button>
         <div class="pay-note">Płatność gotówką lub kartą na miejscu</div>
       </div>
 
@@ -479,17 +481,60 @@
     const VISIBLE = 6;          // ile 30-min slotów widać naraz (= 3h)
     const MIN_MIN = 60;
 
-    const PRICE = { hour: 60, racket: 10, balls: 15 };  // ceny placeholder
+    const PRICE = { hour: 60, racket: 10, balls: 15 };  // ceny placeholder — do potwierdzenia z klientem
+
+    // Backend — Google Apps Script Web App
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
+    const TURNSTILE_SITE_KEY = '0x4AAAAAAEKG6HyPaHfevXYf';
 
     /* =========================================================
-       DANE DOSTĘPNOŚCI — PLACEHOLDER (docelowo Google Calendar)
+       CLOUDFLARE TURNSTILE — widget niewidoczny, uruchamiany
+       programowo dopiero w momencie wysyłania rezerwacji (nie
+       przy wejściu na stronę), żeby token nigdy nie zdążył wygasnąć
+       ========================================================= */
+    let turnstileWidgetId = null;
+    let turnstileReady = false;
+    let turnstileResolve = null;
+    let turnstileReject = null;
+
+    // Wywoływana automatycznie przez skrypt Turnstile po jego załadowaniu (patrz <head>)
+    function onTurnstileLoad() {
+      turnstileWidgetId = turnstile.render('#turnstile-container', {
+        sitekey: TURNSTILE_SITE_KEY,
+        size: 'invisible',
+        callback: function (token) {
+          if (turnstileResolve) { turnstileResolve(token); turnstileResolve = null; turnstileReject = null; }
+        },
+        'error-callback': function () {
+          if (turnstileReject) { turnstileReject(new Error('Weryfikacja antybotowa nie powiodła się. Spróbuj ponownie.')); turnstileResolve = null; turnstileReject = null; }
+          return true; // nie pokazuj natywnego alertu Turnstile — obsługujemy błąd sami
+        },
+      });
+      turnstileReady = true;
+    }
+
+    function getTurnstileToken() {
+      return new Promise((resolve, reject) => {
+        if (!turnstileReady) { reject(new Error('Ochrona antybotowa jeszcze się nie załadowała. Odśwież stronę i spróbuj ponownie.')); return; }
+        turnstileResolve = resolve;
+        turnstileReject = reject;
+        turnstile.execute(turnstileWidgetId);
+      });
+    }
+
+    /* =========================================================
+       DANE DOSTĘPNOŚCI — pobierane na żywo z Google Calendar
+       przez Apps Script (patrz loadAvailabilityForSelectedDate niżej)
        ========================================================= */
     const SLOT_COUNT = (END_H - START_H) * 2;
     const SLOTS = [];
     for (let h = START_H; h < END_H; h++) { SLOTS.push(h + ':00'); SLOTS.push(h + ':30'); }
-    const availability = COURTS.map((_, ci) =>
-      SLOTS.map((_, si) => (((si * 7 + ci * 5) % 9) < 3) ? 1 : 0)
-    );
+
+    // Zaczynamy z pustą siatką (wszystko "wolne"), dopóki nie przyjdzie
+    // prawdziwa odpowiedź z serwera — patrz isLoadingAvailability niżej,
+    // które chwilowo blokuje interakcję i pokazuje "Ładowanie..."
+    let availability = COURTS.map(() => new Array(SLOT_COUNT).fill(0));
+    let isLoadingAvailability = false;
 
     /* =========================================================
        STAN
@@ -516,7 +561,7 @@
         const btn = document.createElement('button');
         btn.className = 'date-btn' + (i === selDate ? ' active' : '');
         btn.innerHTML = '<div class="d-day">' + dayNames[d.getDay()] + '</div><div class="d-num">' + d.getDate() + '</div><div class="d-mon">' + monNames[d.getMonth()] + '</div>';
-        btn.onclick = () => { selDate = i; resetSelection(); buildDates(); render(); };
+        btn.onclick = () => { selDate = i; resetSelection(); buildDates(); loadAvailabilityForSelectedDate(); };
         strip.appendChild(btn);
       }
     }
@@ -536,16 +581,95 @@
       selDate = diff;
       resetSelection();
       buildDates();
-      render();
+      loadAvailabilityForSelectedDate();
     });
 
     function selectedDateObj() { const d = new Date(); d.setDate(d.getDate() + selDate); return d; }
+
+    function toISODateString(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+
+    /* =========================================================
+       POBIERANIE DOSTĘPNOŚCI Z BACKENDU
+       ========================================================= */
+
+    // Backend zwraca zajęte przedziały jako pełne znaczniki czasu UTC
+    // (ISO string kończący się na "Z"). Musimy je przeliczyć na godzinę
+    // czasu warszawskiego, żeby trafić w odpowiedni indeks w SLOTS.
+    function warsawHourMinute(date) {
+      const fmt = new Intl.DateTimeFormat('pl-PL', {
+        timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false,
+      });
+      const parts = fmt.formatToParts(date);
+      const map = {};
+      parts.forEach(p => { map[p.type] = p.value; });
+      return { hour: parseInt(map.hour, 10), minute: parseInt(map.minute, 10) };
+    }
+
+    function slotIndexFromDate(date) {
+      const t = warsawHourMinute(date);
+      return (t.hour - START_H) * 2 + (t.minute >= 30 ? 1 : 0);
+    }
+
+    // Zamienia { "1": [{start,end}], "2": [...], ... } z backendu
+    // na tablicę tablic 0/1 w formacie, jakiego oczekuje reszta strony.
+    function buildAvailabilityGrid(busyByCourt) {
+      const grid = COURTS.map(() => new Array(SLOT_COUNT).fill(0));
+      Object.keys(busyByCourt || {}).forEach(courtKey => {
+        const ci = parseInt(courtKey, 10) - 1; // backend numeruje korty 1–4, tablica jest 0-indeksowana
+        if (ci < 0 || ci >= COURTS.length) return;
+        (busyByCourt[courtKey] || []).forEach(range => {
+          const startIdx = slotIndexFromDate(new Date(range.start));
+          const endIdx = slotIndexFromDate(new Date(range.end));
+          for (let idx = Math.max(startIdx, 0); idx < Math.min(endIdx, SLOT_COUNT); idx++) {
+            grid[ci][idx] = 1;
+          }
+        });
+      });
+      return grid;
+    }
+
+    async function fetchAvailability(dateStr) {
+      const res = await fetch(WEB_APP_URL + '?action=availability&date=' + dateStr);
+      if (!res.ok) throw new Error('Serwer odpowiedział błędem ' + res.status);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      return data.busy;
+    }
+
+    async function loadAvailabilityForSelectedDate() {
+      isLoadingAvailability = true;
+      render();
+      try {
+        const busy = await fetchAvailability(toISODateString(selectedDateObj()));
+        availability = buildAvailabilityGrid(busy);
+      } catch (err) {
+        console.error(err);
+        alert('Nie udało się pobrać aktualnej dostępności kortów. Sprawdź połączenie z internetem i odśwież stronę.');
+      } finally {
+        isLoadingAvailability = false;
+        render();
+      }
+    }
 
     /* =========================================================
        OŚ CZASU
        ========================================================= */
     function render() {
       const tl = document.getElementById('timeline');
+
+      if (isLoadingAvailability) {
+        tl.innerHTML = '<div style="padding:32px 0;text-align:center;color:var(--muted);font-size:14px;">'
+          + '<i class="ti ti-loader-2" style="font-size:20px;display:block;margin-bottom:8px;"></i>'
+          + 'Ładowanie dostępności…</div>';
+        document.getElementById('tl-axis').innerHTML = '';
+        return;
+      }
+
       tl.innerHTML = '';
       const slotsNeeded = selDur / 30;
 
@@ -640,6 +764,7 @@
     }
 
     function selectCourtFromMap(courtIdx) {
+      if (isLoadingAvailability) return;
       for (let i = view; i < view + VISIBLE; i++) {
         if (availability[courtIdx][i] === 0) { selCourt = courtIdx; selSlot = i; selDur = MIN_MIN; showSummary(); render(); return; }
       }
@@ -787,7 +912,15 @@
       document.getElementById('form-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function confirmBooking() {
+    // Buduje moment startu rezerwacji jako obiekt Date. Zakładamy, że
+    // przeglądarka odwiedzającego działa w czasie polskim (Europe/Warsaw)
+    // — uzasadnione założenie dla lokalnego klubu tenisowego w Lublinie.
+    function buildStartDate(dateObj, slotLabel) {
+      const parts = slotLabel.split(':').map(Number);
+      return new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), parts[0], parts[1], 0, 0);
+    }
+
+    async function confirmBooking() {
       const name = document.getElementById('f-name').value.trim();
       const phone = document.getElementById('f-phone').value.trim();
       const consent = document.getElementById('f-consent').checked;
@@ -798,12 +931,72 @@
       if (!consent) { alert('Zaznacz akceptację regulaminu, aby kontynuować.'); ok = false; }
       if (!ok) return;
 
-      /* TUTAJ w przyszłości: fetch POST do Google Apps Script -> zapis do Calendar */
+      const btn = document.getElementById('btn-confirm-book');
+      const originalLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Weryfikacja…';
 
-      const d = selectedDateObj();
+      try {
+        // 1) Turnstile — weryfikacja "czy to człowiek", uruchamiana dopiero teraz
+        const turnstileToken = await getTurnstileToken();
+
+        // 2) jednorazowy token bezpieczeństwa — pobrany świeżo, więc nigdy nie zdąży wygasnąć
+        btn.textContent = 'Zapisywanie…';
+        const tokenRes = await fetch(WEB_APP_URL + '?action=token');
+        const tokenData = await tokenRes.json();
+        if (!tokenData.token) throw new Error('Nie udało się przygotować rezerwacji. Spróbuj ponownie.');
+
+        // 3) właściwe zapytanie o rezerwację
+        const d = selectedDateObj();
+        const payload = {
+          action: 'book',
+          token: tokenData.token,
+          turnstileToken: turnstileToken,
+          court: selCourt + 1, // backend numeruje korty 1–4
+          durationMinutes: selDur,
+          startIso: buildStartDate(d, SLOTS[selSlot]).toISOString(),
+          name: name,
+          phone: phone,
+          email: document.getElementById('f-email').value.trim(),
+          notes: document.getElementById('notes-field').value.trim(),
+          racketQty: qty.racket,
+          ballsQty: qty.balls,
+        };
+
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' }, // patrz komentarz w Code.gs — unikamy CORS-preflight
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+
+        if (!result.success) {
+          const msg = result.error || 'Nieznany błąd serwera.';
+          if (msg.indexOf('zajęty') !== -1) {
+            alert('Ten termin został właśnie zajęty przez kogoś innego. Wybierz inny termin.');
+            await loadAvailabilityForSelectedDate();
+            resetSelection();
+          } else {
+            alert('Nie udało się zapisać rezerwacji: ' + msg + '. Spróbuj ponownie.');
+          }
+          return;
+        }
+
+        showSuccess(d, result.price);
+      } catch (err) {
+        console.error(err);
+        alert('Coś poszło nie tak: ' + err.message + '. Spróbuj ponownie.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+      }
+    }
+
+    function showSuccess(d, serverPrice) {
       const baseMin = parseInt(SLOTS[selSlot]) * 60 + (SLOTS[selSlot].includes(':30') ? 30 : 0);
       const endMin = baseMin + selDur;
       const endLabel = Math.floor(endMin / 60) + ':' + (endMin % 60 === 0 ? '00' : '30');
+      const finalPrice = (typeof serverPrice === 'number') ? serverPrice : totalPrice();
 
       document.getElementById('success-msg').textContent =
         'Czekamy na Ciebie w ' + fullDays[d.getDay()] + ', ' + d.getDate() + ' ' + fullMons[d.getMonth()] +
@@ -814,7 +1007,7 @@
         scRow('Termin', d.getDate() + ' ' + monNames[d.getMonth()] + ', ' + SLOTS[selSlot] + '–' + endLabel) +
         (qty.racket > 0 ? scRow('Rakieta', qty.racket + ' szt.') : '') +
         (qty.balls > 0 ? scRow('Tuba piłek', qty.balls + ' szt.') : '') +
-        scRowP('Do zapłaty', totalPrice() + ' zł');
+        scRowP('Do zapłaty', finalPrice + ' zł');
 
       document.getElementById('summary-panel').classList.add('hidden');
       document.getElementById('form-panel').classList.add('hidden');
@@ -845,7 +1038,7 @@
     view = Math.min(Math.max((nowHour - START_H) * 2, 0), MAX_VIEW);
     slider.value = view;
     buildDates();
-    render();
+    loadAvailabilityForSelectedDate();
   </script>
 
 </body>
