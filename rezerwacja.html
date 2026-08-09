@@ -12,6 +12,10 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
 
   <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -20,8 +24,8 @@
       --orange: #E8722A;
       --cream:  #F5F0E8;
       --white:  #FFFFFF;
-      --free-bg:#EAF3DE; --free-fg:#3B6D11;
-      --busy-bg:#FCF0EB; --busy-fg:#993C1D;
+      --free-bg:#9BCB7C; --free-fg:#2F6B2F;
+      --busy-bg:#E5776D; --busy-fg:#93291F;
       --text:#1A2744; --muted:#888; --border:#eee;
       --font-body:'Outfit',system-ui,sans-serif;
     }
@@ -97,7 +101,7 @@
     .tl-track { position: relative; flex: 1; display: flex; height: 44px; border-radius: 8px; overflow: hidden; border: 1px solid #e3e3e3; transition: box-shadow 0.15s; }
     .tl-cell { flex: 1; border-right: 1px solid rgba(0,0,0,0.07); background: var(--free-bg); cursor: pointer; transition: background 0.1s; }
     .tl-cell:last-child { border-right: none; }
-    .tl-cell:hover:not(.busy) { background: #dcebc8; }
+    .tl-cell:hover:not(.busy) { background: #86BF63; }
     .tl-cell.busy { background: var(--busy-bg); cursor: not-allowed; }
     .tl-cell.selected { background: var(--clay); }
     .tl-cell.in-range { background: rgba(200,98,42,0.4); }
@@ -664,7 +668,7 @@
 
       if (isLoadingAvailability) {
         tl.innerHTML = '<div style="padding:32px 0;text-align:center;color:var(--muted);font-size:14px;">'
-          + '<i class="ti ti-loader-2" style="font-size:20px;display:block;margin-bottom:8px;"></i>'
+          + '<i class="ti ti-loader-2" style="font-size:20px;display:block;margin-bottom:8px;animation:spin 1s linear infinite;"></i>'
           + 'Ładowanie dostępności…</div>';
         document.getElementById('tl-axis').innerHTML = '';
         return;
