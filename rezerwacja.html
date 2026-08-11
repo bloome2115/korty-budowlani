@@ -991,6 +991,12 @@
         console.error(err);
         alert('Coś poszło nie tak: ' + err.message + '. Spróbuj ponownie.');
       } finally {
+        // Turnstile wymaga jawnego resetu po każdym użyciu (udanym lub
+        // nieudanym) — bez tego kolejna próba w tym samym oknie zawsze
+        // kończyłaby się błędem weryfikacji, wymuszając odświeżenie strony.
+        if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
+          turnstile.reset(turnstileWidgetId);
+        }
         btn.disabled = false;
         btn.textContent = originalLabel;
       }
