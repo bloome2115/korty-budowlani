@@ -855,8 +855,8 @@
 
     .mobile-menu .btn-reserve-nav {
       margin-top: 16px;
-      text-align: center;
-      display: block;
+      display: flex;
+      justify-content: center;
       padding: 12px;
     }
 
@@ -879,33 +879,38 @@
       .hero-text h1 { font-size: 34px; }
 
       .stats-bar .container { flex-wrap: wrap; }
-      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-      .stat-item:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.08); }
+      .stat-item { flex: 1 1 50%; }
+      /* Usuwamy WSZYSTKIE separatory na mobile — zarówno dziedziczoną
+         z desktopu pionową kreskę (::after), jak i poziome/pionowe
+         obramowania dodane pod układ 2×2. Same odstępy wystarczą. */
+      .stat-item::after { display: none; }
 
       .cards-grid {
         display: flex;
         overflow-x: auto;
         gap: 16px;
-        padding-bottom: 10px;
+        padding: 0 10% 10px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
       }
-      .card { flex: 0 0 85%; scroll-snap-align: start; }
+      .card { flex: 0 0 80%; scroll-snap-align: center; }
       .cta-badges { gap: 16px; }
     }
 
     @media (max-width: 520px) {
       .hero-text h1 { font-size: 28px; }
-      /* Zostajemy przy układzie 2×2 zamiast 1 kolumny — 4 pełnowymiarowe
-         wiersze zajmowały zbyt dużo miejsca na wąskich telefonach.
-         Dodatkowo lekko ścieśniamy padding i ikony, żeby 2 kolumny
-         wygodnie się zmieściły nawet na najwęższych ekranach. */
-      .stat-item { padding: 18px 14px; gap: 10px; }
-      .stat-icon { font-size: 28px; }
-      .stat-value { font-size: 15px; }
-      .stat-label { font-size: 11px; }
+      .stat-item { padding: 16px 12px; gap: 10px; }
+      .stat-icon-wrap { width: 36px; height: 36px; }
+      .stat-icon { font-size: 24px; }
+      .stat-value { font-size: 14px; white-space: nowrap; }
+      .stat-label { font-size: 10px; }
       .section-title { font-size: 26px; }
       .cta-section h2 { font-size: 26px; }
+      /* Stopka na 2 kolumny wciąż bywa za wąska dla dłuższych napisów
+         (np. godzin otwarcia) — na najwęższych telefonach dajemy
+         każdej sekcji pełną szerokość. */
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer-bloome { align-items: flex-start; }
     }
   </style>
 </head>
