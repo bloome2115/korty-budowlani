@@ -866,20 +866,44 @@
       .hamburger { display: flex; }
 
       .hero-inner .container { grid-template-columns: 1fr; }
-      .availability-widget { display: none; }
+      /* Poziomy gradient nakładki (ciemny z lewej, przezroczysty z prawej)
+         jest zaprojektowany pod wąską kolumnę tekstu na desktopie — na
+         mobile tekst rozciąga się na całą szerokość, więc prawa połowa
+         każdej linijki lądowałaby na niemal przezroczystym tle i była
+         nieczytelna. Zastępujemy go jednolitym przyciemnieniem. */
+      .hero-overlay { background: rgba(10, 18, 35, 0.68); }
+      /* Widget na desktopie jest ukryty w wąskiej kolumnie obok tekstu —
+         na mobile pozwalamy mu normalnie "spłynąć" w single-column grid,
+         czyli wyląduje pod tekstem hero, zamiast go całkiem chować. */
+      .availability-widget { margin-top: 28px; }
       .hero-text h1 { font-size: 34px; }
 
       .stats-bar .container { flex-wrap: wrap; }
       .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
       .stat-item:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.08); }
 
-      .cards-grid { grid-template-columns: 1fr; gap: 16px; }
+      .cards-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        padding-bottom: 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .card { flex: 0 0 85%; scroll-snap-align: start; }
       .cta-badges { gap: 16px; }
     }
 
     @media (max-width: 520px) {
       .hero-text h1 { font-size: 28px; }
-      .stat-item { flex: 1 1 100%; border-right: none; }
+      /* Zostajemy przy układzie 2×2 zamiast 1 kolumny — 4 pełnowymiarowe
+         wiersze zajmowały zbyt dużo miejsca na wąskich telefonach.
+         Dodatkowo lekko ścieśniamy padding i ikony, żeby 2 kolumny
+         wygodnie się zmieściły nawet na najwęższych ekranach. */
+      .stat-item { padding: 18px 14px; gap: 10px; }
+      .stat-icon { font-size: 28px; }
+      .stat-value { font-size: 15px; }
+      .stat-label { font-size: 11px; }
       .section-title { font-size: 26px; }
       .cta-section h2 { font-size: 26px; }
     }
@@ -933,7 +957,7 @@
       <a href="#liga" onclick="toggleMenu()">Liga</a>
       <a href="#o-nas" onclick="toggleMenu()">O nas</a>
       <a href="#kontakt" onclick="toggleMenu()">Kontakt</a>
-      <a href="rezerwacja.html" class="btn-reserve-nav">Zarezerwuj kort →</a>
+      <a href="rezerwacja.html" class="btn-reserve-nav">Zarezerwuj kort</a>
     </div>
   </header>
 
