@@ -1006,8 +1006,8 @@
         // komunikaty (Turnstile, token) już same w sobie zawierają pełną
         // wskazówkę, więc nie dokładamy do nich nic dodatkowego.
         const friendlyMessage = (err && err.message === 'Failed to fetch')
-          ? 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem i spróbuj ponownie.'
-          : (err && err.message) || 'Nieznany błąd. Spróbuj ponownie.';
+          ? 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.'
+          : (err && err.message) || 'Nieznany błąd. Odśwież stronę i spróbuj ponownie.';
         alert('Coś poszło nie tak: ' + friendlyMessage);
       } finally {
         // Turnstile wymaga jawnego resetu po każdym użyciu (udanym lub
