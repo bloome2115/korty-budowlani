@@ -1000,7 +1000,15 @@
         showSuccess(d, result.price);
       } catch (err) {
         console.error(err);
-        alert('Coś poszło nie tak: ' + err.message + '. Spróbuj ponownie.');
+        // "Failed to fetch" to surowy, angielski komunikat przeglądarki
+        // (rzuca go sam fetch(), gdy nie ma połączenia z internetem) —
+        // zamieniamy go na coś zrozumiałego. Pozostałe nasze własne
+        // komunikaty (Turnstile, token) już same w sobie zawierają pełną
+        // wskazówkę, więc nie dokładamy do nich nic dodatkowego.
+        const friendlyMessage = (err && err.message === 'Failed to fetch')
+          ? 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem i spróbuj ponownie.'
+          : (err && err.message) || 'Nieznany błąd. Spróbuj ponownie.';
+        alert('Coś poszło nie tak: ' + friendlyMessage);
       } finally {
         // Turnstile wymaga jawnego resetu po każdym użyciu (udanym lub
         // nieudanym) — bez tego kolejna próba w tym samym oknie zawsze
