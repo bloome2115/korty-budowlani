@@ -523,6 +523,17 @@
         turnstileResolve = resolve;
         turnstileReject = reject;
         turnstile.execute(turnstileWidgetId);
+
+        // Zabezpieczenie: jeśli połączenie się zerwie w trakcie, widget
+        // Turnstile potrafi "zamilknąć" — nie wywołać ani sukcesu, ani
+        // błędu. Bez tego limitu czasu strona czekałaby w nieskończoność.
+        setTimeout(() => {
+          if (turnstileReject) {
+            turnstileReject(new Error('Weryfikacja trwa zbyt długo. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.'));
+            turnstileResolve = null;
+            turnstileReject = null;
+          }
+        }, 15000);
       });
     }
 
@@ -994,8 +1005,15 @@
         // Turnstile wymaga jawnego resetu po każdym użyciu (udanym lub
         // nieudanym) — bez tego kolejna próba w tym samym oknie zawsze
         // kończyłaby się błędem weryfikacji, wymuszając odświeżenie strony.
-        if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
-          turnstile.reset(turnstileWidgetId);
+        // Reset owinięty w try/catch: jeśli widget jest w zepsutym stanie
+        // (np. po zerwaniu połączenia), sam reset też może się wysypać —
+        // a mimo to przycisk MUSI wrócić do stanu klikalnego.
+        try {
+          if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
+            turnstile.reset(turnstileWidgetId);
+          }
+        } catch (resetErr) {
+          console.error('Nie udało się zresetować Turnstile:', resetErr);
         }
         btn.disabled = false;
         btn.textContent = originalLabel;
