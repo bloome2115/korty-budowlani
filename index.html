@@ -878,22 +878,31 @@
       .availability-widget { margin-top: 28px; }
       .hero-text h1 { font-size: 34px; }
 
-      .stats-bar .container { flex-wrap: wrap; }
-      .stat-item { flex: 1 1 50%; }
-      /* Usuwamy WSZYSTKIE separatory na mobile — zarówno dziedziczoną
-         z desktopu pionową kreskę (::after), jak i poziome/pionowe
-         obramowania dodane pod układ 2×2. Same odstępy wystarczą. */
-      .stat-item::after { display: none; }
+      /* Zamiast flex-wrap + flex-basis:50% (który potrafi się nieprzewidywalnie
+         "rozjechać" w zależności od długości tekstu w środku), używamy
+         siatki z dokładnie zdefiniowanymi dwiema kolumnami — gwarantuje
+         to zawsze równe 2×2, niezależnie od zawartości. */
+      .stats-bar .container { display: grid; grid-template-columns: 1fr 1fr; }
+      /* Ten sam selektor co oryginalna reguła (identyczna specyficzność),
+         ale zapisany później — dzięki temu faktycznie wygrywa i separator
+         znika, zamiast pozostawać niewidoczny, ale wciąż wpływający na
+         obliczenia szerokości elementów. */
+      .stat-item:not(:last-child)::after { display: none; }
 
       .cards-grid {
         display: flex;
         overflow-x: auto;
         gap: 16px;
-        padding: 0 10% 10px;
+        padding: 0 6% 10px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
+        /* Karty na mobile nie muszą mieć równej wysokości (nie sąsiadują
+           trwale w wierszu jak na desktopie) — bez tego .card-desc niżej
+           rozciągał się na sztuczną, "naciągniętą" wysokość. */
+        align-items: flex-start;
       }
-      .card { flex: 0 0 80%; scroll-snap-align: center; }
+      .card { flex: 0 0 88%; scroll-snap-align: center; }
+      .card-desc { flex: 0 0 auto; }
       .cta-badges { gap: 16px; }
     }
 
@@ -906,11 +915,6 @@
       .stat-label { font-size: 10px; }
       .section-title { font-size: 26px; }
       .cta-section h2 { font-size: 26px; }
-      /* Stopka na 2 kolumny wciąż bywa za wąska dla dłuższych napisów
-         (np. godzin otwarcia) — na najwęższych telefonach dajemy
-         każdej sekcji pełną szerokość. */
-      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-      .footer-bloome { align-items: flex-start; }
     }
   </style>
 </head>
@@ -1144,7 +1148,7 @@
           <div class="footer-col-title">Lokalizacja</div>
           <ul class="footer-contact-list">
             <li><i class="ti ti-map-pin"></i> ul. Andrzeja Struga 8, Lublin</li>
-            <li><i class="ti ti-clock"></i> Pon–Nd: 8:00 – 22:00</li>
+            <li><i class="ti ti-clock"></i> Pon–Nd: <span style="white-space:nowrap;">8:00 – 22:00</span></li>
           </ul>
         </div>
 
