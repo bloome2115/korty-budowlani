@@ -936,11 +936,11 @@
         </div>
 
         <ul class="navbar-menu">
-          <li><a href="#oferta">Oferta</a></li>
-          <li><a href="#cennik">Cennik</a></li>
-          <li><a href="#liga">Liga</a></li>
-          <li><a href="#o-nas">O nas</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
+          <li><a href="#oferta" data-i18n="nav_oferta">Oferta</a></li>
+          <li><a href="#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="#liga" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="#o-nas" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
         </ul>
 
         <div class="navbar-right">
@@ -949,7 +949,7 @@
             <span id="lang-en">EN</span>
           </div>
           <a href="rezerwacja.html">
-            <button class="btn-reserve-nav">Zarezerwuj kort</button>
+            <button class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</button>
           </a>
           </a>
         </div>
@@ -961,12 +961,12 @@
     </nav>
 
     <div class="mobile-menu" id="mobile-menu">
-      <a href="#oferta" onclick="toggleMenu()">Oferta</a>
-      <a href="#cennik" onclick="toggleMenu()">Cennik</a>
-      <a href="#liga" onclick="toggleMenu()">Liga</a>
-      <a href="#o-nas" onclick="toggleMenu()">O nas</a>
-      <a href="#kontakt" onclick="toggleMenu()">Kontakt</a>
-      <a href="rezerwacja.html" class="btn-reserve-nav">Zarezerwuj kort</a>
+      <a href="#oferta" onclick="toggleMenu()" data-i18n="nav_oferta">Oferta</a>
+      <a href="#cennik" onclick="toggleMenu()" data-i18n="nav_cennik">Cennik</a>
+      <a href="#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
+      <a href="#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
+      <a href="#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
+      <a href="rezerwacja.html" class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
     </div>
   </header>
 
@@ -977,25 +977,25 @@
     <div class="hero-inner">
       <div class="container">
         <div class="hero-text">
-          <div class="hero-eyebrow">Lublin · Korty tenisowe Budowlani</div>
-          <h1>Graj w miejscu<br><em>z wyjątkową atmosferą</em></h1>
-          <p>4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.</p>
-          <p class="hero-sub2">Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.</p>
+          <div class="hero-eyebrow" data-i18n="hero_eyebrow">Lublin · Korty tenisowe Budowlani</div>
+          <h1 data-i18n-html="hero_h1">Graj w miejscu<br><em>z wyjątkową atmosferą</em></h1>
+          <p data-i18n="hero_p1">4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.</p>
+          <p class="hero-sub2" data-i18n="hero_p2">Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.</p>
           <div class="hero-btns">
-            <a href="rezerwacja.html"><button class="btn-primary">Zarezerwuj kort →</button></a>
-            <a href="#oferta"><button class="btn-outline">Zobacz ofertę</button></a>
+            <a href="rezerwacja.html"><button class="btn-primary" data-i18n="hero_btn_reserve">Zarezerwuj kort →</button></a>
+            <a href="#oferta"><button class="btn-outline" data-i18n="hero_btn_offer">Zobacz ofertę</button></a>
           </div>
           <div class="hero-badges">
-            <span><i class="ti ti-check"></i> Szybka rezerwacja online</span>
-            <span><i class="ti ti-check"></i> Bez rejestracji</span>
-            <span><i class="ti ti-check"></i> Płatność na miejscu</span>
+            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge1">Szybka rezerwacja online</span></span>
+            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge2">Bez rejestracji</span></span>
+            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge3">Płatność na miejscu</span></span>
           </div>
         </div>
 
         <div class="availability-widget">
           <div class="widget-header">
-            <div class="widget-title">Dostępność dziś</div>
-            <div class="widget-live"><div class="live-dot"></div> na żywo</div>
+            <div class="widget-title" data-i18n="widget_title">Dostępność dziś</div>
+            <div class="widget-live"><div class="live-dot"></div> <span data-i18n="widget_live">na żywo</span></div>
           </div>
           <div class="widget-date" id="widget-date">ładowanie...</div>
 
@@ -1008,15 +1008,15 @@
 
           <div class="widget-legend">
             <div class="widget-legend-item">
-              <div class="legend-dot legend-dot-free"></div> Wolny
+              <div class="legend-dot legend-dot-free"></div> <span data-i18n="widget_legend_free">Wolny</span>
             </div>
             <div class="widget-legend-item">
-              <div class="legend-dot legend-dot-busy"></div> Zajęty
+              <div class="legend-dot legend-dot-busy"></div> <span data-i18n="widget_legend_busy">Zajęty</span>
             </div>
           </div>
 
-          <div class="widget-footer">dane pobierane z Google Calendar</div>
-          <a href="rezerwacja.html"><button class="widget-cta">Sprawdź wszystkie terminy →</button></a>
+          <div class="widget-footer" data-i18n="widget_footer">dane pobierane z Google Calendar</div>
+          <a href="rezerwacja.html"><button class="widget-cta" data-i18n="widget_cta">Sprawdź wszystkie terminy →</button></a>
         </div>
       </div>
     </div>
@@ -1028,29 +1028,29 @@
       <div class="stat-item">
         <div class="stat-icon-wrap"><i class="ti ti-ball-tennis stat-icon"></i></div>
         <div>
-          <div class="stat-value">4 korty</div>
-          <div class="stat-label">mączkowe, zewnętrzne</div>
+          <div class="stat-value" data-i18n="stat1_value">4 korty</div>
+          <div class="stat-label" data-i18n="stat1_label">mączkowe, zewnętrzne</div>
         </div>
       </div>
       <div class="stat-item">
         <div class="stat-icon-wrap"><i class="ti ti-clock stat-icon"></i></div>
         <div>
           <div class="stat-value">8:00 – 22:00</div>
-          <div class="stat-label">godziny otwarcia</div>
+          <div class="stat-label" data-i18n="stat2_label">godziny otwarcia</div>
         </div>
       </div>
       <div class="stat-item">
         <div class="stat-icon-wrap"><i class="ti ti-credit-card stat-icon"></i></div>
         <div>
-          <div class="stat-value">Gotówka i karta</div>
-          <div class="stat-label">płatność na miejscu</div>
+          <div class="stat-value" data-i18n="stat3_value">Gotówka i karta</div>
+          <div class="stat-label" data-i18n="stat3_label">płatność na miejscu</div>
         </div>
       </div>
       <div class="stat-item">
         <div class="stat-icon-wrap"><i class="ti ti-award stat-icon"></i></div>
         <div>
-          <div class="stat-value">Od 1974 roku</div>
-          <div class="stat-label">tradycja i doświadczenie</div>
+          <div class="stat-value" data-i18n="stat4_value">Od 1974 roku</div>
+          <div class="stat-label" data-i18n="stat4_label">tradycja i doświadczenie</div>
         </div>
       </div>
     </div>
@@ -1060,60 +1060,60 @@
   <section class="oferta" id="oferta">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Nasza oferta</h2>
+        <h2 class="section-title" data-i18n="section_oferta_title">Nasza oferta</h2>
       </div>
 
       <div class="cards-grid">
         <div class="card">
           <div class="card-icon"><i class="ti ti-ball-tennis"></i></div>
-          <div class="card-title">Wynajem kortu</div>
-          <p class="card-desc">4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.</p>
+          <div class="card-title" data-i18n="card1_title">Wynajem kortu</div>
+          <p class="card-desc" data-i18n="card1_desc">4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.</p>
           <div class="card-price">
             <span class="price-amount">60 zł</span>
-            <span class="price-per">/ godzina</span>
+            <span class="price-per" data-i18n="card1_price_per">/ godzina</span>
           </div>
           <ul class="card-features">
-            <li><i class="ti ti-check"></i> Rezerwacja online 24/7</li>
-            <li><i class="ti ti-check"></i> Bez rejestracji konta</li>
-            <li><i class="ti ti-check"></i> Płatność na miejscu</li>
-            <li><i class="ti ti-check"></i> Sprzęt do wypożyczenia</li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f1">Rezerwacja online 24/7</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f2">Bez rejestracji konta</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f3">Płatność na miejscu</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f4">Sprzęt do wypożyczenia</span></li>
           </ul>
-          <a href="rezerwacja.html"><button class="card-btn">Zarezerwuj kort →</button></a>
+          <a href="rezerwacja.html"><button class="card-btn" data-i18n="card1_btn">Zarezerwuj kort →</button></a>
         </div>
 
         <div class="card featured">
-          <div class="featured-badge">Popularne</div>
+          <div class="featured-badge" data-i18n="card2_badge">Popularne</div>
           <div class="card-icon"><i class="ti ti-user"></i></div>
-          <div class="card-title">Lekcje tenisa</div>
-          <p class="card-desc">Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.</p>
+          <div class="card-title" data-i18n="card2_title">Lekcje tenisa</div>
+          <p class="card-desc" data-i18n="card2_desc">Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.</p>
           <div class="card-price">
             <span class="price-amount">120 zł</span>
-            <span class="price-per">/ 60 min</span>
+            <span class="price-per" data-i18n="card2_price_per">/ 60 min</span>
           </div>
           <ul class="card-features">
-            <li><i class="ti ti-check"></i> Każdy poziom zaawansowania</li>
-            <li><i class="ti ti-check"></i> Dzieci i dorośli</li>
-            <li><i class="ti ti-check"></i> Zajęcia grupowe i indywidualne</li>
-            <li><i class="ti ti-check"></i> Piłki wliczone w cenę</li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card2_f1">Każdy poziom zaawansowania</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card2_f2">Dzieci i dorośli</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card2_f3">Zajęcia grupowe i indywidualne</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card2_f4">Piłki wliczone w cenę</span></li>
           </ul>
-          <a href="#kontakt"><button class="card-btn">Zapisz się →</button></a>
+          <a href="#kontakt"><button class="card-btn" data-i18n="card2_btn">Zapisz się →</button></a>
         </div>
 
         <div class="card">
           <div class="card-icon"><i class="ti ti-trophy"></i></div>
-          <div class="card-title">Liga tenisa</div>
-          <p class="card-desc">Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.</p>
+          <div class="card-title" data-i18n="card3_title">Liga tenisa</div>
+          <p class="card-desc" data-i18n="card3_desc">Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.</p>
           <div class="card-price">
             <span class="price-amount">150 zł</span>
-            <span class="price-per">/ sezon</span>
+            <span class="price-per" data-i18n="card3_price_per">/ sezon</span>
           </div>
           <ul class="card-features">
-            <li><i class="ti ti-check"></i> Mecze w dogodnych terminach</li>
-            <li><i class="ti ti-check"></i> Tabela i statystyki online</li>
-            <li><i class="ti ti-check"></i> Podział na grupy poziomów</li>
-            <li><i class="ti ti-check"></i> Nagrody dla najlepszych</li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card3_f1">Mecze w dogodnych terminach</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card3_f2">Tabela i statystyki online</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card3_f3">Podział na grupy poziomów</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card3_f4">Nagrody dla najlepszych</span></li>
           </ul>
-          <a href="#kontakt"><button class="card-btn">Dołącz do ligi →</button></a>
+          <a href="#kontakt"><button class="card-btn" data-i18n="card3_btn">Dołącz do ligi →</button></a>
         </div>
       </div>
     </div>
@@ -1122,9 +1122,9 @@
   <!-- ─── CTA ─── -->
   <section class="cta-section">
     <div class="container">
-      <h2>Zarezerwuj kort<br><em>już dziś</em></h2>
-      <p>Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.</p>
-      <a href="rezerwacja.html"><button class="btn-cta-main">Zarezerwuj kort</button></a>
+      <h2 data-i18n-html="cta_h2">Zarezerwuj kort<br><em>już dziś</em></h2>
+      <p data-i18n="cta_p">Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.</p>
+      <a href="rezerwacja.html"><button class="btn-cta-main" data-i18n="cta_btn">Zarezerwuj kort</button></a>
     </div>
   </section>
 
@@ -1140,21 +1140,21 @@
             <div class="footer-logos-divider"></div>
             <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa">
           </div>
-          <p class="footer-tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
+          <p class="footer-tagline" data-i18n="footer_tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
         </div>
 
         <!-- Kolumna 2: Adres i godziny -->
         <div>
-          <div class="footer-col-title">Lokalizacja</div>
+          <div class="footer-col-title" data-i18n="footer_location_title">Lokalizacja</div>
           <ul class="footer-contact-list">
             <li><i class="ti ti-map-pin"></i> ul. Andrzeja Struga 8, Lublin</li>
-            <li><i class="ti ti-clock"></i> Pon–Nd<br>8:00 – 22:00</li>
+            <li><i class="ti ti-clock"></i> <span data-i18n-html="footer_hours">Pon–Nd<br>8:00 – 22:00</span></li>
           </ul>
         </div>
 
         <!-- Kolumna 3: Telefon i email -->
         <div>
-          <div class="footer-col-title">Kontakt</div>
+          <div class="footer-col-title" data-i18n="footer_contact_title">Kontakt</div>
           <ul class="footer-contact-list">
             <li><i class="ti ti-phone"></i> <a href="tel:+48000000000">+48 000 000 000</a></li>
             <li><i class="ti ti-mail"></i> <a href="mailto:kontakt@kortylublin.pl">kontakt@kortylublin.pl</a></li>
@@ -1163,15 +1163,15 @@
 
         <!-- Kolumna 3: Bloome -->
         <div class="footer-bloome">
-          <div class="footer-bloome-label">Projekt i realizacja</div>
+          <div class="footer-bloome-label" data-i18n="footer_bloome_label">Projekt i realizacja</div>
           <div class="footer-bloome-name">Bloome</div>
-          <div class="footer-bloome-sub">web design & development</div>
+          <div class="footer-bloome-sub">web design &amp; development</div>
         </div>
 
       </div>
 
       <div class="footer-bottom">
-        <div class="footer-copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
+        <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
       </div>
     </div>
   </footer>
@@ -1183,18 +1183,140 @@
       document.getElementById('mobile-menu').classList.toggle('open');
     }
 
-    // Przełącznik języka (placeholder)
+    /* =========================================================
+       DWUJĘZYCZNOŚĆ PL/EN — bez zapamiętywania między wizytami,
+       strona zawsze startuje po polsku (zgodnie z ustaleniami).
+       ========================================================= */
+    const TRANSLATIONS = {
+      pl: {
+        nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+        btn_reserve: 'Zarezerwuj kort',
+        hero_eyebrow: 'Lublin · Korty tenisowe Budowlani',
+        hero_h1: 'Graj w miejscu<br><em>z wyjątkową atmosferą</em>',
+        hero_p1: '4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.',
+        hero_p2: 'Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.',
+        hero_btn_reserve: 'Zarezerwuj kort →', hero_btn_offer: 'Zobacz ofertę',
+        hero_badge1: 'Szybka rezerwacja online', hero_badge2: 'Bez rejestracji', hero_badge3: 'Płatność na miejscu',
+        widget_title: 'Dostępność dziś', widget_live: 'na żywo',
+        widget_legend_free: 'Wolny', widget_legend_busy: 'Zajęty',
+        widget_footer: 'dane pobierane z Google Calendar', widget_cta: 'Sprawdź wszystkie terminy →',
+        stat1_value: '4 korty', stat1_label: 'mączkowe, zewnętrzne',
+        stat2_label: 'godziny otwarcia',
+        stat3_value: 'Gotówka i karta', stat3_label: 'płatność na miejscu',
+        stat4_value: 'Od 1974 roku', stat4_label: 'tradycja i doświadczenie',
+        section_oferta_title: 'Nasza oferta',
+        card1_title: 'Wynajem kortu',
+        card1_desc: '4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.',
+        card1_price_per: '/ godzina',
+        card1_f1: 'Rezerwacja online 24/7', card1_f2: 'Bez rejestracji konta', card1_f3: 'Płatność na miejscu', card1_f4: 'Sprzęt do wypożyczenia',
+        card1_btn: 'Zarezerwuj kort →',
+        card2_badge: 'Popularne', card2_title: 'Lekcje tenisa',
+        card2_desc: 'Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.',
+        card2_price_per: '/ 60 min',
+        card2_f1: 'Każdy poziom zaawansowania', card2_f2: 'Dzieci i dorośli', card2_f3: 'Zajęcia grupowe i indywidualne', card2_f4: 'Piłki wliczone w cenę',
+        card2_btn: 'Zapisz się →',
+        card3_title: 'Liga tenisa',
+        card3_desc: 'Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.',
+        card3_price_per: '/ sezon',
+        card3_f1: 'Mecze w dogodnych terminach', card3_f2: 'Tabela i statystyki online', card3_f3: 'Podział na grupy poziomów', card3_f4: 'Nagrody dla najlepszych',
+        card3_btn: 'Dołącz do ligi →',
+        cta_h2: 'Zarezerwuj kort<br><em>już dziś</em>',
+        cta_p: 'Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.',
+        cta_btn: 'Zarezerwuj kort',
+        footer_tagline: '4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.',
+        footer_location_title: 'Lokalizacja',
+        footer_hours: 'Pon–Nd<br>8:00 – 22:00',
+        footer_contact_title: 'Kontakt',
+        footer_bloome_label: 'Projekt i realizacja',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.',
+      },
+      en: {
+        nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+        btn_reserve: 'Book a court',
+        hero_eyebrow: 'Lublin · Budowlani Tennis Courts',
+        hero_h1: 'Play in a place<br><em>with a unique atmosphere</em>',
+        hero_p1: '4 clay courts, a peaceful setting, and tennis at its best.',
+        hero_p2: "We're creating a place where what matters isn't just the game, but good energy and time well spent together.",
+        hero_btn_reserve: 'Book a court →', hero_btn_offer: 'View offer',
+        hero_badge1: 'Fast online booking', hero_badge2: 'No registration', hero_badge3: 'Pay on arrival',
+        widget_title: 'Availability today', widget_live: 'live',
+        widget_legend_free: 'Free', widget_legend_busy: 'Booked',
+        widget_footer: 'data from Google Calendar', widget_cta: 'Check all time slots →',
+        stat1_value: '4 courts', stat1_label: 'clay, outdoor',
+        stat2_label: 'opening hours',
+        stat3_value: 'Cash and card', stat3_label: 'pay on arrival',
+        stat4_value: 'Since 1974', stat4_label: 'tradition and experience',
+        section_oferta_title: 'Our offer',
+        card1_title: 'Court rental',
+        card1_desc: '4 clay courts available every day. Book online and come play — no unnecessary formalities.',
+        card1_price_per: '/ hour',
+        card1_f1: 'Online booking 24/7', card1_f2: 'No account registration', card1_f3: 'Pay on arrival', card1_f4: 'Equipment rental available',
+        card1_btn: 'Book a court →',
+        card2_badge: 'Popular', card2_title: 'Tennis lessons',
+        card2_desc: 'Individual and group lessons with certified coaches from GoRun Tennis Academy.',
+        card2_price_per: '/ 60 min',
+        card2_f1: 'Every skill level', card2_f2: 'Kids and adults', card2_f3: 'Group and individual sessions', card2_f4: 'Balls included in the price',
+        card2_btn: 'Sign up →',
+        card3_title: 'Tennis league',
+        card3_desc: 'Compete against players at a similar level. A seasonal amateur league for Lublin residents.',
+        card3_price_per: '/ season',
+        card3_f1: 'Matches at convenient times', card3_f2: 'Online standings and stats', card3_f3: 'Skill-based groups', card3_f4: 'Prizes for top players',
+        card3_btn: 'Join the league →',
+        cta_h2: 'Book a court<br><em>today</em>',
+        cta_p: "Pick a date, court, and time — booking takes less than a minute. No registration, no upfront payment.",
+        cta_btn: 'Book a court',
+        footer_tagline: '4 clay courts in the heart of Lublin. Playing since 1974.',
+        footer_location_title: 'Location',
+        footer_hours: 'Mon–Sun<br>8:00 – 22:00',
+        footer_contact_title: 'Contact',
+        footer_bloome_label: 'Design & development by',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. All rights reserved.',
+      },
+    };
+
+    let currentLang = 'pl'; // strona zawsze startuje po polsku
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (TRANSLATIONS[lang][key] !== undefined) el.innerHTML = TRANSLATIONS[lang][key];
+      });
+
+      updateWidgetDate();
+    }
+
     function toggleLang() {
       document.getElementById('lang-pl').classList.toggle('active');
       document.getElementById('lang-en').classList.toggle('active');
+      applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
     }
 
-    // Data w widgecie
-    const days = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
-    const months = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
-    const now = new Date();
-    document.getElementById('widget-date').textContent =
-      `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    // Data w widgecie — osobne nazwy dni/miesięcy PL/EN
+    const DAY_NAMES = {
+      pl: ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'],
+      en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    };
+    const MONTH_NAMES = {
+      pl: ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'],
+      en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    };
+
+    function updateWidgetDate() {
+      const now = new Date();
+      const days = DAY_NAMES[currentLang];
+      const months = MONTH_NAMES[currentLang];
+      document.getElementById('widget-date').textContent = (currentLang === 'pl')
+        ? `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`
+        : `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+    }
+    updateWidgetDate();
 
     // Ken Burns effect na hero
     window.addEventListener('load', () => {
