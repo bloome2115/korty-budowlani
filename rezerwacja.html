@@ -225,36 +225,36 @@
           <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86"></a>
         </div>
         <ul class="navbar-menu">
-          <li><a href="index.html#oferta">Oferta</a></li>
-          <li><a href="index.html#cennik">Cennik</a></li>
-          <li><a href="index.html#liga">Liga</a></li>
-          <li><a href="index.html#o-nas">O nas</a></li>
-          <li><a href="index.html#kontakt">Kontakt</a></li>
+          <li><a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a></li>
+          <li><a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="index.html#liga" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="index.html#o-nas" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
         </ul>
         <div class="navbar-right">
           <div class="lang-switch" onclick="toggleLang()">
             <span class="active" id="lang-pl">PL</span><span id="lang-en">EN</span>
           </div>
-          <a href="index.html"><button class="btn-reserve-nav">Strona główna</button></a>
+          <a href="index.html"><button class="btn-reserve-nav" data-i18n="btn_home">Strona główna</button></a>
         </div>
         <div class="hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></div>
       </div>
     </nav>
     <div class="mobile-menu" id="mobile-menu">
-      <a href="index.html#oferta" onclick="toggleMenu()">Oferta</a>
-      <a href="index.html#cennik" onclick="toggleMenu()">Cennik</a>
-      <a href="index.html#liga" onclick="toggleMenu()">Liga</a>
-      <a href="index.html#o-nas" onclick="toggleMenu()">O nas</a>
-      <a href="index.html#kontakt" onclick="toggleMenu()">Kontakt</a>
-      <a href="index.html" class="btn-reserve-nav">Strona główna</a>
+      <a href="index.html#oferta" onclick="toggleMenu()" data-i18n="nav_oferta">Oferta</a>
+      <a href="index.html#cennik" onclick="toggleMenu()" data-i18n="nav_cennik">Cennik</a>
+      <a href="index.html#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
+      <a href="index.html#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
+      <a href="index.html#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
+      <a href="index.html" class="btn-reserve-nav" data-i18n="btn_home">Strona główna</a>
     </div>
   </header>
 
   <div class="page-head">
     <div class="container">
-      <div class="page-eyebrow">Rezerwacja online</div>
-      <h1 class="page-title">Zarezerwuj kort</h1>
-      <p class="page-sub">Wybierz dzień, godzinę i kort. Bez rejestracji, płatność na miejscu — rezerwacja zajmuje mniej niż minutę.</p>
+      <div class="page-eyebrow" data-i18n="page_eyebrow">Rezerwacja online</div>
+      <h1 class="page-title" data-i18n="page_title">Zarezerwuj kort</h1>
+      <p class="page-sub" data-i18n="page_sub">Wybierz dzień, godzinę i kort. Bez rejestracji, płatność na miejscu — rezerwacja zajmuje mniej niż minutę.</p>
     </div>
   </div>
 
@@ -263,10 +263,10 @@
 
       <!-- KROK 1: Data -->
       <div class="panel">
-        <div class="panel-label">1 · Wybierz dzień</div>
+        <div class="panel-label" data-i18n="step1_label">1 · Wybierz dzień</div>
         <div class="date-strip" id="date-strip"></div>
         <div class="other-date">
-          <span class="other-date-toggle" onclick="toggleDateInput()"><i class="ti ti-calendar"></i> Inna data</span>
+          <span class="other-date-toggle" onclick="toggleDateInput()"><i class="ti ti-calendar"></i> <span data-i18n="other_date">Inna data</span></span>
           <input type="date" class="date-input" id="date-input">
         </div>
       </div>
@@ -276,7 +276,7 @@
 
         <!-- MAPKA -->
         <div class="court-map">
-          <div class="panel-label">Układ kortów</div>
+          <div class="panel-label" data-i18n="map_label">Układ kortów</div>
           <svg viewBox="0 0 263 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plan kortów: kort 4 u góry poziomo, korty 1-3 na dole pionowo, północ u góry">
             <!-- Róża wiatrów -->
             <g transform="translate(28,28)">
@@ -360,13 +360,13 @@
               </g>
             </g>
           </svg>
-          <div class="map-hint">Najedź na kort, aby podświetlić go w grafiku. Kliknij, aby wybrać.</div>
+          <div class="map-hint" data-i18n="map_hint">Najedź na kort, aby podświetlić go w grafiku. Kliknij, aby wybrać.</div>
         </div>
 
         <!-- SIATKA / OŚ CZASU -->
         <div class="panel" style="margin-bottom:0;">
           <div class="grid-head-row">
-            <div class="panel-label" style="margin-bottom:0;">2 · Wybierz kort i godzinę</div>
+            <div class="panel-label" style="margin-bottom:0;" data-i18n="step2_label">2 · Wybierz kort i godzinę</div>
           </div>
 
           <div class="tl-scroll-wrap">
@@ -375,13 +375,13 @@
             <div class="slider-row">
               <input type="range" class="tl-slider" id="tl-slider" min="0" max="100" value="0" step="1">
             </div>
-            <div class="slider-hint">Przesuń suwak lub przeciągnij oś palcem, aby zobaczyć inne godziny (8:00–22:00)</div>
+            <div class="slider-hint" data-i18n="slider_hint">Przesuń suwak lub przeciągnij oś palcem, aby zobaczyć inne godziny (8:00–22:00)</div>
           </div>
 
           <div class="legend">
-            <div class="legend-item"><span class="legend-dot legend-free"></span> Wolny</div>
-            <div class="legend-item"><span class="legend-dot legend-busy"></span> Zajęty</div>
-            <div class="legend-item"><span class="legend-dot legend-sel"></span> Twój wybór</div>
+            <div class="legend-item"><span class="legend-dot legend-free"></span> <span data-i18n="legend_free">Wolny</span></div>
+            <div class="legend-item"><span class="legend-dot legend-busy"></span> <span data-i18n="legend_busy">Zajęty</span></div>
+            <div class="legend-item"><span class="legend-dot legend-sel"></span> <span data-i18n="legend_sel">Twój wybór</span></div>
           </div>
         </div>
       </div>
@@ -390,48 +390,48 @@
 
       <!-- KROK 3: Podsumowanie -->
       <div class="summary-panel hidden" id="summary-panel">
-        <div class="summary-label">Twój wybór</div>
+        <div class="summary-label" data-i18n="summary_label">Twój wybór</div>
         <div class="summary-facts" id="summary-facts"></div>
-        <div class="dur-label">Długość gry</div>
+        <div class="dur-label" data-i18n="dur_label">Długość gry</div>
         <div class="dur-opts" id="dur-opts"></div>
         <div class="dur-warning" id="dur-warning"></div>
         <div class="price-breakdown" id="price-breakdown"></div>
-        <button class="btn-next" id="btn-next" onclick="goToForm()">Przejdź do danych →</button>
+        <button class="btn-next" id="btn-next" onclick="goToForm()" data-i18n="btn_next">Przejdź do danych →</button>
       </div>
 
       <!-- KROK 4: Formularz -->
       <div class="panel form-panel hidden" id="form-panel">
-        <div class="form-title">Twoje dane</div>
-        <label class="field-label">Imię i nazwisko <span class="req">*</span></label>
-        <input type="text" class="field" id="f-name" placeholder="np. Anna Kowalska">
-        <label class="field-label">Telefon <span class="req">*</span></label>
-        <input type="tel" class="field" id="f-phone" placeholder="np. 600 100 200">
-        <label class="field-label">E-mail <span class="opt">(opcjonalnie, na potwierdzenie)</span></label>
-        <input type="email" class="field" id="f-email" placeholder="np. anna@email.pl">
-        <div class="gear-title">Wypożyczenie sprzętu <span class="opt">(opcjonalnie)</span></div>
+        <div class="form-title" data-i18n="form_title">Twoje dane</div>
+        <label class="field-label"><span data-i18n="label_name">Imię i nazwisko</span> <span class="req">*</span></label>
+        <input type="text" class="field" id="f-name" placeholder="np. Anna Kowalska" data-i18n-placeholder="placeholder_name">
+        <label class="field-label"><span data-i18n="label_phone">Telefon</span> <span class="req">*</span></label>
+        <input type="tel" class="field" id="f-phone" placeholder="np. 600 100 200" data-i18n-placeholder="placeholder_phone">
+        <label class="field-label"><span data-i18n="label_email">E-mail</span> <span class="opt" data-i18n="email_opt">(opcjonalnie, na potwierdzenie)</span></label>
+        <input type="email" class="field" id="f-email" placeholder="np. anna@email.pl" data-i18n-placeholder="placeholder_email">
+        <div class="gear-title"><span data-i18n="gear_title">Wypożyczenie sprzętu</span> <span class="opt" data-i18n="gear_opt">(opcjonalnie)</span></div>
         <div class="gear-row">
-          <div><div class="gear-name">Rakieta tenisowa</div><div class="gear-price" id="price-racket-label"></div></div>
+          <div><div class="gear-name" data-i18n="gear_racket">Rakieta tenisowa</div><div class="gear-price" id="price-racket-label"></div></div>
           <div class="stepper"><button class="step-btn step-minus" onclick="step('racket',-1)">−</button><span class="step-q" id="racket-q">0</span><button class="step-btn step-plus" onclick="step('racket',1)">+</button></div>
         </div>
         <div class="gear-row" style="margin-bottom:6px;">
-          <div><div class="gear-name">Tuba piłek (3 szt.)</div><div class="gear-price" id="price-balls-label"></div></div>
+          <div><div class="gear-name" data-i18n="gear_balls">Tuba piłek (3 szt.)</div><div class="gear-price" id="price-balls-label"></div></div>
           <div class="stepper"><button class="step-btn step-minus" onclick="step('balls',-1)">−</button><span class="step-q" id="balls-q">0</span><button class="step-btn step-plus" onclick="step('balls',1)">+</button></div>
         </div>
-        <div class="notes-toggle" onclick="toggleNotes()"><i class="ti ti-plus" id="notes-icon"></i> Dodatkowe uwagi</div>
-        <textarea class="field notes-field" id="notes-field" placeholder="np. gram z dzieckiem, proszę o niższą siatkę" rows="2"></textarea>
-        <div class="consent"><input type="checkbox" id="f-consent" style="margin-top:3px;"><span>Akceptuję regulamin kortów. Anulowanie bezpłatne do 24h przed terminem.</span></div>
+        <div class="notes-toggle" onclick="toggleNotes()"><i class="ti ti-plus" id="notes-icon"></i> <span data-i18n="notes_toggle">Dodatkowe uwagi</span></div>
+        <textarea class="field notes-field" id="notes-field" placeholder="np. gram z dzieckiem, proszę o niższą siatkę" rows="2" data-i18n-placeholder="placeholder_notes"></textarea>
+        <div class="consent"><input type="checkbox" id="f-consent" style="margin-top:3px;"><span data-i18n="consent_text">Akceptuję regulamin kortów. Anulowanie bezpłatne do 24h przed terminem.</span></div>
         <div id="turnstile-container" style="display:none;"></div>
-        <button class="btn-confirm" id="btn-confirm-book" onclick="confirmBooking()">Potwierdź rezerwację</button>
-        <div class="pay-note">Płatność gotówką lub kartą na miejscu</div>
+        <button class="btn-confirm" id="btn-confirm-book" onclick="confirmBooking()" data-i18n="btn_confirm">Potwierdź rezerwację</button>
+        <div class="pay-note" data-i18n="pay_note">Płatność gotówką lub kartą na miejscu</div>
       </div>
 
       <!-- KROK 5: Sukces -->
       <div class="panel success-panel hidden" id="success-panel">
         <div class="success-icon"><i class="ti ti-check"></i></div>
-        <div class="success-title">Rezerwacja potwierdzona!</div>
+        <div class="success-title" data-i18n="success_title">Rezerwacja potwierdzona!</div>
         <div class="success-msg" id="success-msg"></div>
         <div class="success-card" id="success-card"></div>
-        <a href="index.html"><button class="btn-next">Wróć na stronę główną</button></a>
+        <a href="index.html"><button class="btn-next" data-i18n="btn_back_home">Wróć na stronę główną</button></a>
       </div>
 
     </div>
@@ -447,30 +447,30 @@
             <div class="footer-logos-divider"></div>
             <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa">
           </div>
-          <p class="footer-tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
+          <p class="footer-tagline" data-i18n="footer_tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
         </div>
         <div>
-          <div class="footer-col-title">Lokalizacja</div>
+          <div class="footer-col-title" data-i18n="footer_location_title">Lokalizacja</div>
           <ul class="footer-contact-list">
             <li><i class="ti ti-map-pin"></i> ul. Andrzeja Struga 8, Lublin</li>
-            <li><i class="ti ti-clock"></i> Pon–Nd: 8:00 – 22:00</li>
+            <li><i class="ti ti-clock"></i> <span data-i18n="footer_hours">Pon–Nd: 8:00 – 22:00</span></li>
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">Kontakt</div>
+          <div class="footer-col-title" data-i18n="footer_contact_title">Kontakt</div>
           <ul class="footer-contact-list">
             <li><i class="ti ti-phone"></i> <a href="tel:+48000000000">+48 000 000 000</a></li>
             <li><i class="ti ti-mail"></i> <a href="mailto:kontakt@kortylublin.pl">kontakt@kortylublin.pl</a></li>
           </ul>
         </div>
         <div class="footer-bloome">
-          <div class="footer-bloome-label">Projekt i realizacja</div>
+          <div class="footer-bloome-label" data-i18n="footer_bloome_label">Projekt i realizacja</div>
           <div class="footer-bloome-name">Bloome</div>
           <div class="footer-bloome-sub">web design &amp; development</div>
         </div>
       </div>
       <div class="footer-bottom">
-        <div class="footer-copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
+        <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
       </div>
     </div>
   </footer>
@@ -479,7 +479,6 @@
     /* =========================================================
        KONFIGURACJA — wszystko do zmiany w jednym miejscu
        ========================================================= */
-    const COURTS  = ['Kort 1', 'Kort 2', 'Kort 3', 'Kort 4'];
     const START_H = 8;
     const END_H   = 22;
     const VISIBLE = 6;          // ile 30-min slotów widać naraz (= 3h)
@@ -490,6 +489,140 @@
     // Backend — Google Apps Script Web App
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
     const TURNSTILE_SITE_KEY = '0x4AAAAAAEKG6HyPaHfevXYf';
+
+    /* =========================================================
+       DWUJĘZYCZNOŚĆ PL/EN — bez zapamiętywania między wizytami.
+       Prawie cała ta strona jest generowana w JS (siatka godzin,
+       ceny, ostrzeżenia, komunikaty), więc oprócz statycznych
+       data-i18n w HTML potrzebujemy też słownika dla samego JS.
+       ========================================================= */
+    const TRANSLATIONS = {
+      pl: {
+        nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+        btn_home: 'Strona główna',
+        page_eyebrow: 'Rezerwacja online', page_title: 'Zarezerwuj kort',
+        page_sub: 'Wybierz dzień, godzinę i kort. Bez rejestracji, płatność na miejscu — rezerwacja zajmuje mniej niż minutę.',
+        step1_label: '1 · Wybierz dzień', other_date: 'Inna data',
+        map_label: 'Układ kortów', map_hint: 'Najedź na kort, aby podświetlić go w grafiku. Kliknij, aby wybrać.',
+        step2_label: '2 · Wybierz kort i godzinę',
+        slider_hint: 'Przesuń suwak lub przeciągnij oś palcem, aby zobaczyć inne godziny (8:00–22:00)',
+        legend_free: 'Wolny', legend_busy: 'Zajęty', legend_sel: 'Twój wybór',
+        summary_label: 'Twój wybór', dur_label: 'Długość gry', btn_next: 'Przejdź do danych →',
+        fact_date: 'Data', fact_court: 'Kort', fact_start: 'Start',
+        form_title: 'Twoje dane',
+        label_name: 'Imię i nazwisko', label_phone: 'Telefon', label_email: 'E-mail',
+        email_opt: '(opcjonalnie, na potwierdzenie)',
+        placeholder_name: 'np. Anna Kowalska', placeholder_phone: 'np. 600 100 200', placeholder_email: 'np. anna@email.pl',
+        gear_title: 'Wypożyczenie sprzętu', gear_opt: '(opcjonalnie)',
+        gear_racket: 'Rakieta tenisowa', gear_balls: 'Tuba piłek (3 szt.)',
+        notes_toggle: 'Dodatkowe uwagi', placeholder_notes: 'np. gram z dzieckiem, proszę o niższą siatkę',
+        consent_text: 'Akceptuję regulamin kortów. Anulowanie bezpłatne do 24h przed terminem.',
+        btn_confirm: 'Potwierdź rezerwację', pay_note: 'Płatność gotówką lub kartą na miejscu',
+        success_title: 'Rezerwacja potwierdzona!', btn_back_home: 'Wróć na stronę główną',
+        footer_tagline: '4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.',
+        footer_location_title: 'Lokalizacja', footer_hours: 'Pon–Nd: 8:00 – 22:00',
+        footer_contact_title: 'Kontakt', footer_bloome_label: 'Projekt i realizacja',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.',
+
+        // treści generowane w JS
+        court_names: ['Kort 1', 'Kort 2', 'Kort 3', 'Kort 4'],
+        day_short: ['niedz','pon','wt','śr','czw','pt','sob'],
+        mon_short: ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'],
+        day_full: ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'],
+        mon_full: ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'],
+        loading_availability: 'Ładowanie dostępności…',
+        alert_pick_future_date: 'Wybierz dzisiejszą lub przyszłą datę.',
+        alert_availability_fail: 'Nie udało się pobrać aktualnej dostępności kortów. Sprawdź połączenie z internetem i odśwież stronę.',
+        orphan_base: 'Ten wybór zostawiłby 30 minut, których nikt nie wykorzysta. ',
+        orphan_extend: m => 'przedłużyć grę do ' + m + ' min',
+        orphan_start_later: 'zacząć 30 minut później',
+        orphan_start_earlier: 'zacząć 30 minut wcześniej',
+        orphan_earlier_longer: 'zacząć wcześniej i grać dłużej',
+        orphan_fallback: 'Wybierz inną godzinę lub kort.',
+        orphan_you_can: 'Możesz', orphan_or: 'lub',
+        price_court: min => 'Kort (' + min + ' min)',
+        price_racket: n => 'Rakieta × ' + n,
+        price_balls: n => 'Tuba piłek × ' + n,
+        price_total: 'Razem', price_per_unit: 'zł / szt.',
+        alert_consent: 'Zaznacz akceptację regulaminu, aby kontynuować.',
+        btn_verifying: 'Weryfikacja…', btn_saving: 'Zapisywanie…',
+        err_prepare_failed: 'Nie udało się przygotować rezerwacji. Spróbuj ponownie.',
+        alert_slot_taken: 'Ten termin został właśnie zajęty przez kogoś innego. Wybierz inny termin.',
+        alert_save_failed: msg => 'Nie udało się zapisać rezerwacji: ' + msg + '. Spróbuj ponownie.',
+        err_connection: 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.',
+        err_unknown: 'Nieznany błąd. Odśwież stronę i spróbuj ponownie.',
+        alert_something_wrong: msg => 'Coś poszło nie tak: ' + msg,
+        err_turnstile_not_ready: 'Ochrona antybotowa jeszcze się nie załadowała. Odśwież stronę i spróbuj ponownie.',
+        err_turnstile_timeout: 'Weryfikacja trwa zbyt długo. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.',
+        err_turnstile_failed: 'Weryfikacja antybotowa nie powiodła się. Spróbuj ponownie.',
+        success_msg: (day, date, mon, time, court) => 'Czekamy na Ciebie w ' + day + ', ' + date + ' ' + mon + ' o ' + time + ' na ' + court + '.',
+        sc_court: 'Kort', sc_term: 'Termin', sc_racket: 'Rakieta', sc_balls: 'Tuba piłek', sc_pay: 'Do zapłaty',
+        unit_pcs: 'szt.',
+      },
+      en: {
+        nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+        btn_home: 'Homepage',
+        page_eyebrow: 'Online booking', page_title: 'Book a court',
+        page_sub: "Pick a day, time, and court. No registration, pay on arrival — booking takes less than a minute.",
+        step1_label: '1 · Choose a day', other_date: 'Other date',
+        map_label: 'Court layout', map_hint: 'Hover over a court to highlight it in the grid. Click to select.',
+        step2_label: '2 · Choose a court and time',
+        slider_hint: 'Drag the slider or the timeline to see other hours (8:00–22:00)',
+        legend_free: 'Free', legend_busy: 'Booked', legend_sel: 'Your pick',
+        summary_label: 'Your selection', dur_label: 'Duration', btn_next: 'Continue to details →',
+        fact_date: 'Date', fact_court: 'Court', fact_start: 'Start',
+        form_title: 'Your details',
+        label_name: 'Full name', label_phone: 'Phone', label_email: 'Email',
+        email_opt: '(optional, for confirmation)',
+        placeholder_name: 'e.g. Anna Kowalska', placeholder_phone: 'e.g. 600 100 200', placeholder_email: 'e.g. anna@email.com',
+        gear_title: 'Equipment rental', gear_opt: '(optional)',
+        gear_racket: 'Tennis racket', gear_balls: 'Ball tube (3 pcs)',
+        notes_toggle: 'Additional notes', placeholder_notes: 'e.g. playing with a child, please lower the net',
+        consent_text: 'I accept the court regulations. Free cancellation up to 24h before the booking.',
+        btn_confirm: 'Confirm booking', pay_note: 'Pay by cash or card on arrival',
+        success_title: 'Booking confirmed!', btn_back_home: 'Back to homepage',
+        footer_tagline: '4 clay courts in the heart of Lublin. Playing since 1974.',
+        footer_location_title: 'Location', footer_hours: 'Mon–Sun: 8:00 – 22:00',
+        footer_contact_title: 'Contact', footer_bloome_label: 'Design & development by',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. All rights reserved.',
+
+        court_names: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+        day_short: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+        mon_short: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        day_full: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+        mon_full: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        loading_availability: 'Loading availability…',
+        alert_pick_future_date: 'Choose today or a future date.',
+        alert_availability_fail: "Couldn't load current court availability. Check your internet connection and refresh the page.",
+        orphan_base: "This choice would leave 30 minutes that no one could use. ",
+        orphan_extend: m => 'extend to ' + m + ' min',
+        orphan_start_later: 'start 30 minutes later',
+        orphan_start_earlier: 'start 30 minutes earlier',
+        orphan_earlier_longer: 'start earlier and play longer',
+        orphan_fallback: 'Choose a different time or court.',
+        orphan_you_can: 'You could', orphan_or: 'or',
+        price_court: min => 'Court (' + min + ' min)',
+        price_racket: n => 'Racket × ' + n,
+        price_balls: n => 'Ball tube × ' + n,
+        price_total: 'Total', price_per_unit: 'PLN / pc.',
+        alert_consent: 'Please accept the regulations to continue.',
+        btn_verifying: 'Verifying…', btn_saving: 'Saving…',
+        err_prepare_failed: "Couldn't prepare your booking. Please try again.",
+        alert_slot_taken: 'This time slot was just booked by someone else. Please choose another one.',
+        alert_save_failed: msg => "Couldn't save the booking: " + msg + '. Please try again.',
+        err_connection: "Couldn't connect to the server. Check your internet connection, refresh the page, and try again.",
+        err_unknown: 'Unknown error. Refresh the page and try again.',
+        alert_something_wrong: msg => 'Something went wrong: ' + msg,
+        err_turnstile_not_ready: "Bot protection hasn't loaded yet. Refresh the page and try again.",
+        err_turnstile_timeout: 'Verification is taking too long. Check your internet connection, refresh the page, and try again.',
+        err_turnstile_failed: 'Bot verification failed. Please try again.',
+        success_msg: (day, date, mon, time, court) => "We'll see you on " + day + ', ' + mon + ' ' + date + ' at ' + time + ' on ' + court + '.',
+        sc_court: 'Court', sc_term: 'Time', sc_racket: 'Racket', sc_balls: 'Ball tube', sc_pay: 'Amount due',
+        unit_pcs: 'pc.',
+      },
+    };
+
+    let currentLang = 'pl'; // strona zawsze startuje po polsku
 
     /* =========================================================
        CLOUDFLARE TURNSTILE — widget niewidoczny, uruchamiany
@@ -510,7 +643,7 @@
           if (turnstileResolve) { turnstileResolve(token); turnstileResolve = null; turnstileReject = null; }
         },
         'error-callback': function () {
-          if (turnstileReject) { turnstileReject(new Error('Weryfikacja antybotowa nie powiodła się. Spróbuj ponownie.')); turnstileResolve = null; turnstileReject = null; }
+          if (turnstileReject) { turnstileReject(new Error(TRANSLATIONS[currentLang].err_turnstile_failed)); turnstileResolve = null; turnstileReject = null; }
           return true; // nie pokazuj natywnego alertu Turnstile — obsługujemy błąd sami
         },
       });
@@ -519,7 +652,7 @@
 
     function getTurnstileToken() {
       return new Promise((resolve, reject) => {
-        if (!turnstileReady) { reject(new Error('Ochrona antybotowa jeszcze się nie załadowała. Odśwież stronę i spróbuj ponownie.')); return; }
+        if (!turnstileReady) { reject(new Error(TRANSLATIONS[currentLang].err_turnstile_not_ready)); return; }
         turnstileResolve = resolve;
         turnstileReject = reject;
         turnstile.execute(turnstileWidgetId);
@@ -529,7 +662,7 @@
         // błędu. Bez tego limitu czasu strona czekałaby w nieskończoność.
         setTimeout(() => {
           if (turnstileReject) {
-            turnstileReject(new Error('Weryfikacja trwa zbyt długo. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.'));
+            turnstileReject(new Error(TRANSLATIONS[currentLang].err_turnstile_timeout));
             turnstileResolve = null;
             turnstileReject = null;
           }
@@ -545,10 +678,13 @@
     const SLOTS = [];
     for (let h = START_H; h < END_H; h++) { SLOTS.push(h + ':00'); SLOTS.push(h + ':30'); }
 
+    const COURT_COUNT = 4;
+    function courtsList() { return TRANSLATIONS[currentLang].court_names; }
+
     // Zaczynamy z pustą siatką (wszystko "wolne"), dopóki nie przyjdzie
     // prawdziwa odpowiedź z serwera — patrz isLoadingAvailability niżej,
     // które chwilowo blokuje interakcję i pokazuje "Ładowanie..."
-    let availability = COURTS.map(() => new Array(SLOT_COUNT).fill(0));
+    let availability = Array.from({ length: COURT_COUNT }, () => new Array(SLOT_COUNT).fill(0));
     let isLoadingAvailability = false;
 
     /* =========================================================
@@ -556,11 +692,7 @@
        ========================================================= */
     let view = 0, selDate = 0, selCourt = null, selSlot = null, selDur = MIN_MIN;
     const qty = { racket: 0, balls: 0 };
-
-    const dayNames = ['niedz','pon','wt','śr','czw','pt','sob'];
-    const monNames = ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
-    const fullDays = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
-    const fullMons = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+    let lastSuccessDate = null, lastSuccessPrice = null;
 
     const MAX_VIEW = SLOT_COUNT - VISIBLE;
 
@@ -571,6 +703,8 @@
       const strip = document.getElementById('date-strip');
       strip.innerHTML = '';
       const today = new Date();
+      const dayNames = TRANSLATIONS[currentLang].day_short;
+      const monNames = TRANSLATIONS[currentLang].mon_short;
       for (let i = 0; i < 14; i++) {
         const d = new Date(today); d.setDate(today.getDate() + i);
         const btn = document.createElement('button');
@@ -592,7 +726,7 @@
       const picked = new Date(this.value + 'T00:00:00');
       const today = new Date(); today.setHours(0,0,0,0);
       const diff = Math.round((picked - today) / 86400000);
-      if (diff < 0) { alert('Wybierz dzisiejszą lub przyszłą datę.'); return; }
+      if (diff < 0) { alert(TRANSLATIONS[currentLang].alert_pick_future_date); return; }
       selDate = diff;
       resetSelection();
       buildDates();
@@ -633,10 +767,10 @@
     // Zamienia { "1": [{start,end}], "2": [...], ... } z backendu
     // na tablicę tablic 0/1 w formacie, jakiego oczekuje reszta strony.
     function buildAvailabilityGrid(busyByCourt) {
-      const grid = COURTS.map(() => new Array(SLOT_COUNT).fill(0));
+      const grid = Array.from({ length: COURT_COUNT }, () => new Array(SLOT_COUNT).fill(0));
       Object.keys(busyByCourt || {}).forEach(courtKey => {
         const ci = parseInt(courtKey, 10) - 1; // backend numeruje korty 1–4, tablica jest 0-indeksowana
-        if (ci < 0 || ci >= COURTS.length) return;
+        if (ci < 0 || ci >= COURT_COUNT) return;
         (busyByCourt[courtKey] || []).forEach(range => {
           const startIdx = slotIndexFromDate(new Date(range.start));
           const endIdx = slotIndexFromDate(new Date(range.end));
@@ -664,7 +798,7 @@
         availability = buildAvailabilityGrid(busy);
       } catch (err) {
         console.error(err);
-        alert('Nie udało się pobrać aktualnej dostępności kortów. Sprawdź połączenie z internetem i odśwież stronę.');
+        alert(TRANSLATIONS[currentLang].alert_availability_fail);
       } finally {
         isLoadingAvailability = false;
         render();
@@ -680,7 +814,7 @@
       if (isLoadingAvailability) {
         tl.innerHTML = '<div style="padding:32px 0;text-align:center;color:var(--muted);font-size:14px;">'
           + '<i class="ti ti-loader-2" style="font-size:20px;display:block;margin-bottom:8px;animation:spin 1s linear infinite;"></i>'
-          + 'Ładowanie dostępności…</div>';
+          + TRANSLATIONS[currentLang].loading_availability + '</div>';
         document.getElementById('tl-axis').innerHTML = '';
         return;
       }
@@ -688,7 +822,7 @@
       tl.innerHTML = '';
       const slotsNeeded = selDur / 30;
 
-      COURTS.forEach((court, ci) => {
+      courtsList().forEach((court, ci) => {
         const row = document.createElement('div');
         row.className = 'tl-row';
         row.dataset.court = ci;
@@ -825,10 +959,11 @@
     function showSummary() {
       document.getElementById('summary-panel').classList.remove('hidden');
       const d = selectedDateObj();
+      const t = TRANSLATIONS[currentLang];
       const facts = [
-        ['Data', dayNames[d.getDay()] + ', ' + d.getDate() + ' ' + monNames[d.getMonth()]],
-        ['Kort', COURTS[selCourt]],
-        ['Start', SLOTS[selSlot]]
+        [t.fact_date, t.day_short[d.getDay()] + ', ' + d.getDate() + ' ' + t.mon_short[d.getMonth()]],
+        [t.fact_court, courtsList()[selCourt]],
+        [t.fact_start, SLOTS[selSlot]]
       ];
       document.getElementById('summary-facts').innerHTML = facts.map(([k, v]) =>
         '<div class="summary-fact"><div class="sf-k">' + k + '</div><div class="sf-v">' + v + '</div></div>').join('');
@@ -865,17 +1000,17 @@
 
     // Buduje kontekstową podpowiedź: co konkretnie zrobić, by uniknąć sieroty
     function buildOrphanHint(courtIdx, startIdx, durMin) {
-      const base = 'Ten wybór zostawiłby 30 minut, których nikt nie wykorzysta. ';
+      const t = TRANSLATIONS[currentLang];
       const tips = [];
 
       // sierota PO rezerwacji → przedłużenie o 30 min wchłonie lukę?
       if (orphanAfter(courtIdx, startIdx, durMin)) {
         if (durationFits(courtIdx, startIdx, durMin + 30) && !leavesOrphan(courtIdx, startIdx, durMin + 30)) {
-          tips.push('przedłużyć grę do ' + (durMin + 30) + ' min');
+          tips.push(t.orphan_extend(durMin + 30));
         }
         // albo zacząć 30 min później (slot startowy +1), jeśli nadal się mieści
         if (durationFits(courtIdx, startIdx + 1, durMin) && !leavesOrphan(courtIdx, startIdx + 1, durMin)) {
-          tips.push('zacząć 30 minut później');
+          tips.push(t.orphan_start_later);
         }
       }
 
@@ -883,34 +1018,35 @@
       if (orphanBefore(courtIdx, startIdx)) {
         if (startIdx - 1 >= 0 && availability[courtIdx][startIdx - 1] === 0 &&
             durationFits(courtIdx, startIdx - 1, durMin) && !leavesOrphan(courtIdx, startIdx - 1, durMin)) {
-          tips.push('zacząć 30 minut wcześniej');
+          tips.push(t.orphan_start_earlier);
         }
         // albo przedłużyć z wcześniejszym startem
         if (startIdx - 1 >= 0 && availability[courtIdx][startIdx - 1] === 0 &&
             durationFits(courtIdx, startIdx - 1, durMin + 30) && !leavesOrphan(courtIdx, startIdx - 1, durMin + 30)) {
-          tips.push('zacząć wcześniej i grać dłużej');
+          tips.push(t.orphan_earlier_longer);
         }
       }
 
-      if (tips.length === 0) return base + 'Wybierz inną godzinę lub kort.';
+      if (tips.length === 0) return t.orphan_base + t.orphan_fallback;
 
       // składamy ładną listę: "Możesz: a, b lub c."
       let joined;
       if (tips.length === 1) joined = tips[0];
-      else joined = tips.slice(0, -1).join(', ') + ' lub ' + tips[tips.length - 1];
-      return base + 'Możesz <strong>' + joined + '</strong>.';
+      else joined = tips.slice(0, -1).join(', ') + ' ' + t.orphan_or + ' ' + tips[tips.length - 1];
+      return t.orphan_base + t.orphan_you_can + ' <strong>' + joined + '</strong>.';
     }
 
     function courtPrice() { return Math.round(selDur / 60 * PRICE.hour); }
     function totalPrice() { return courtPrice() + qty.racket * PRICE.racket + qty.balls * PRICE.balls; }
 
     function renderPrice() {
+      const t = TRANSLATIONS[currentLang];
       const lines = [];
-      lines.push(rowHtml('Kort (' + selDur + ' min)', courtPrice()));
-      if (qty.racket > 0) lines.push(rowHtml('Rakieta × ' + qty.racket, qty.racket * PRICE.racket));
-      if (qty.balls > 0)  lines.push(rowHtml('Tuba piłek × ' + qty.balls, qty.balls * PRICE.balls));
+      lines.push(rowHtml(t.price_court(selDur), courtPrice()));
+      if (qty.racket > 0) lines.push(rowHtml(t.price_racket(qty.racket), qty.racket * PRICE.racket));
+      if (qty.balls > 0)  lines.push(rowHtml(t.price_balls(qty.balls), qty.balls * PRICE.balls));
       document.getElementById('price-breakdown').innerHTML =
-        lines.join('') + '<div class="pb-total"><span>Razem</span><span>' + totalPrice() + ' zł</span></div>';
+        lines.join('') + '<div class="pb-total"><span>' + t.price_total + '</span><span>' + totalPrice() + ' zł</span></div>';
       function rowHtml(k, v) { return '<div class="pb-row"><span>' + k + '</span><span>' + v + ' zł</span></div>'; }
     }
 
@@ -943,23 +1079,23 @@
       document.getElementById('f-name').classList.toggle('invalid', !name);
       document.getElementById('f-phone').classList.toggle('invalid', !phone);
       if (!name || !phone) ok = false;
-      if (!consent) { alert('Zaznacz akceptację regulaminu, aby kontynuować.'); ok = false; }
+      if (!consent) { alert(TRANSLATIONS[currentLang].alert_consent); ok = false; }
       if (!ok) return;
 
       const btn = document.getElementById('btn-confirm-book');
       const originalLabel = btn.textContent;
       btn.disabled = true;
-      btn.textContent = 'Weryfikacja…';
+      btn.textContent = TRANSLATIONS[currentLang].btn_verifying;
 
       try {
         // 1) Turnstile — weryfikacja "czy to człowiek", uruchamiana dopiero teraz
         const turnstileToken = await getTurnstileToken();
 
         // 2) jednorazowy token bezpieczeństwa — pobrany świeżo, więc nigdy nie zdąży wygasnąć
-        btn.textContent = 'Zapisywanie…';
+        btn.textContent = TRANSLATIONS[currentLang].btn_saving;
         const tokenRes = await fetch(WEB_APP_URL + '?action=token');
         const tokenData = await tokenRes.json();
-        if (!tokenData.token) throw new Error('Nie udało się przygotować rezerwacji. Spróbuj ponownie.');
+        if (!tokenData.token) throw new Error(TRANSLATIONS[currentLang].err_prepare_failed);
 
         // 3) właściwe zapytanie o rezerwację
         const d = selectedDateObj();
@@ -986,13 +1122,17 @@
         const result = await res.json();
 
         if (!result.success) {
+          // Backend (Code.gs) zawsze odpowiada po polsku, niezależnie od
+          // języka strony — dopasowanie słowa 'zajęty' musi więc zostać
+          // po polsku, nawet w wersji angielskiej. Nasz WŁASNY komunikat
+          // pokazywany użytkownikowi jest oczywiście przetłumaczony.
           const msg = result.error || 'Nieznany błąd serwera.';
           if (msg.indexOf('zajęty') !== -1) {
-            alert('Ten termin został właśnie zajęty przez kogoś innego. Wybierz inny termin.');
+            alert(TRANSLATIONS[currentLang].alert_slot_taken);
             await loadAvailabilityForSelectedDate();
             resetSelection();
           } else {
-            alert('Nie udało się zapisać rezerwacji: ' + msg + '. Spróbuj ponownie.');
+            alert(TRANSLATIONS[currentLang].alert_save_failed(msg));
           }
           return;
         }
@@ -1006,9 +1146,9 @@
         // komunikaty (Turnstile, token) już same w sobie zawierają pełną
         // wskazówkę, więc nie dokładamy do nich nic dodatkowego.
         const friendlyMessage = (err && err.message === 'Failed to fetch')
-          ? 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem, odśwież stronę i spróbuj ponownie.'
-          : (err && err.message) || 'Nieznany błąd. Odśwież stronę i spróbuj ponownie.';
-        alert('Coś poszło nie tak: ' + friendlyMessage);
+          ? TRANSLATIONS[currentLang].err_connection
+          : (err && err.message) || TRANSLATIONS[currentLang].err_unknown;
+        alert(TRANSLATIONS[currentLang].alert_something_wrong(friendlyMessage));
       } finally {
         // Turnstile wymaga jawnego resetu po każdym użyciu (udanym lub
         // nieudanym) — bez tego kolejna próba w tym samym oknie zawsze
@@ -1029,21 +1169,24 @@
     }
 
     function showSuccess(d, serverPrice) {
+      const t = TRANSLATIONS[currentLang];
       const baseMin = parseInt(SLOTS[selSlot]) * 60 + (SLOTS[selSlot].includes(':30') ? 30 : 0);
       const endMin = baseMin + selDur;
       const endLabel = Math.floor(endMin / 60) + ':' + (endMin % 60 === 0 ? '00' : '30');
       const finalPrice = (typeof serverPrice === 'number') ? serverPrice : totalPrice();
+      lastSuccessDate = d;
+      lastSuccessPrice = serverPrice;
 
-      document.getElementById('success-msg').textContent =
-        'Czekamy na Ciebie w ' + fullDays[d.getDay()] + ', ' + d.getDate() + ' ' + fullMons[d.getMonth()] +
-        ' o ' + SLOTS[selSlot] + ' na ' + COURTS[selCourt].toLowerCase() + '.';
+      document.getElementById('success-msg').textContent = t.success_msg(
+        t.day_full[d.getDay()], d.getDate(), t.mon_full[d.getMonth()], SLOTS[selSlot], courtsList()[selCourt].toLowerCase()
+      );
 
       document.getElementById('success-card').innerHTML =
-        scRow('Kort', COURTS[selCourt]) +
-        scRow('Termin', d.getDate() + ' ' + monNames[d.getMonth()] + ', ' + SLOTS[selSlot] + '–' + endLabel) +
-        (qty.racket > 0 ? scRow('Rakieta', qty.racket + ' szt.') : '') +
-        (qty.balls > 0 ? scRow('Tuba piłek', qty.balls + ' szt.') : '') +
-        scRowP('Do zapłaty', finalPrice + ' zł');
+        scRow(t.sc_court, courtsList()[selCourt]) +
+        scRow(t.sc_term, d.getDate() + ' ' + t.mon_short[d.getMonth()] + ', ' + SLOTS[selSlot] + '–' + endLabel) +
+        (qty.racket > 0 ? scRow(t.sc_racket, qty.racket + ' ' + t.unit_pcs) : '') +
+        (qty.balls > 0 ? scRow(t.sc_balls, qty.balls + ' ' + t.unit_pcs) : '') +
+        scRowP(t.sc_pay, finalPrice + ' zł');
 
       document.getElementById('summary-panel').classList.add('hidden');
       document.getElementById('form-panel').classList.add('hidden');
@@ -1064,12 +1207,52 @@
     }
 
     function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
-    function toggleLang() { document.getElementById('lang-pl').classList.toggle('active'); document.getElementById('lang-en').classList.toggle('active'); }
+
+    function updateGearPriceLabels() {
+      document.getElementById('price-racket-label').textContent = PRICE.racket + ' ' + TRANSLATIONS[currentLang].price_per_unit;
+      document.getElementById('price-balls-label').textContent = PRICE.balls + ' ' + TRANSLATIONS[currentLang].price_per_unit;
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (TRANSLATIONS[lang][key] !== undefined) el.setAttribute('placeholder', TRANSLATIONS[lang][key]);
+      });
+
+      updateGearPriceLabels();
+      buildDates();  // etykiety dat (dni/miesiące) zależą od języka
+      render();      // nazwy kortów w siatce godzin zależą od języka
+
+      // Jeśli podsumowanie jest akurat widoczne, przebuduj je też —
+      // inaczej zostałoby "zamrożone" w poprzednim języku do następnej
+      // interakcji użytkownika.
+      if (!document.getElementById('summary-panel').classList.contains('hidden') && selCourt !== null) {
+        showSummary();
+      }
+      // To samo dla ekranu sukcesu, gdyby ktoś przełączył język już po
+      // potwierdzeniu rezerwacji.
+      if (!document.getElementById('success-panel').classList.contains('hidden') && lastSuccessDate) {
+        showSuccess(lastSuccessDate, lastSuccessPrice);
+      }
+    }
+
+    function toggleLang() {
+      document.getElementById('lang-pl').classList.toggle('active');
+      document.getElementById('lang-en').classList.toggle('active');
+      applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
+    }
+
     window.addEventListener('scroll', () => { document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 10); });
 
     /* INIT */
-    document.getElementById('price-racket-label').textContent = PRICE.racket + ' zł / szt.';
-    document.getElementById('price-balls-label').textContent = PRICE.balls + ' zł / szt.';
+    updateGearPriceLabels();
     const nowHour = new Date().getHours();
     view = Math.min(Math.max((nowHour - START_H) * 2, 0), MAX_VIEW);
     slider.value = view;
