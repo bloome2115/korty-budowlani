@@ -201,9 +201,10 @@
     .mobile-menu.open { display: flex; }
     .mobile-menu a { color: rgba(255,255,255,0.75); font-size: 15px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .mobile-menu .btn-reserve-nav { margin-top: 16px; text-align: center; display: block; padding: 12px; }
+    .mobile-menu .lang-switch { margin-top: 16px; justify-content: center; width: fit-content; }
 
     @media (max-width: 900px) {
-      .navbar-menu, .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
+      .navbar-menu, .navbar-right .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
       .hamburger { display: flex; }
       .page-title { font-size: 30px; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
@@ -233,7 +234,7 @@
         </ul>
         <div class="navbar-right">
           <div class="lang-switch" onclick="toggleLang()">
-            <span class="active" id="lang-pl">PL</span><span id="lang-en">EN</span>
+            <span class="lang-pl-span active">PL</span><span class="lang-en-span">EN</span>
           </div>
           <a href="index.html"><button class="btn-reserve-nav" data-i18n="btn_home">Strona główna</button></a>
         </div>
@@ -246,6 +247,9 @@
       <a href="index.html#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
       <a href="index.html#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
       <a href="index.html#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
+      <div class="lang-switch" onclick="toggleLang()">
+        <span class="lang-pl-span active">PL</span><span class="lang-en-span">EN</span>
+      </div>
       <a href="index.html" class="btn-reserve-nav" data-i18n="btn_home">Strona główna</a>
     </div>
   </header>
@@ -1244,8 +1248,8 @@
     }
 
     function toggleLang() {
-      document.getElementById('lang-pl').classList.toggle('active');
-      document.getElementById('lang-en').classList.toggle('active');
+      document.querySelectorAll('.lang-pl-span').forEach(el => el.classList.toggle('active'));
+      document.querySelectorAll('.lang-en-span').forEach(el => el.classList.toggle('active'));
       applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
     }
 

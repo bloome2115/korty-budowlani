@@ -860,9 +860,15 @@
       padding: 12px;
     }
 
+    .mobile-menu .lang-switch {
+      margin-top: 16px;
+      justify-content: center;
+      width: fit-content;
+    }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
-      .navbar-menu, .lang-switch, .btn-reserve-nav { display: none; }
+      .navbar-menu, .navbar-right .lang-switch, .btn-reserve-nav { display: none; }
       .hamburger { display: flex; }
 
       .hero-inner .container { grid-template-columns: 1fr; }
@@ -945,8 +951,8 @@
 
         <div class="navbar-right">
           <div class="lang-switch" onclick="toggleLang()">
-            <span class="active" id="lang-pl">PL</span>
-            <span id="lang-en">EN</span>
+            <span class="lang-pl-span active">PL</span>
+            <span class="lang-en-span">EN</span>
           </div>
           <a href="rezerwacja.html">
             <button class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</button>
@@ -966,6 +972,10 @@
       <a href="#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
       <a href="#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
       <a href="#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
+      <div class="lang-switch" onclick="toggleLang()">
+        <span class="lang-pl-span active">PL</span>
+        <span class="lang-en-span">EN</span>
+      </div>
       <a href="rezerwacja.html" class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
     </div>
   </header>
@@ -1293,8 +1303,8 @@
     }
 
     function toggleLang() {
-      document.getElementById('lang-pl').classList.toggle('active');
-      document.getElementById('lang-en').classList.toggle('active');
+      document.querySelectorAll('.lang-pl-span').forEach(el => el.classList.toggle('active'));
+      document.querySelectorAll('.lang-en-span').forEach(el => el.classList.toggle('active'));
       applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
     }
 
