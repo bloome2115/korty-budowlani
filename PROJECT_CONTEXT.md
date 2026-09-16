@@ -1,17 +1,23 @@
 # 🎾 PROJECT CONTEXT — Korty Budowlani Lublin / GoRun Akademia Tenisa
 
-> Ten plik opisuje wszystkie ustalenia projektowe. Wklej jego zawartość na początku każdej nowej rozmowy z Claude, aby zachować pełny kontekst.
+> Główny dokument ustaleń. Wklej na początku nowej rozmowy, żeby zachować kontekst.
+> **Wersja 3 — 19.09.2026.** Strona jest wizytówką, nie systemem rezerwacji.
+> Uzasadnienie zwrotu: `claude/DECYZJE_wizytowka_i_posty.md`.
 
 ---
 
 ## 1. OPIS PROJEKTU
 
-Strona internetowa dla kortów tenisowych wraz z systemem rezerwacji online.
+Strona internetowa kortów tenisowych — **wizytówka obiektu** z sekcją aktualności,
+zarządzaną samodzielnie przez obsługę klubu.
 
 **Cel:**
-- Nowoczesna, funkcjonalna strona WWW dla kortów
-- System rezerwacji kortów zintegrowany z Google Calendar
-- W przyszłości: integracja z AI receptionist (to kolejny etap — poza zakresem bieżącej pracy)
+- Nowoczesna strona WWW, która sprzedaje obiekt: oferta, cennik, lokalizacja, kontakt
+- Sekcja aktualności (ogłoszenia, turnieje, promocje, galeria) — dodawana z panelu, bez programisty
+- Rezerwacje: **przekierowanie do zewnętrznego systemu kluby.org** (decyzja klienta, nie nasza)
+
+**Czym ten projekt już NIE jest:** systemem rezerwacji. Kod rezerwacji zostaje w repo
+jako zamrożony, ale nie jest rozwijany ani widoczny dla klienta.
 
 ---
 
@@ -21,70 +27,79 @@ Strona internetowa dla kortów tenisowych wraz z systemem rezerwacji online.
 |---|---|
 | **Nazwa kortów** | Budowlani Lublin |
 | **Zarządca** | GoRun Akademia Tenisa |
-| **Lokalizacja** | Andrzeja Struga 8, 20-709 Lublin, Polska |
+| **Lokalizacja** | Andrzeja Struga 8, 20-709 Lublin |
 | **Korty obecnie** | 4 korty mączkowe (zewnętrzne) |
-| **Korty w przyszłości** | +3 korty twarde (hala, planowane na przyszły rok) |
+| **Hala** | 3 korty kryte, w przygotowaniu (roboczo: sezon zimowy 2026/27) |
+| **Rezerwacje** | zewnętrznie, przez **kluby.org** (dawniej korty.org — ta sama firma) |
+
+⚠️ **Konto klubu na kluby.org jeszcze nie istnieje.** Do czasu jego założenia przyciski
+„Zarezerwuj kort" prowadzą na `rezerwacja-wkrotce.html`.
 
 ---
 
 ## 3. MARKI I LOGA
 
 Dwie równorzędne marki — żadna nie jest nadrzędna:
-- **Budowlani Lublin** — historyczna nazwa kortów, rozpoznawalna przez klientów. Logo: tarcza (czerwień, granat, biel). Plik: `Budowlani.png` (PNG z czarnym tłem)
-- **GoRun Akademia Tenisa** — nowy zarządca obiektu. Logo: sylwetka tenisisty + napis. Pliki: `GoRun_full_z_ciemnym_tlem.png` (wersja na ciemnym tle), `GoRun_full_jasny_bez_tla.png` (wersja bez tła, ale przeznaczona na ciemne tło)
+- **Budowlani Lublin** — historyczna nazwa, rozpoznawalna. Logo: tarcza (czerwień, granat, biel). Plik: `Budowlani_bez_tla.png`
+- **GoRun Akademia Tenisa** — zarządca obiektu. Logo: sylwetka tenisisty + napis. Plik: `GoRun_serwis_napis_jasny_bez_tla.png`
 
-**Zasada:** Oba loga zawsze obok siebie, w identycznych rozmiarach, bez hierarchii.
+**Zasada:** oba loga zawsze obok siebie, w zbliżonych rozmiarach, bez hierarchii.
 
 ---
 
 ## 4. DESIGN I STYL
 
-### Inspiracja wizualna
+### Inspiracja
 Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 
-### Paleta kolorów
+### Paleta (zmienne CSS w `index.html`)
 | Nazwa | HEX | Zastosowanie |
 |---|---|---|
-| Ceglasta mączka | `#C8622A` | Przyciski CTA, akcenty, cena |
-| Granat | `#1A2744` | Stats bar, nagłówki, tekst, navbar, footer |
-| Kremowe tło | `#F5F0E8` | Tło hero, sekcja CTA |
-| Czysta biel | `#FFFFFF` | Karty, sekcja oferty |
-| Zieleń (wolny) | `#EAF3DE` / `#3B6D11` | Status "wolny kort" |
-| Czerwień (zajęty) | `#FCF0EB` / `#993C1D` | Status "zajęty kort" |
+| Ceglasta mączka | `#C8622A` | CTA, akcenty, ceny, ikony |
+| Pomarańcz | `#E8722A` | akcent w hero |
+| Granat | `#1A2744` | navbar, stats bar, footer, tekst |
+| Kremowe tło | `#F5F0E8` | jasne sekcje (Aktualności, O nas) |
+| Biel | `#FFFFFF` | karty, Oferta, Cennik |
 
-### Zasady designu
-- **Jasna, czysta strona** — kremowe i białe tła, dużo przestrzeni
-- **Bez tekstur** — flat design
-- **Navbar ciemny** (`#111827`) — loga wyglądają najlepiej na ciemnym tle
-- **Footer ciemny** (`#111827`) — spójność z navbarem
-- **Typografia:** system font-sans, wagi 400/500 (bez bold)
-- **Zaokrąglenia:** subtelne (border-radius ~8px)
+### Zasady
+- Jasna, czysta strona — dużo przestrzeni, flat design, bez tekstur
+- Navbar i footer ciemne (granat) — loga wyglądają najlepiej na ciemnym tle
+- Typografia: **Outfit** (body, wagi 300–600)
+- Ikony: Tabler Icons (webfont z CDN)
+- Zaokrąglenia subtelne (8–14 px)
+- Mobile-first: karty Oferty i Aktualności przechodzą na mobile w poziomy scroll ze snapem,
+  stats bar w siatkę 2×2, tabela cennika przewija się we własnym pudełku
 
 ---
 
 ## 5. STRUKTURA STRONY
 
-### Strona główna (`index.html`)
-1. **Navbar** — ciemny, oba loga równorzędne, menu (Korty / Cennik / O nas / Kontakt), przełącznik PL/EN, przycisk CTA "Zarezerwuj kort →"
-2. **Hero** — kremowe tło, tytuł, podtytuł, dwa przyciski (główny CTA + "Zobacz korty"), widget "Dostępność dziś" po prawej (live podgląd kortów)
-3. **Stats bar** — granatowy pasek: liczba kortów / godziny otwarcia / płatność na miejscu
-4. **Sekcja Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Karnet miesięczny
-5. **CTA do rezerwacji** — kremowe tło, duży przycisk → podstrona rezerwacji
-6. **Footer** — ciemny, prawa autorskie, adres
+### `index.html` — strona główna ✅ gotowa
+1. **Navbar** — ciemny, oba loga, menu (Oferta / Cennik / Aktualności / Liga / O nas / Kontakt), przełącznik PL/EN, CTA
+2. **Hero** — zdjęcie kortu + gradient, nagłówek, dwa przyciski, **widget „Nadchodzące wydarzenia"** po prawej
+3. **Stats bar** — 4 korty mączkowe (3 kryte w przygotowaniu) / 8:00–22:00 / gotówka i karta / od 1974
+4. **Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Liga (kotwica `#liga` jest na trzeciej karcie)
+5. **Cennik** — tabela; ⚠️ trzy pozycje mają `[do uzupełnienia]`
+6. **Aktualności** — 3 najnowsze wpisy; sekcja `hidden`, gdy brak wpisów
+7. **O nas** — ⚠️ tekst jest SZKICEM, czeka na akceptację klienta
+8. **CTA** — granatowa sekcja z dużym przyciskiem
+9. **Footer** — loga, adres, godziny, kontakt (⚠️ telefon to atrapa), podpis Bloome
 
-### Podstrona rezerwacji (`rezerwacja.html`)
-- Osobna podstrona (nie modal)
-- Kalendarz z wyborem daty
-- Wybór kortu (1–4)
-- Wybór godziny (sloty co 30 min, minimalnie 60min, ale może być więcej np 90min)
-- Formularz danych (imię, nazwisko, telefon/email)
-- Potwierdzenie rezerwacji
+### `rezerwacja-wkrotce.html` — podstrona przejściowa ✅ gotowa
+Informuje, że rezerwacja online jest w przygotowaniu, i podaje numer telefonu jako
+drogę rezerwacji. Ma `noindex` — zniknie, gdy ruszy kluby.org, a zaindeksowany adres
+zostałby martwym linkiem w Google. ⚠️ Numer telefonu to atrapa.
 
-### Panel admina (`admin.html`)
-- Zabezpieczona podstrona (hasło)
-- Podgląd wszystkich rezerwacji
-- Widok dzienny/tygodniowy
-- Zintegrowany z Google Calendar (rezerwacje = eventy w kalendarzu)
+### `aktualnosci.html` — lista postów 🆕 do zbudowania
+Pełna lista wpisów z filtrowaniem po typie. Przyciski „Wszystkie aktualności"
+w `index.html` już do niej prowadzą — **dopóki nie powstanie, to martwy link**.
+
+### `admin.html` — panel obsługi 🆕 do zbudowania
+Logowanie hasłem, formularz dodawania/edycji postów, upload zdjęć (ze zmniejszaniem
+po stronie przeglądarki), publikacja i ukrywanie wpisów.
+
+### `rezerwacja.html` — ❄️ ZAMROŻONE
+Zostaje w repo, znika z nawigacji. Nie rozwijamy, nie kasujemy.
 
 ---
 
@@ -93,101 +108,148 @@ Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 ### Stack (zero kosztów operacyjnych)
 | Element | Technologia | Koszt |
 |---|---|---|
-| Frontend (strona) | HTML + CSS + Vanilla JavaScript | 0 zł |
-| Hosting | GitHub Pages lub Netlify | 0 zł |
-| Baza rezerwacji | Google Calendar (4 kalendarze = 4 korty) | 0 zł |
-| Backend/logika | Google Apps Script | 0 zł |
-| Dwujęzyczność | JavaScript i18n (PL/EN w jednym pliku) | 0 zł |
+| Frontend | HTML + CSS + Vanilla JS (jeden plik na stronę) | 0 zł |
+| Repozytorium | git, zdalny `origin` już skonfigurowany | 0 zł |
+| Hosting | GitHub Pages | 0 zł |
+| Baza postów | Arkusz Google (zakładka `Posty`) | 0 zł |
+| Backend / API postów | Google Apps Script (Web App) | 0 zł |
+| Zdjęcia do postów | Google Drive (pliki udostępniane pojedynczo) | 0 zł |
+| Dwujęzyczność | Słownik JS w pliku strony | 0 zł |
+| Fonty i ikony | Google Fonts + Tabler Icons (CDN) | 0 zł |
 | Domena | np. kortybudowlani.pl | ~50 zł/rok |
 
-### Architektura rezerwacji z Google Calendar
+### Architektura postów
 ```
-Użytkownik (strona WWW)
-       ↓  [fetch/POST]
-Google Apps Script (Web App)
-       ↓  [Calendar API]
-Google Calendar (4 kalendarze — po jednym na kort)
-       ↓
-Właściciele widzą rezerwacje w telefonie/komputerze
+admin.html  ──POST (hasło + treść + zdjęcia)──►  Apps Script
+                                                    │
+                                    ┌───────────────┴───────────────┐
+                                    ▼                               ▼
+                            Arkusz Google                    Google Drive
+                            (treść postów)                  (pliki zdjęć)
+                                    │
+index.html / aktualnosci.html ──GET (JSON)──────────┘
 ```
 
-**Dlaczego Google Calendar:**
-- Właściciele mają dostęp przez aplikację którą już znają
-- Automatyczne powiadomienia email
-- Zero kosztów
-- Łatwa integracja z przyszłym AI receptionist
+**Dlaczego tak:**
+- Weryfikacja hasła dzieje się **po stronie serwera** (Apps Script), nie w przeglądarce —
+  na stronie statycznej hasło w JS to atrapa zabezpieczenia
+- Arkusz jest awaryjnym interfejsem: gdyby panel padł, wpis da się dodać ręcznie
+- Publikacja jest natychmiastowa — bez przebudowy strony
+- Zero nowych zależności: Apps Script już był w projekcie
+
+**Świadomy koszt:** posty ładują się JavaScriptem, więc Google ich nie zaindeksuje.
+Dla wizytówki akceptowalne — pozycjonuje treść strony głównej, a ta jest statyczna w HTML.
+
+### Rozdział plików w Apps Script
+`Code.gs` (rezerwacje, zamrożone) i `Posty.gs` (aktualności) to osobne pliki w jednym
+projekcie. Apps Script pozwala mieć tylko jedną funkcję `doGet` i jedną `doPost`, więc
+`Code.gs` pyta `Posty.gs`, czy dana akcja należy do niego — dzięki temu żaden plik nie
+musi wiedzieć nic o drugim. Instrukcja łatki jest na dole `Posty.gs`.
+
+### Przełącznik `REZERWACJA_URL`
+Jedna stała u góry skryptu w `index.html` steruje wszystkimi pięcioma przyciskami
+„Zarezerwuj kort". Pusta = przyciski prowadzą na `rezerwacja-wkrotce.html` w tej samej
+karcie. Wypełniona = prowadzą na kluby.org w nowej karcie, z `rel="noopener"`.
+Napis na przycisku nie zmienia się w żadnym z tych stanów.
 
 ---
 
 ## 7. FUNKCJONALNOŚCI
 
-### Rezerwacje
-- Bez konieczności rejestracji konta (na razie)
-- Płatność wyłącznie na miejscu (gotówka i karta)
-- Sloty co 30 minut
-- Widok dostępności w czasie rzeczywistym (pobierany z Google Calendar)
-- Potwierdzenie rezerwacji na email/SMS (do ustalenia)
+### Aktualności
+Cztery typy wpisów (jeden model danych, różne pola opcjonalne):
+- **Ogłoszenie** — tytuł, treść, data publikacji
+- **Turniej / wydarzenie** — dodatkowo data wydarzenia; **tylko ten typ zasila widget w hero**
+- **Promocja** — dodatkowo data ważności; po jej upływie wpis znika automatycznie
+- **Galeria / relacja** — wpis oparty o zdjęcia
+
+Filtrowanie (status, data publikacji w przyszłości, wygasłe promocje) dzieje się
+**po stronie serwera** — czego serwer nie wyśle, tego nikt nie odczyta w podglądzie sieci.
+
+### Panel
+- Autor: **osoba nietechniczna** (znajomy / recepcja), często z telefonu → panel musi być prosty i odporny na pomyłki
+- Wymagane: podgląd przed publikacją, edycja i ukrycie wpisu, czytelne komunikaty błędów
+- Logowanie hasłem współdzielonym; hasło w Script Properties, nigdy w kodzie strony
+- Usuwanie wpisu = zmiana statusu na `ukryty`, nigdy kasowanie wiersza
 
 ### Dwujęzyczność
-- PL / EN
-- Przełącznik w navbarze
-- Wszystkie teksty tłumaczone przez JavaScript (jeden plik HTML)
-
-### Responsywność
-- Mobile-first (właściciele i klienci używają głównie telefonów)
+PL / EN przełączane w navbarze, strona zawsze startuje po polsku.
+⚠️ Nierozstrzygnięte: czy posty też mają być dwujęzyczne (podwaja pracę recepcji).
 
 ---
 
 ## 8. STATUS PROJEKTU
 
 ### ✅ Ukończone
-- [x] Zebranie wymagań i ustalenie kierunku
-- [x] Wybór technologii i architektury
-- [x] Mockup strony głównej (v1–v5) — zatwierdzony kierunek wizualny
-- [x] Paleta kolorów zatwierdzona
-- [x] Układ navbar z dwoma logami — zatwierdzony
+- [x] Zebranie wymagań, wybór technologii, kierunek wizualny
+- [x] `rezerwacja.html` + `Code.gs` (zamrożone)
+- [x] Aktualizacja dokumentacji pod nowy zakres
+- [x] `Posty.gs` — backend aktualności (napisany, **nie wdrożony**)
+- [x] `index.html` przerobiony na wizytówkę: widget wydarzeń, sekcja Aktualności,
+      przełącznik rezerwacji, Cennik, O nas, wzmianki o hali
+- [x] `rezerwacja-wkrotce.html`
 
-### 🔄 Następny krok
-- [ ] Mockup podstrony rezerwacji
-- [ ] Mockup panelu admina
-- [ ] Napisanie kodu HTML/CSS strony głównej
-- [ ] Integracja Google Calendar API (Google Apps Script)
-- [ ] Tłumaczenia PL/EN
-- [ ] Testy i wdrożenie
+### ⏭️ Następne kroki
+- [ ] **Wdrożyć `Posty.gs`** — wkleić do Apps Script, wstawić łatkę do `doGet`/`doPost`,
+      ustawić `ADMIN_PASSWORD`, podać `DRIVE_FOLDER_ID`, uruchomić `setupPosty()`, nowe wdrożenie
+- [ ] Uzupełnić stawki w Cenniku i prawdziwy numer telefonu (2 miejsca + stopka)
+- [ ] Akceptacja tekstu „O nas" przez klienta
+- [ ] `aktualnosci.html` — obecnie martwy link z dwóch miejsc
+- [ ] `admin.html` — panel obsługi
+- [ ] Testy na telefonie z osobą, która realnie będzie dodawać posty
+- [ ] Wdrożenie: hosting, domena, przekazanie hasła
+
+### ⚠️ Znane atrapy na stronie
+| Co | Gdzie |
+|---|---|
+| `+48 000 000 000` | stopka `index.html`, dwa miejsca w `rezerwacja-wkrotce.html` |
+| `kontakt@kortylublin.pl` | stopka `index.html`, `rezerwacja-wkrotce.html` |
+| `[do uzupełnienia]` ×3 | tabela cennika w `index.html` |
+| Tekst „O nas" | szkic, niezaakceptowany |
+| Link do `aktualnosci.html` | strona nie istnieje |
 
 ---
 
 ## 9. PLIKI PROJEKTU
 
+Katalog roboczy na komputerze Daniela:
+`D:\- Moje dokumenty\- Pulpit\Projekty\Korty` (repo git z podpiętym `origin`)
+
 ```
-projekt/
-├── PROJECT_CONTEXT.md        ← ten plik
-├── index.html                ← strona główna (do stworzenia)
-├── rezerwacja.html           ← podstrona rezerwacji (do stworzenia)
-├── admin.html                ← panel admina (do stworzenia)
-├── assets/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   ├── main.js
-│   │   ├── booking.js
-│   │   └── i18n.js           ← tłumaczenia PL/EN
-│   └── img/
-│       ├── Budowlani.png
-│       ├── GoRun_full_z_ciemnym_tlem.png
-│       └── GoRun_full_jasny_bez_tla.png
-└── apps-script/
-    └── Code.gs               ← Google Apps Script (backend rezerwacji)
+Korty/
+├── PROJECT_CONTEXT.md          ← ten plik
+├── claude/
+│   ├── DECYZJE_wizytowka_i_posty.md   ← aktualne decyzje
+│   └── DECYZJE_hala_i_sterowanie.md   ← częściowo nieaktualny (patrz nagłówek)
+├── index.html                  ← strona główna ✅
+├── rezerwacja-wkrotce.html     ← podstrona przejściowa ✅
+├── aktualnosci.html            ← lista postów (do stworzenia)
+├── admin.html                  ← panel obsługi (do stworzenia)
+├── rezerwacja.html             ← ZAMROŻONE
+├── assets/img/
+│   ├── Budowlani_bez_tla.png
+│   ├── GoRun_serwis_napis_jasny_bez_tla.png
+│   └── Zdjecie_kortu_2_poprawione.png
+├── apps-script/
+│   └── Posty.gs                ← backend aktualności
+└── _archiwum/                  ← stare wersje, poza gitem (.gitignore)
 ```
+
+`Code.gs` żyje wyłącznie w projekcie Apps Script i w projekcie Claude — nie ma go w repo.
 
 ---
 
 ## 10. NOTATKI I DECYZJE
 
-- Logo GoRun z ciemnym tłem używamy na ciemnym navbarze
-- Logo GoRun bez tła (jasne) używamy w jasnych sekcjach (jeśli potrzebne)
-- Logo Budowlani (PNG z czarnym tłem) — na ciemnym tle wygląda naturalnie
-- Rezerwacja NIE jest na stronie głównej — jest osobną podstroną, ale łatwo dostępną
-- Widget "Dostępność dziś" na stronie głównej to podgląd, nie formularz
-- W przyszłości: +3 korty twarde (indoor) — architektura musi to obsługiwać (osobne kalendarze)
 - Język roboczy z klientem: **polski**
+- Strona zawsze startuje po polsku, wybór języka nie jest zapamiętywany między wizytami
+- **kluby.org to nowa nazwa korty.org** — ta sama firma, ten sam ekosystem co sterowanie.org.
+  Konsekwencja: argument o vendor lock-in, którym odrzuciliśmy ofertę sterowanie.org,
+  osłabł — warto wrócić do tej decyzji przy hali
+- Rezerwacje idą do kluby.org — nie kontrolujemy tego systemu, więc nie obiecujemy
+  klientowi niczego, co od niego zależy
+- Hala komunikowana **bez twardej daty** — termin listopadowy potrafi się przesunąć,
+  a strona obiecująca coś, czego nie ma, szkodzi bardziej niż milczenie
+- `rezerwacja.html` i `Code.gs` (część rezerwacyjna) zamrożone, nie usunięte
+- Sterowanie obiektem (Shelly, oświetlenie, ogrzewanie hali) to **osobny wątek** —
+  decyzja o odpięciu go od systemu rezerwacji obroniła się przy zmianie systemu

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Korty Tenisowe Budowlani Lublin | GoRun Akademia Tenisa</title>
-  <meta name="description" content="4 korty mączkowe w sercu Lublina. Rezerwacja online bez rejestracji. Lekcje tenisa, liga amatorska. Andrzeja Struga 8, Lublin.">
+  <meta name="description" content="4 korty mączkowe w sercu Lublina, wkrótce 3 korty kryte. Lekcje tenisa, liga amatorska, turnieje. Andrzeja Struga 8, Lublin.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
@@ -116,9 +116,11 @@
 
     .navbar-menu a {
       color: rgba(255,255,255,0.70);
-      font-size: 19px;
+      /* Sześć pozycji zamiast czterech — zwężamy odstępy, żeby menu
+         nie zaczęło się zawijać na węższych laptopach. */
+      font-size: 16px;
       font-weight: 400;
-      padding: 10px 22px;
+      padding: 10px 13px;
       border-radius: 8px;
       letter-spacing: 0.2px;
       transition: background 0.15s, color 0.15s;
@@ -198,16 +200,6 @@
       box-shadow: 0 2px 8px rgba(200, 98, 42, 0.4);
     }
 
-    .btn-reserve-nav:hover {
-      background: #b5571f;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(200, 98, 42, 0.45);
-    }
-
-    .btn-reserve-nav:hover::after {
-      transform: translateX(3px);
-    }
-
     .hamburger {
       display: none;
       flex-direction: column;
@@ -266,7 +258,7 @@
 
     .hero-inner .container {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 340px;
       gap: 48px;
       align-items: center;
     }
@@ -368,11 +360,17 @@
 
     .btn-outline:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
 
-    /* Widget dostępności */
-    .availability-widget {
+    /* ─── WIDGET: NADCHODZĄCE WYDARZENIA ───
+       Zastąpił widget dostępności kortów. Powód: dostępność pochodziła
+       z naszego Google Calendar, który przestał być źródłem prawdy po
+       przejściu rezerwacji na korty.org. Widget pokazujący nieprawdziwe
+       dane jest gorszy niż jego brak.
+       Teraz czyta z tego samego API co sekcja Aktualności — filtruje
+       wpisy typu "turniej" z datą w przyszłości. */
+    .hero-widget {
       background: rgba(255,255,255,0.97);
       border-radius: 14px;
-      padding: 26px 28px;
+      padding: 24px 26px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.2);
       animation: fadeInUp 0.7s 0.2s ease both;
     }
@@ -381,7 +379,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
     }
 
     .widget-title {
@@ -392,108 +392,80 @@
       letter-spacing: 0.8px;
     }
 
-    .widget-live {
+    .widget-header i {
+      font-size: 18px;
+      color: var(--clay);
+    }
+
+    .event-item {
       display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 13px;
-      color: var(--free-fg);
-      font-weight: 500;
-    }
-
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      background: var(--free-fg);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .widget-date { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-
-    .court-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
       border-bottom: 1px solid var(--border);
     }
 
-    .court-row:last-of-type { border-bottom: none; }
+    .event-item:last-child { border-bottom: none; }
 
-    .court-name { font-size: 14px; font-weight: 500; color: var(--navy); min-width: 52px; }
-
-    .court-slots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-
-    .slot {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-    .slot-halves {
-      display: flex;
-      width: 36px;
-      height: 14px;
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .slot-half { flex: 1; }
-    .slot-half-free { background: var(--free-bg); }
-    .slot-half-busy { background: var(--busy-bg); }
-    .slot-label { font-size: 11px; color: var(--muted); }
-
-    .widget-footer {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: #bbb;
-      text-align: center;
-    }
-
-    .widget-slider-wrap {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .widget-slider {
-      width: 100%;
-      accent-color: var(--clay);
-      cursor: pointer;
-      height: 4px;
-    }
-
-    .widget-legend {
-      display: flex;
-      gap: 14px;
-      margin-top: 10px;
-    }
-
-    .widget-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
+    /* Kafelek z datą — czytelny „na jeden rzut oka". Dzień dużą cyfrą,
+       miesiąc małymi literami pod spodem. */
+    .event-date {
       flex-shrink: 0;
+      width: 46px;
+      text-align: center;
+      background: #FDF0E8;
+      border-radius: 8px;
+      padding: 6px 0 5px;
     }
 
-    .legend-dot-free { background: var(--free-bg); border: 1px solid var(--free-fg); }
-    .legend-dot-busy { background: var(--busy-bg); border: 1px solid var(--busy-fg); }
+    .event-day {
+      display: block;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--clay);
+      line-height: 1;
+    }
+
+    .event-month {
+      display: block;
+      font-size: 10px;
+      color: var(--clay);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+    }
+
+    .event-body { min-width: 0; }
+
+    .event-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      line-height: 1.35;
+      margin-bottom: 3px;
+    }
+
+    .event-meta {
+      font-size: 12px;
+      color: var(--muted);
+      /* Tytuły turniejów bywają długie — ucinamy do dwóch linijek,
+         żeby widget nie rozpychał hero w nieprzewidywalny sposób. */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Stan pusty i stan ładowania są tu pełnoprawnymi widokami, nie
+       „awarią". Widget bez wydarzeń to normalna sytuacja — poza sezonem
+       turniejowym będzie tak przez większość roku. */
+    .widget-msg {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      padding: 18px 8px;
+      line-height: 1.6;
+    }
 
     .widget-cta {
       display: block;
@@ -505,7 +477,8 @@
       padding: 10px;
       font-size: 13px;
       font-weight: 500;
-      margin-top: 14px;
+      margin-top: 16px;
+      text-align: center;
       transition: background 0.15s;
     }
 
@@ -620,9 +593,7 @@
       margin-bottom: 22px;
     }
 
-    .card.featured .card-icon { background: #FDF0E8; }
     .card-icon i { font-size: 28px; color: var(--clay); }
-    .card.featured .card-icon i { font-size: 28px; color: var(--clay); }
 
     .card-title { font-size: 17px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .card-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; flex: 1; }
@@ -653,8 +624,248 @@
       transition: opacity 0.15s;
     }
 
-    .card.featured .card-btn { background: var(--navy); }
     .card-btn:hover { opacity: 0.88; }
+
+    /* ─── AKTUALNOŚCI ───
+       Cała sekcja jest domyślnie ukryta (hidden w HTML) i pokazuje się
+       dopiero, gdy z serwera przyjdzie przynajmniej jeden post. Powód:
+       pusta sekcja „Aktualności" z napisem „brak wpisów" wygląda na
+       porzuconą stronę. Lepiej, żeby odwiedzający jej wtedy nie zobaczył. */
+    .aktualnosci { background: var(--cream); padding: 80px 0; }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .news-card {
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .news-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
+
+    .news-media {
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .news-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .news-body { padding: 24px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+
+    .news-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Kolor plakietki niesie informację o typie wpisu, więc nie jest
+       dekoracją — ale nie jest też JEDYNYM nośnikiem, bo obok stoi
+       tekst. Kolor sam w sobie nie działa dla osób nierozróżniających
+       barw i nie działa na wydruku. */
+    .news-badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .news-badge.ogloszenie { background: #EEF1F7; color: var(--navy); }
+    .news-badge.turniej    { background: #FDF0E8; color: var(--clay); }
+    .news-badge.promocja   { background: #EAF3DE; color: var(--free-fg); }
+    .news-badge.galeria    { background: #F2ECF7; color: #5B3B7A; }
+
+    .news-date { font-size: 12px; color: #bbb; }
+
+    .news-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--navy);
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .news-excerpt {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .news-extra {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--clay);
+      margin-top: 14px;
+      font-weight: 500;
+    }
+
+    .news-extra i { font-size: 15px; }
+
+    .news-footer { text-align: center; margin-top: 40px; }
+
+    .btn-news-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid rgba(26, 39, 68, 0.25);
+      border-radius: 8px;
+      padding: 13px 28px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .btn-news-all:hover { border-color: var(--navy); background: rgba(26, 39, 68, 0.04); }
+
+    /* ─── CENNIK ───
+       Tabela cen, a nie karty. Powód: karty są dobre, gdy użytkownik
+       WYBIERA jedną z kilku opcji. Tutaj on PORÓWNUJE stawki między
+       sobą — a do porównywania liczb nic nie bije wiersza i kolumny. */
+    .cennik { background: var(--white); padding: 80px 0; }
+
+    .price-table-wrap {
+      /* Tabela na wąskim ekranie przewija się we własnym pudełku,
+         zamiast rozpychać całą stronę w poziomie. */
+      overflow-x: auto;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+    }
+
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+
+    .price-table caption {
+      text-align: left;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 18px 24px 0;
+      caption-side: top;
+    }
+
+    .price-table th,
+    .price-table td {
+      padding: 15px 24px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+
+    .price-table thead th {
+      background: var(--cream);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .price-table tbody tr:last-child td { border-bottom: none; }
+    .price-table tbody tr:hover { background: #fcfbf9; }
+
+    .price-row-name { font-weight: 500; color: var(--navy); }
+    .price-row-note { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .price-value { font-weight: 500; color: var(--clay); white-space: nowrap; }
+
+    /* Wiersz dotyczący hali — wizualnie oddzielony, bo opisuje coś,
+       czego jeszcze nie ma. Klient musi to zobaczyć, zanim przeczyta cenę. */
+    .price-table tr.soon td { background: #FBF7F2; }
+
+    .price-soon-tag {
+      display: inline-block;
+      background: #FDF0E8;
+      color: var(--clay);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .cennik-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .cennik-note i { color: var(--clay); font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── O NAS ─── */
+    .o-nas { background: var(--cream); padding: 80px 0; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 15px;
+      color: #5a6270;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--navy); font-weight: 500; }
+
+    .about-facts {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: var(--white);
+      border-radius: 14px;
+      padding: 8px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .about-fact {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 26px;
+    }
+
+    .about-fact:not(:last-child) { border-bottom: 1px solid #f2f2f2; }
+
+    .about-fact i { font-size: 24px; color: var(--clay); flex-shrink: 0; }
+    .about-fact-value { font-size: 15px; font-weight: 500; color: var(--navy); }
+    .about-fact-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    @media (max-width: 900px) {
+      .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
 
     /* ─── CTA SECTION ─── */
     .cta-section { background: var(--navy); padding: 80px 0; text-align: center; }
@@ -722,8 +933,6 @@
       gap: 48px;
       margin-bottom: 40px;
     }
-
-    .footer-brand {}
 
     .footer-logos {
       display: flex;
@@ -868,7 +1077,7 @@
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
-      .navbar-menu, .navbar-right .lang-switch, .btn-reserve-nav { display: none; }
+      .navbar-menu, .navbar-right .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
       .hamburger { display: flex; }
 
       .hero-inner .container { grid-template-columns: 1fr; }
@@ -878,10 +1087,7 @@
          każdej linijki lądowałaby na niemal przezroczystym tle i była
          nieczytelna. Zastępujemy go jednolitym przyciemnieniem. */
       .hero-overlay { background: rgba(10, 18, 35, 0.68); }
-      /* Widget na desktopie jest ukryty w wąskiej kolumnie obok tekstu —
-         na mobile pozwalamy mu normalnie "spłynąć" w single-column grid,
-         czyli wyląduje pod tekstem hero, zamiast go całkiem chować. */
-      .availability-widget { margin-top: 28px; }
+      .hero-widget { margin-top: 28px; }
       .hero-text h1 { font-size: 34px; }
 
       /* Zamiast flex-wrap + flex-basis:50% (który potrafi się nieprzewidywalnie
@@ -909,7 +1115,21 @@
       }
       .card { flex: 0 0 88%; scroll-snap-align: center; scroll-snap-stop: always; }
       .card-desc { flex: 0 0 auto; }
-      .cta-badges { gap: 16px; }
+
+      /* Aktualności na mobile: ta sama karuzela co oferta. Spójność
+         zachowania w obrębie strony jest ważniejsza niż to, że siatka
+         też by zadziałała. */
+      .news-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        padding: 0 6% 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        align-items: flex-start;
+      }
+      .news-card { flex: 0 0 88%; scroll-snap-align: center; scroll-snap-stop: always; }
+      .news-excerpt { flex: 0 0 auto; }
     }
 
     @media (max-width: 520px) {
@@ -944,6 +1164,7 @@
         <ul class="navbar-menu">
           <li><a href="#oferta" data-i18n="nav_oferta">Oferta</a></li>
           <li><a href="#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="#aktualnosci" data-i18n="nav_aktualnosci">Aktualności</a></li>
           <li><a href="#liga" data-i18n="nav_liga">Liga</a></li>
           <li><a href="#o-nas" data-i18n="nav_o_nas">O nas</a></li>
           <li><a href="#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
@@ -954,9 +1175,10 @@
             <span class="lang-pl-span active">PL</span>
             <span class="lang-en-span">EN</span>
           </div>
-          <a href="rezerwacja.html">
+          <!-- data-reserve-link: adres nadaje JavaScript ze stałej REZERWACJA_URL.
+               Patrz komentarz przy tej stałej na dole pliku. -->
+          <a href="#kontakt" data-reserve-link>
             <button class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</button>
-          </a>
           </a>
         </div>
 
@@ -969,6 +1191,7 @@
     <div class="mobile-menu" id="mobile-menu">
       <a href="#oferta" onclick="toggleMenu()" data-i18n="nav_oferta">Oferta</a>
       <a href="#cennik" onclick="toggleMenu()" data-i18n="nav_cennik">Cennik</a>
+      <a href="#aktualnosci" onclick="toggleMenu()" data-i18n="nav_aktualnosci">Aktualności</a>
       <a href="#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
       <a href="#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
       <a href="#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
@@ -976,7 +1199,7 @@
         <span class="lang-pl-span active">PL</span>
         <span class="lang-en-span">EN</span>
       </div>
-      <a href="rezerwacja.html" class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
+      <a href="#kontakt" data-reserve-link class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
     </div>
   </header>
 
@@ -989,44 +1212,31 @@
         <div class="hero-text">
           <div class="hero-eyebrow" data-i18n="hero_eyebrow">Lublin · Korty tenisowe Budowlani</div>
           <h1 data-i18n-html="hero_h1">Graj w miejscu<br><em>z wyjątkową atmosferą</em></h1>
-          <p data-i18n="hero_p1">4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.</p>
+          <p data-i18n="hero_p1">4 korty mączkowe, a wkrótce także 3 korty kryte. Spokojne otoczenie i tenis w najlepszym wydaniu.</p>
           <p class="hero-sub2" data-i18n="hero_p2">Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.</p>
           <div class="hero-btns">
-            <a href="rezerwacja.html"><button class="btn-primary" data-i18n="hero_btn_reserve">Zarezerwuj kort →</button></a>
+            <a href="#kontakt" data-reserve-link><button class="btn-primary" data-i18n="hero_btn_reserve">Zarezerwuj kort →</button></a>
             <a href="#oferta"><button class="btn-outline" data-i18n="hero_btn_offer">Zobacz ofertę</button></a>
           </div>
           <div class="hero-badges">
-            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge1">Szybka rezerwacja online</span></span>
-            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge2">Bez rejestracji</span></span>
+            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge1">4 korty mączkowe</span></span>
+            <span><i class="ti ti-check"></i> <span data-i18n="hero_badge2">Lekcje z trenerem</span></span>
             <span><i class="ti ti-check"></i> <span data-i18n="hero_badge3">Płatność na miejscu</span></span>
           </div>
         </div>
 
-        <div class="availability-widget">
+        <!-- ─── WIDGET: NADCHODZĄCE WYDARZENIA ─── -->
+        <div class="hero-widget">
           <div class="widget-header">
-            <div class="widget-title" data-i18n="widget_title">Dostępność dziś</div>
-            <div class="widget-live"><div class="live-dot"></div> <span data-i18n="widget_live">na żywo</span></div>
-          </div>
-          <div class="widget-date" id="widget-date">ładowanie...</div>
-
-          <div id="widget-courts"></div>
-
-          <div class="widget-slider-wrap">
-            <input type="range" class="widget-slider" id="widget-slider"
-              min="0" max="10" value="2" step="1">
+            <div class="widget-title" data-i18n="widget_title">Nadchodzące wydarzenia</div>
+            <i class="ti ti-calendar-event"></i>
           </div>
 
-          <div class="widget-legend">
-            <div class="widget-legend-item">
-              <div class="legend-dot legend-dot-free"></div> <span data-i18n="widget_legend_free">Wolny</span>
-            </div>
-            <div class="widget-legend-item">
-              <div class="legend-dot legend-dot-busy"></div> <span data-i18n="widget_legend_busy">Zajęty</span>
-            </div>
+          <div id="widget-events">
+            <div class="widget-msg" data-i18n="widget_loading">Wczytywanie…</div>
           </div>
 
-          <div class="widget-footer" data-i18n="widget_footer">dane pobierane z Google Calendar</div>
-          <a href="rezerwacja.html"><button class="widget-cta" data-i18n="widget_cta">Sprawdź wszystkie terminy →</button></a>
+          <a href="aktualnosci.html"><div class="widget-cta" data-i18n="widget_cta">Wszystkie aktualności →</div></a>
         </div>
       </div>
     </div>
@@ -1038,8 +1248,8 @@
       <div class="stat-item">
         <div class="stat-icon-wrap"><i class="ti ti-ball-tennis stat-icon"></i></div>
         <div>
-          <div class="stat-value" data-i18n="stat1_value">4 korty</div>
-          <div class="stat-label" data-i18n="stat1_label">mączkowe, zewnętrzne</div>
+          <div class="stat-value" data-i18n="stat1_value">4 korty mączkowe</div>
+          <div class="stat-label" data-i18n="stat1_label">3 kryte w przygotowaniu</div>
         </div>
       </div>
       <div class="stat-item">
@@ -1077,18 +1287,18 @@
         <div class="card">
           <div class="card-icon"><i class="ti ti-ball-tennis"></i></div>
           <div class="card-title" data-i18n="card1_title">Wynajem kortu</div>
-          <p class="card-desc" data-i18n="card1_desc">4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.</p>
+          <p class="card-desc" data-i18n="card1_desc">4 korty mączkowe dostępne codziennie, a wkrótce również 3 korty kryte. Zarezerwuj termin i przyjdź grać — bez zbędnych formalności.</p>
           <div class="card-price">
             <span class="price-amount">60 zł</span>
             <span class="price-per" data-i18n="card1_price_per">/ godzina</span>
           </div>
           <ul class="card-features">
-            <li><i class="ti ti-check"></i> <span data-i18n="card1_f1">Rezerwacja online 24/7</span></li>
-            <li><i class="ti ti-check"></i> <span data-i18n="card1_f2">Bez rejestracji konta</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f1">Korty dostępne codziennie</span></li>
+            <li><i class="ti ti-check"></i> <span data-i18n="card1_f2">3 korty kryte — już wkrótce</span></li>
             <li><i class="ti ti-check"></i> <span data-i18n="card1_f3">Płatność na miejscu</span></li>
             <li><i class="ti ti-check"></i> <span data-i18n="card1_f4">Sprzęt do wypożyczenia</span></li>
           </ul>
-          <a href="rezerwacja.html"><button class="card-btn" data-i18n="card1_btn">Zarezerwuj kort →</button></a>
+          <a href="#kontakt" data-reserve-link><button class="card-btn" data-i18n="card1_btn">Zarezerwuj kort →</button></a>
         </div>
 
         <div class="card featured">
@@ -1109,7 +1319,7 @@
           <a href="#kontakt"><button class="card-btn" data-i18n="card2_btn">Zapisz się →</button></a>
         </div>
 
-        <div class="card">
+        <div class="card" id="liga">
           <div class="card-icon"><i class="ti ti-trophy"></i></div>
           <div class="card-title" data-i18n="card3_title">Liga tenisa</div>
           <p class="card-desc" data-i18n="card3_desc">Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.</p>
@@ -1129,12 +1339,173 @@
     </div>
   </section>
 
+  <!-- ─── CENNIK ───
+       UWAGA DLA NAS: liczby oznaczone jako [do uzupełnienia] czekają na
+       stawki od klienta. Wszystkie ceny są w jednym miejscu — w tej tabeli
+       — a nie rozsypane po stronie, więc aktualizacja to jedna sekcja. -->
+  <section class="cennik" id="cennik">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow" data-i18n="section_cennik_eyebrow">Przejrzyste stawki</div>
+        <h2 class="section-title" data-i18n="section_cennik_title">Cennik</h2>
+        <p class="section-sub" data-i18n="section_cennik_sub">Płatność na miejscu — gotówką lub kartą. Bez opłat z góry i bez ukrytych kosztów.</p>
+      </div>
+
+      <div class="price-table-wrap">
+        <table class="price-table">
+          <thead>
+            <tr>
+              <th data-i18n="price_col_item">Pozycja</th>
+              <th data-i18n="price_col_price">Cena</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_court_name">Kort mączkowy</div>
+                <div class="price-row-note" data-i18n="price_court_note">dni powszednie, do 16:00</div>
+              </td>
+              <td class="price-value">60 zł / <span data-i18n="price_unit_hour">godz.</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_court_peak_name">Kort mączkowy</div>
+                <div class="price-row-note" data-i18n="price_court_peak_note">wieczory i weekendy</div>
+              </td>
+              <td class="price-value">[do uzupełnienia]</td>
+            </tr>
+            <tr class="soon">
+              <td>
+                <div class="price-row-name">
+                  <span data-i18n="price_indoor_name">Kort kryty</span>
+                  <span class="price-soon-tag" data-i18n="price_soon_tag">wkrótce</span>
+                </div>
+                <div class="price-row-note" data-i18n="price_indoor_note">3 korty, sezon zimowy</div>
+              </td>
+              <td class="price-value">[do uzupełnienia]</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_lesson_name">Lekcja indywidualna</div>
+                <div class="price-row-note" data-i18n="price_lesson_note">z trenerem GoRun, piłki wliczone</div>
+              </td>
+              <td class="price-value">120 zł / 60 min</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_group_name">Zajęcia grupowe</div>
+                <div class="price-row-note" data-i18n="price_group_note">dzieci i dorośli</div>
+              </td>
+              <td class="price-value">[do uzupełnienia]</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_league_name">Liga amatorska</div>
+                <div class="price-row-note" data-i18n="price_league_note">wpisowe za cały sezon</div>
+              </td>
+              <td class="price-value">150 zł</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_racket_name">Wypożyczenie rakiety</div>
+              </td>
+              <td class="price-value">10 zł</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="price-row-name" data-i18n="price_balls_name">Piłki (tuba)</div>
+              </td>
+              <td class="price-value">15 zł</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cennik-note">
+        <i class="ti ti-info-circle"></i>
+        <span data-i18n="cennik_note">Karnety i stawki dla grup zorganizowanych ustalamy indywidualnie — zadzwoń, doradzimy najkorzystniejszy wariant.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AKTUALNOŚCI ───
+       hidden do momentu, aż serwer zwróci przynajmniej jeden post -->
+  <section class="aktualnosci" id="aktualnosci" hidden>
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow" data-i18n="section_news_eyebrow">Co u nas słychać</div>
+        <h2 class="section-title" data-i18n="section_news_title">Aktualności</h2>
+      </div>
+
+      <div class="news-grid" id="news-grid"></div>
+
+      <div class="news-footer">
+        <a href="aktualnosci.html">
+          <button class="btn-news-all" data-i18n="news_all_btn">Zobacz wszystkie wpisy →</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── O NAS ───
+       UWAGA DLA NAS: tekst jest SZKICEM napisanym z faktów, które już były
+       w projekcie (rok 1974, dwie marki, adres, liczba kortów). Nic tu nie
+       zostało dopowiedziane „z głowy", ale wszystko wymaga potwierdzenia
+       przez klienta — to jego historia, nie nasza. -->
+  <section class="o-nas" id="o-nas">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow" data-i18n="section_about_eyebrow">Kim jesteśmy</div>
+        <h2 class="section-title" data-i18n="section_about_title">O nas</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p data-i18n-html="about_p1"><strong>Budowlani Lublin</strong> to nazwa, którą lublinianie znają od pokoleń. Korty przy Andrzeja Struga działają nieprzerwanie od 1974 roku i przez ten czas przewinęło się przez nie kilka pokoleń tenisistów — od pierwszych lekcji po ligowe mecze.</p>
+          <p data-i18n-html="about_p2">Dziś obiektem zarządza <strong>GoRun Akademia Tenisa</strong>. Zachowujemy to, co w tym miejscu najlepsze — kameralną atmosferę i mączkę, na której naprawdę chce się grać — i dokładamy to, czego brakowało: trenerów z certyfikatami, ligę amatorską i turnieje dla graczy na każdym poziomie.</p>
+          <p data-i18n-html="about_p3">Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami. Prace już trwają — o terminie otwarcia poinformujemy w aktualnościach.</p>
+        </div>
+
+        <div class="about-facts">
+          <div class="about-fact">
+            <i class="ti ti-award"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="about_fact1_value">Od 1974 roku</div>
+              <div class="about-fact-label" data-i18n="about_fact1_label">nieprzerwanej działalności</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-ball-tennis"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="about_fact2_value">4 korty mączkowe</div>
+              <div class="about-fact-label" data-i18n="about_fact2_label">otwarte codziennie</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-building-arch"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="about_fact3_value">3 korty kryte</div>
+              <div class="about-fact-label" data-i18n="about_fact3_label">w przygotowaniu</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-map-pin"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="about_fact4_value">Andrzeja Struga 8</div>
+              <div class="about-fact-label" data-i18n="about_fact4_label">Lublin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── CTA ─── -->
   <section class="cta-section">
     <div class="container">
       <h2 data-i18n-html="cta_h2">Zarezerwuj kort<br><em>już dziś</em></h2>
       <p data-i18n="cta_p">Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.</p>
-      <a href="rezerwacja.html"><button class="btn-cta-main" data-i18n="cta_btn">Zarezerwuj kort</button></a>
+      <a href="#kontakt" data-reserve-link><button class="btn-cta-main" data-i18n="cta_btn">Zarezerwuj kort</button></a>
     </div>
   </section>
 
@@ -1143,7 +1514,6 @@
     <div class="container">
       <div class="footer-grid">
 
-        <!-- Kolumna 1: Marki -->
         <div class="footer-brand">
           <div class="footer-logos">
             <img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin">
@@ -1153,7 +1523,6 @@
           <p class="footer-tagline" data-i18n="footer_tagline">4 korty mączkowe w sercu Lublina. Gramy od 1974 roku.</p>
         </div>
 
-        <!-- Kolumna 2: Adres i godziny -->
         <div>
           <div class="footer-col-title" data-i18n="footer_location_title">Lokalizacja</div>
           <ul class="footer-contact-list">
@@ -1162,7 +1531,6 @@
           </ul>
         </div>
 
-        <!-- Kolumna 3: Telefon i email -->
         <div>
           <div class="footer-col-title" data-i18n="footer_contact_title">Kontakt</div>
           <ul class="footer-contact-list">
@@ -1171,7 +1539,6 @@
           </ul>
         </div>
 
-        <!-- Kolumna 3: Bloome -->
         <div class="footer-bloome">
           <div class="footer-bloome-label" data-i18n="footer_bloome_label">Projekt i realizacja</div>
           <div class="footer-bloome-name">Bloome</div>
@@ -1188,7 +1555,42 @@
 
   <!-- ─── JAVASCRIPT ─── -->
   <script>
-    // Hamburger menu
+    /* =========================================================
+       KONFIGURACJA — jedyne miejsce do zmiany przy uruchamianiu
+       ========================================================= */
+
+    // Backend — Google Apps Script Web App (ten sam projekt co rezerwacje,
+    // ale używamy z niego wyłącznie akcji od postów).
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
+
+    /* ADRES REZERWACJI — przełącznik na cały serwis.
+       ---------------------------------------------------------
+       PUSTY  = strona klubu na kluby.org jeszcze nie istnieje. Przyciski
+                „Zarezerwuj kort" prowadzą do podstrony wyjaśniającej,
+                że rezerwacja online jest w przygotowaniu.
+       ADRES  = przyciski prowadzą prosto na kluby.org, w nowej karcie.
+
+       DLACZEGO TAK, A NIE PRZEZ EDYCJĘ LINKÓW W HTML:
+       linków „Zarezerwuj" jest na stronie pięć. Gdyby każdy miał adres
+       wpisany na sztywno, uruchomienie kluby.org oznaczałoby pięć edycji
+       w pięciu miejscach — i pierwszą rzeczą, która by się zdarzyła,
+       byłoby przeoczenie jednego. Tutaj zmieniasz jedną linijkę.
+
+       NAPIS NA PRZYCISKU NIE ZMIENIA SIĘ w żadnym z tych stanów. Klient
+       klika „Zarezerwuj kort" i trafia tam, gdzie się rezerwuje — dziś
+       jest to strona z numerem telefonu, jutro będzie grafik online.
+       Z jego punktu widzenia to ta sama intencja. */
+    const REZERWACJA_URL = '';
+
+    // Dokąd prowadzą przyciski, dopóki powyższy adres jest pusty.
+    const REZERWACJA_FALLBACK = 'rezerwacja-wkrotce.html';
+
+    const MAX_EVENTS_IN_WIDGET = 3;  // ile turniejów mieści się w hero
+    const MAX_NEWS_ON_HOMEPAGE = 3;  // ile wpisów na stronie głównej
+
+    /* =========================================================
+       MENU
+       ========================================================= */
     function toggleMenu() {
       document.getElementById('mobile-menu').classList.toggle('open');
     }
@@ -1199,26 +1601,31 @@
        ========================================================= */
     const TRANSLATIONS = {
       pl: {
-        nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+        nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_aktualnosci: 'Aktualności',
+        nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
         btn_reserve: 'Zarezerwuj kort',
         hero_eyebrow: 'Lublin · Korty tenisowe Budowlani',
         hero_h1: 'Graj w miejscu<br><em>z wyjątkową atmosferą</em>',
-        hero_p1: '4 korty mączkowe, spokojne otoczenie i tenis w najlepszym wydaniu.',
+        hero_p1: '4 korty mączkowe, a wkrótce także 3 korty kryte. Spokojne otoczenie i tenis w najlepszym wydaniu.',
         hero_p2: 'Tworzymy przestrzeń, w której liczy się nie tylko gra, ale też dobra energia i wspólnie spędzony czas.',
         hero_btn_reserve: 'Zarezerwuj kort →', hero_btn_offer: 'Zobacz ofertę',
-        hero_badge1: 'Szybka rezerwacja online', hero_badge2: 'Bez rejestracji', hero_badge3: 'Płatność na miejscu',
-        widget_title: 'Dostępność dziś', widget_live: 'na żywo',
-        widget_legend_free: 'Wolny', widget_legend_busy: 'Zajęty',
-        widget_footer: 'dane pobierane z Google Calendar', widget_cta: 'Sprawdź wszystkie terminy →',
-        stat1_value: '4 korty', stat1_label: 'mączkowe, zewnętrzne',
+        hero_badge1: '4 korty mączkowe', hero_badge2: 'Lekcje z trenerem', hero_badge3: 'Płatność na miejscu',
+
+        widget_title: 'Nadchodzące wydarzenia',
+        widget_loading: 'Wczytywanie…',
+        widget_empty: 'Brak zaplanowanych wydarzeń.<br>Zajrzyj wkrótce.',
+        widget_error: 'Nie udało się wczytać wydarzeń.',
+        widget_cta: 'Wszystkie aktualności →',
+
+        stat1_value: '4 korty mączkowe', stat1_label: '3 kryte w przygotowaniu',
         stat2_label: 'godziny otwarcia',
         stat3_value: 'Gotówka i karta', stat3_label: 'płatność na miejscu',
         stat4_value: 'Od 1974 roku', stat4_label: 'tradycja i doświadczenie',
         section_oferta_title: 'Nasza oferta',
         card1_title: 'Wynajem kortu',
-        card1_desc: '4 korty mączkowe dostępne codziennie. Zarezerwuj online i przyjdź grać — bez zbędnych formalności.',
+        card1_desc: '4 korty mączkowe dostępne codziennie, a wkrótce również 3 korty kryte. Zarezerwuj termin i przyjdź grać — bez zbędnych formalności.',
         card1_price_per: '/ godzina',
-        card1_f1: 'Rezerwacja online 24/7', card1_f2: 'Bez rejestracji konta', card1_f3: 'Płatność na miejscu', card1_f4: 'Sprzęt do wypożyczenia',
+        card1_f1: 'Korty dostępne codziennie', card1_f2: '3 korty kryte — już wkrótce', card1_f3: 'Płatność na miejscu', card1_f4: 'Sprzęt do wypożyczenia',
         card1_btn: 'Zarezerwuj kort →',
         card2_badge: 'Popularne', card2_title: 'Lekcje tenisa',
         card2_desc: 'Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.',
@@ -1230,6 +1637,36 @@
         card3_price_per: '/ sezon',
         card3_f1: 'Mecze w dogodnych terminach', card3_f2: 'Tabela i statystyki online', card3_f3: 'Podział na grupy poziomów', card3_f4: 'Nagrody dla najlepszych',
         card3_btn: 'Dołącz do ligi →',
+
+        section_news_eyebrow: 'Co u nas słychać',
+        section_news_title: 'Aktualności',
+        news_all_btn: 'Zobacz wszystkie wpisy →',
+        typ_ogloszenie: 'Ogłoszenie', typ_turniej: 'Turniej', typ_promocja: 'Promocja', typ_galeria: 'Galeria',
+        news_event_date: 'Termin:', news_valid_until: 'Obowiązuje do:',
+
+        section_cennik_eyebrow: 'Przejrzyste stawki',
+        section_cennik_title: 'Cennik',
+        section_cennik_sub: 'Płatność na miejscu — gotówką lub kartą. Bez opłat z góry i bez ukrytych kosztów.',
+        price_col_item: 'Pozycja', price_col_price: 'Cena', price_unit_hour: 'godz.',
+        price_court_name: 'Kort mączkowy', price_court_note: 'dni powszednie, do 16:00',
+        price_court_peak_name: 'Kort mączkowy', price_court_peak_note: 'wieczory i weekendy',
+        price_indoor_name: 'Kort kryty', price_indoor_note: '3 korty, sezon zimowy', price_soon_tag: 'wkrótce',
+        price_lesson_name: 'Lekcja indywidualna', price_lesson_note: 'z trenerem GoRun, piłki wliczone',
+        price_group_name: 'Zajęcia grupowe', price_group_note: 'dzieci i dorośli',
+        price_league_name: 'Liga amatorska', price_league_note: 'wpisowe za cały sezon',
+        price_racket_name: 'Wypożyczenie rakiety', price_balls_name: 'Piłki (tuba)',
+        cennik_note: 'Karnety i stawki dla grup zorganizowanych ustalamy indywidualnie — zadzwoń, doradzimy najkorzystniejszy wariant.',
+
+        section_about_eyebrow: 'Kim jesteśmy',
+        section_about_title: 'O nas',
+        about_p1: '<strong>Budowlani Lublin</strong> to nazwa, którą lublinianie znają od pokoleń. Korty przy Andrzeja Struga działają nieprzerwanie od 1974 roku i przez ten czas przewinęło się przez nie kilka pokoleń tenisistów — od pierwszych lekcji po ligowe mecze.',
+        about_p2: 'Dziś obiektem zarządza <strong>GoRun Akademia Tenisa</strong>. Zachowujemy to, co w tym miejscu najlepsze — kameralną atmosferę i mączkę, na której naprawdę chce się grać — i dokładamy to, czego brakowało: trenerów z certyfikatami, ligę amatorską i turnieje dla graczy na każdym poziomie.',
+        about_p3: 'Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami. Prace już trwają — o terminie otwarcia poinformujemy w aktualnościach.',
+        about_fact1_value: 'Od 1974 roku', about_fact1_label: 'nieprzerwanej działalności',
+        about_fact2_value: '4 korty mączkowe', about_fact2_label: 'otwarte codziennie',
+        about_fact3_value: '3 korty kryte', about_fact3_label: 'w przygotowaniu',
+        about_fact4_value: 'Andrzeja Struga 8', about_fact4_label: 'Lublin',
+
         cta_h2: 'Zarezerwuj kort<br><em>już dziś</em>',
         cta_p: 'Wybierz termin, kort i godzinę — rezerwacja zajmuje mniej niż minutę. Bez rejestracji, bez opłat z góry.',
         cta_btn: 'Zarezerwuj kort',
@@ -1241,26 +1678,31 @@
         footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.',
       },
       en: {
-        nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+        nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_aktualnosci: 'News',
+        nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
         btn_reserve: 'Book a court',
         hero_eyebrow: 'Lublin · Budowlani Tennis Courts',
         hero_h1: 'Play in a place<br><em>with a unique atmosphere</em>',
-        hero_p1: '4 clay courts, a peaceful setting, and tennis at its best.',
+        hero_p1: '4 clay courts, and 3 indoor courts coming soon. A peaceful setting and tennis at its best.',
         hero_p2: "We're creating a place where what matters isn't just the game, but good energy and time well spent together.",
         hero_btn_reserve: 'Book a court →', hero_btn_offer: 'View offer',
-        hero_badge1: 'Fast online booking', hero_badge2: 'No registration', hero_badge3: 'Pay on arrival',
-        widget_title: 'Availability today', widget_live: 'live',
-        widget_legend_free: 'Free', widget_legend_busy: 'Booked',
-        widget_footer: 'data from Google Calendar', widget_cta: 'Check all time slots →',
-        stat1_value: '4 courts', stat1_label: 'clay, outdoor',
+        hero_badge1: '4 clay courts', hero_badge2: 'Lessons with a coach', hero_badge3: 'Pay on arrival',
+
+        widget_title: 'Upcoming events',
+        widget_loading: 'Loading…',
+        widget_empty: 'No events scheduled.<br>Check back soon.',
+        widget_error: 'Could not load events.',
+        widget_cta: 'All news →',
+
+        stat1_value: '4 clay courts', stat1_label: '3 indoor in preparation',
         stat2_label: 'opening hours',
         stat3_value: 'Cash and card', stat3_label: 'pay on arrival',
         stat4_value: 'Since 1974', stat4_label: 'tradition and experience',
         section_oferta_title: 'Our offer',
         card1_title: 'Court rental',
-        card1_desc: '4 clay courts available every day. Book online and come play — no unnecessary formalities.',
+        card1_desc: '4 clay courts available every day, with 3 indoor courts coming soon. Book a slot and come play — no unnecessary formalities.',
         card1_price_per: '/ hour',
-        card1_f1: 'Online booking 24/7', card1_f2: 'No account registration', card1_f3: 'Pay on arrival', card1_f4: 'Equipment rental available',
+        card1_f1: 'Courts open every day', card1_f2: '3 indoor courts — coming soon', card1_f3: 'Pay on arrival', card1_f4: 'Equipment rental available',
         card1_btn: 'Book a court →',
         card2_badge: 'Popular', card2_title: 'Tennis lessons',
         card2_desc: 'Individual and group lessons with certified coaches from GoRun Tennis Academy.',
@@ -1272,6 +1714,36 @@
         card3_price_per: '/ season',
         card3_f1: 'Matches at convenient times', card3_f2: 'Online standings and stats', card3_f3: 'Skill-based groups', card3_f4: 'Prizes for top players',
         card3_btn: 'Join the league →',
+
+        section_news_eyebrow: "What's new",
+        section_news_title: 'News',
+        news_all_btn: 'See all posts →',
+        typ_ogloszenie: 'Announcement', typ_turniej: 'Tournament', typ_promocja: 'Promotion', typ_galeria: 'Gallery',
+        news_event_date: 'Date:', news_valid_until: 'Valid until:',
+
+        section_cennik_eyebrow: 'Transparent rates',
+        section_cennik_title: 'Pricing',
+        section_cennik_sub: 'Pay on arrival — cash or card. No upfront fees and no hidden costs.',
+        price_col_item: 'Item', price_col_price: 'Price', price_unit_hour: 'hour',
+        price_court_name: 'Clay court', price_court_note: 'weekdays, until 4 PM',
+        price_court_peak_name: 'Clay court', price_court_peak_note: 'evenings and weekends',
+        price_indoor_name: 'Indoor court', price_indoor_note: '3 courts, winter season', price_soon_tag: 'soon',
+        price_lesson_name: 'Private lesson', price_lesson_note: 'with a GoRun coach, balls included',
+        price_group_name: 'Group sessions', price_group_note: 'kids and adults',
+        price_league_name: 'Amateur league', price_league_note: 'entry fee for the whole season',
+        price_racket_name: 'Racket rental', price_balls_name: 'Balls (one tube)',
+        cennik_note: 'Passes and rates for organised groups are arranged individually — give us a call and we will find the best option.',
+
+        section_about_eyebrow: 'Who we are',
+        section_about_title: 'About us',
+        about_p1: '<strong>Budowlani Lublin</strong> is a name Lublin has known for generations. The courts on Andrzeja Struga have been running without a break since 1974, and several generations of players have passed through them — from first lessons to league matches.',
+        about_p2: 'Today the facility is managed by <strong>GoRun Tennis Academy</strong>. We keep what is best about this place — the relaxed atmosphere and clay you actually want to play on — and add what was missing: certified coaches, an amateur league, and tournaments for players at every level.',
+        about_p3: 'Next come <strong>three indoor courts</strong>, so the season no longer ends with the first cold days. Work is already under way — we will announce the opening date in the news section.',
+        about_fact1_value: 'Since 1974', about_fact1_label: 'without a break',
+        about_fact2_value: '4 clay courts', about_fact2_label: 'open every day',
+        about_fact3_value: '3 indoor courts', about_fact3_label: 'in preparation',
+        about_fact4_value: 'Andrzeja Struga 8', about_fact4_label: 'Lublin',
+
         cta_h2: 'Book a court<br><em>today</em>',
         cta_p: "Pick a date, court, and time — booking takes less than a minute. No registration, no upfront payment.",
         cta_btn: 'Book a court',
@@ -1286,6 +1758,12 @@
 
     let currentLang = 'pl'; // strona zawsze startuje po polsku
 
+    function t(key) {
+      return TRANSLATIONS[currentLang][key] !== undefined
+        ? TRANSLATIONS[currentLang][key]
+        : key;
+    }
+
     function applyLanguage(lang) {
       currentLang = lang;
       document.documentElement.lang = lang;
@@ -1299,7 +1777,11 @@
         if (TRANSLATIONS[lang][key] !== undefined) el.innerHTML = TRANSLATIONS[lang][key];
       });
 
-      updateWidgetDate();
+      // Treść generowana z JavaScriptu nie ma atrybutów data-i18n,
+      // więc po zmianie języka musimy ją przerysować ręcznie.
+      applyReserveLinks();
+      renderEventsWidget();
+      renderNewsSection();
     }
 
     function toggleLang() {
@@ -1308,149 +1790,228 @@
       applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
     }
 
-    // Data w widgecie — osobne nazwy dni/miesięcy PL/EN
-    const DAY_NAMES = {
-      pl: ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'],
-      en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    /* =========================================================
+       PRZYCISKI REZERWACJI
+       ========================================================= */
+    function applyReserveLinks() {
+      const hasUrl = REZERWACJA_URL.trim() !== '';
+
+      document.querySelectorAll('[data-reserve-link]').forEach(link => {
+        if (hasUrl) {
+          link.href = REZERWACJA_URL;
+          link.target = '_blank';
+          // Wysyłając kogoś na cudzą stronę w nowej karcie, zawsze
+          // dokładamy noopener — bez tego otwarta strona ma techniczną
+          // możliwość manipulowania kartą, z której wyszła.
+          link.rel = 'noopener noreferrer';
+        } else {
+          // Podstrona wyjaśniająca zostaje w tej samej karcie — to wciąż
+          // nasz serwis, a otwieranie własnej strony w nowej karcie
+          // zostawia po sobie bałagan w przeglądarce klienta.
+          link.href = REZERWACJA_FALLBACK;
+          link.removeAttribute('target');
+          link.removeAttribute('rel');
+        }
+      });
+    }
+
+    /* =========================================================
+       POBIERANIE POSTÓW
+       Jedno zapytanie zasila i widget w hero, i sekcję Aktualności.
+       Nie ma powodu pytać serwera dwa razy o te same dane.
+       ========================================================= */
+    let allPosts = null;   // null = jeszcze nie wczytane
+    let loadFailed = false;
+
+    const MONTHS_SHORT = {
+      pl: ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'],
+      en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     };
-    const MONTH_NAMES = {
+
+    const MONTHS_LONG = {
       pl: ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'],
       en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
     };
 
-    function updateWidgetDate() {
-      const now = new Date();
-      const days = DAY_NAMES[currentLang];
-      const months = MONTH_NAMES[currentLang];
-      document.getElementById('widget-date').textContent = (currentLang === 'pl')
-        ? `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`
-        : `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-    }
-    updateWidgetDate();
-
-    // Ken Burns effect na hero
-    window.addEventListener('load', () => {
-      document.getElementById('hero-bg').classList.add('loaded');
-    });
-
-    // ── Widget dostępności z suwakiem ──
-    // Backend — Google Apps Script Web App (ten sam co w rezerwacja.html)
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
-    const COURT_NAMES = ['Kort 1', 'Kort 2', 'Kort 3', 'Kort 4'];
-
-    const VISIBLE = 4;   // ile slotów widać naraz
-    const TOTAL   = 14;  // godziny 8:00–21:00
-    const START_H = 8;   // pierwsza godzina
-
-    // Zaczynamy z pustymi (pozornie "wolnymi") danymi, dopóki nie
-    // przyjdzie prawdziwa odpowiedź z serwera — patrz loadTodayAvailability()
-    let courtData = COURT_NAMES.map(name => ({ name, slots: new Array(TOTAL * 2).fill(0) }));
-
-    function hourLabel(offset) {
-      return `${START_H + offset}:00`;
+    /* Zamiana tekstu na bezpieczny HTML.
+       DLACZEGO TO MUSI TU BYĆ: treść postów pisze recepcja, a my wstawiamy
+       ją do strony przez innerHTML. Gdyby ktoś wpisał w tytule znacznik
+       HTML, przeglądarka wykonałaby go jako kod, a nie pokazała jako tekst.
+       To nie jest kwestia zaufania do recepcji — to kwestia tego, że
+       przypadkowy znak < w treści nie ma prawa rozwalić układu strony. */
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function renderCourts(startIdx) {
-      const container = document.getElementById('widget-courts');
-      container.innerHTML = courtData.map(court => {
-        const cellsHTML = [];
-        for (let h = startIdx; h < startIdx + VISIBLE; h++) {
-          const firstHalfBusy = court.slots[h * 2];
-          const secondHalfBusy = court.slots[h * 2 + 1];
-          cellsHTML.push(`
-            <span class="slot">
-              <span class="slot-halves">
-                <span class="slot-half ${firstHalfBusy ? 'slot-half-busy' : 'slot-half-free'}"></span>
-                <span class="slot-half ${secondHalfBusy ? 'slot-half-busy' : 'slot-half-free'}"></span>
-              </span>
-              <span class="slot-label">${hourLabel(h)}</span>
-            </span>`);
-        }
+    // Daty z serwera przychodzą jako tekst RRRR-MM-DD. Rozbijamy je ręcznie
+    // zamiast przez new Date(tekst), bo ten drugi sposób w części przeglądarek
+    // interpretuje taki zapis jako UTC i potrafi cofnąć datę o jeden dzień.
+    function parseIsoDate(iso) {
+      const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return null;
+      return new Date(+m[1], +m[2] - 1, +m[3]);
+    }
+
+    function formatDateLong(iso) {
+      const d = parseIsoDate(iso);
+      if (!d) return '';
+      return currentLang === 'pl'
+        ? `${d.getDate()} ${MONTHS_LONG.pl[d.getMonth()]} ${d.getFullYear()}`
+        : `${MONTHS_LONG.en[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    }
+
+    function todayIso() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    async function loadPosts() {
+      try {
+        const res = await fetch(WEB_APP_URL + '?action=posts');
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        allPosts = Array.isArray(data.posts) ? data.posts : [];
+      } catch (err) {
+        loadFailed = true;
+        allPosts = [];
+        console.error('Nie udało się pobrać aktualności:', err);
+      }
+
+      renderEventsWidget();
+      renderNewsSection();
+    }
+
+    /* =========================================================
+       WIDGET: NADCHODZĄCE WYDARZENIA
+       ========================================================= */
+    function upcomingEvents() {
+      const today = todayIso();
+      return (allPosts || [])
+        .filter(p => p.typ === 'turniej' && p.data_wydarzenia && p.data_wydarzenia >= today)
+        // Wydarzenia sortujemy rosnąco — najbliższe u góry. To odwrotnie
+        // niż aktualności, gdzie na górze jest najnowszy wpis. Inny cel,
+        // inna kolejność.
+        .sort((a, b) => a.data_wydarzenia.localeCompare(b.data_wydarzenia))
+        .slice(0, MAX_EVENTS_IN_WIDGET);
+    }
+
+    function renderEventsWidget() {
+      const container = document.getElementById('widget-events');
+      if (!container) return;
+
+      if (allPosts === null) {
+        container.innerHTML = `<div class="widget-msg">${t('widget_loading')}</div>`;
+        return;
+      }
+
+      if (loadFailed) {
+        container.innerHTML = `<div class="widget-msg">${t('widget_error')}</div>`;
+        return;
+      }
+
+      const events = upcomingEvents();
+
+      if (events.length === 0) {
+        container.innerHTML = `<div class="widget-msg">${t('widget_empty')}</div>`;
+        return;
+      }
+
+      container.innerHTML = events.map(ev => {
+        const d = parseIsoDate(ev.data_wydarzenia);
+        const day = d ? d.getDate() : '';
+        const month = d ? MONTHS_SHORT[currentLang][d.getMonth()] : '';
+
         return `
-          <div class="court-row">
-            <span class="court-name">${court.name}</span>
-            <div class="court-slots">${cellsHTML.join('')}</div>
+          <div class="event-item">
+            <div class="event-date">
+              <span class="event-day">${day}</span>
+              <span class="event-month">${month}</span>
+            </div>
+            <div class="event-body">
+              <div class="event-title">${escapeHtml(ev.tytul)}</div>
+              <div class="event-meta">${escapeHtml(ev.tresc)}</div>
+            </div>
           </div>`;
       }).join('');
     }
 
-    function updateWidget(val) {
-      renderCourts(+val);
+    /* =========================================================
+       SEKCJA AKTUALNOŚCI
+       ========================================================= */
+    function excerpt(text, maxChars) {
+      const clean = String(text || '').replace(/\s+/g, ' ').trim();
+      if (clean.length <= maxChars) return clean;
+      // Ucinamy na granicy słowa, nie w połowie wyrazu.
+      return clean.slice(0, clean.lastIndexOf(' ', maxChars)) + '…';
+    }
+
+    function renderNewsSection() {
+      const section = document.getElementById('aktualnosci');
+      const grid = document.getElementById('news-grid');
+      if (!section || !grid) return;
+
+      const posts = (allPosts || []).slice(0, MAX_NEWS_ON_HOMEPAGE);
+
+      // Brak wpisów albo błąd → sekcja w ogóle się nie pokazuje.
+      // Odwiedzający nie powinien oglądać naszych problemów technicznych.
+      if (posts.length === 0) {
+        section.hidden = true;
+        return;
+      }
+
+      section.hidden = false;
+
+      grid.innerHTML = posts.map(post => {
+        const hasImage = Array.isArray(post.zdjecia) && post.zdjecia.length > 0;
+
+        const media = hasImage
+          ? `<div class="news-media"><img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy"></div>`
+          : '';
+
+        // Dodatkowa linijka zależna od typu wpisu — turniej pokazuje
+        // termin, promocja datę ważności, reszta nic.
+        let extra = '';
+        if (post.typ === 'turniej' && post.data_wydarzenia) {
+          extra = `<div class="news-extra"><i class="ti ti-calendar-event"></i> ${t('news_event_date')} ${formatDateLong(post.data_wydarzenia)}</div>`;
+        } else if (post.typ === 'promocja' && post.wazny_do) {
+          extra = `<div class="news-extra"><i class="ti ti-clock"></i> ${t('news_valid_until')} ${formatDateLong(post.wazny_do)}</div>`;
+        }
+
+        return `
+          <article class="news-card">
+            ${media}
+            <div class="news-body">
+              <div class="news-top">
+                <span class="news-badge ${escapeHtml(post.typ)}">${t('typ_' + post.typ)}</span>
+                <span class="news-date">${formatDateLong(post.data_publikacji)}</span>
+              </div>
+              <h3 class="news-title">${escapeHtml(post.tytul)}</h3>
+              <p class="news-excerpt">${escapeHtml(excerpt(post.tresc, 140))}</p>
+              ${extra}
+            </div>
+          </article>`;
+      }).join('');
     }
 
     /* =========================================================
-       POBIERANIE PRAWDZIWEJ DOSTĘPNOŚCI (dokładnie ta sama logika
-       stref czasowych co w rezerwacja.html — tam jest dokładniejszy
-       komentarz, jeśli chcesz przypomnieć sobie dlaczego tak to działa)
+       START
        ========================================================= */
-    function toISODateString(d) {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
+    window.addEventListener('load', () => {
+      document.getElementById('hero-bg').classList.add('loaded');
+    });
 
-    function warsawHour(date) {
-      const fmt = new Intl.DateTimeFormat('pl-PL', {
-        timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false,
-      });
-      const parts = fmt.formatToParts(date);
-      const map = {};
-      parts.forEach(p => { map[p.type] = p.value; });
-      return { hour: parseInt(map.hour, 10), minute: parseInt(map.minute, 10) };
-    }
-
-    // Indeks 30-minutowego slotu (0 = 8:00–8:30, 1 = 8:30–9:00, ...) —
-    // ta sama jednostka co w rezerwacja.html, żeby połówki kratek
-    // odzwierciedlały rzeczywiste 30-minutowe bloki z kalendarza.
-    function slotIndex30FromDate(date) {
-      const t = warsawHour(date);
-      return (t.hour - START_H) * 2 + (t.minute >= 30 ? 1 : 0);
-    }
-
-    function build30MinGrid(busyByCourt) {
-      const slotCount = TOTAL * 2; // 28 półgodzinnych slotów w oknie 8:00–22:00
-      const grid = COURT_NAMES.map(() => new Array(slotCount).fill(0));
-      Object.keys(busyByCourt || {}).forEach(courtKey => {
-        const ci = parseInt(courtKey, 10) - 1;
-        if (ci < 0 || ci >= COURT_NAMES.length) return;
-        (busyByCourt[courtKey] || []).forEach(range => {
-          const startIdx = slotIndex30FromDate(new Date(range.start));
-          const endIdx = slotIndex30FromDate(new Date(range.end));
-          for (let i = Math.max(startIdx, 0); i < Math.min(endIdx, slotCount); i++) grid[ci][i] = 1;
-        });
-      });
-      return grid;
-    }
-
-    async function loadTodayAvailability() {
-      try {
-        const res = await fetch(WEB_APP_URL + '?action=availability&date=' + toISODateString(new Date()));
-        const data = await res.json();
-        const grid = build30MinGrid(data.busy);
-        courtData = COURT_NAMES.map((name, i) => ({ name, slots: grid[i] }));
-        updateWidget(sliderEl.value);
-      } catch (err) {
-        // Widget na stronie głównej to tylko podgląd — jeśli zapytanie
-        // się nie uda, nie przeszkadzamy klientowi błędem, po prostu
-        // zostawiamy poprzedni stan i logujemy do konsoli dla nas.
-        console.error('Nie udało się pobrać dostępności do widgetu:', err);
-      }
-    }
-
-    // Inicjalizacja — ustaw suwak tak żeby startował od bieżącej godziny
-    const sliderEl = document.getElementById('widget-slider');
-    const nowHour  = new Date().getHours();
-    const initVal  = Math.min(Math.max(nowHour - START_H, 0), TOTAL - VISIBLE);
-    sliderEl.max   = TOTAL - VISIBLE;  // max = 10 (14-4)
-    sliderEl.value = initVal;
-    sliderEl.addEventListener('input', e => updateWidget(e.target.value));
-    updateWidget(initVal);
-    loadTodayAvailability();
     window.addEventListener('scroll', () => {
       document.querySelector('.navbar')
         .classList.toggle('scrolled', window.scrollY > 10);
     });
+
+    applyReserveLinks();
+    loadPosts();
   </script>
 
 </body>

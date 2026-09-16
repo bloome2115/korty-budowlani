@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezerwacja — Korty Budowlani Lublin</title>
+  <!-- Ta podstrona jest stanem przejściowym i celowo nie ma jej w Google:
+       gdy ruszy kluby.org, strona zniknie, a zaindeksowany adres zostałby
+       martwym linkiem w wynikach wyszukiwania na długie miesiące. -->
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --text:   #1A2744;
+      --muted:  #888;
+      --border: #eee;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      /* Strona jest krótka — układ kolumnowy z rosnącą treścią w środku
+         przykleja stopkę do dołu okna, zamiast zostawiać pustą przestrzeń
+         pod nią na dużych ekranach. */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+    /* ─── NAVBAR ─── */
+    .navbar {
+      background: var(--navy);
+      height: 104px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 100%;
+    }
+
+    .navbar-logos { display: flex; align-items: center; gap: 18px; }
+    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
+
+    .logos-divider {
+      width: 2px;
+      height: 62px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.7);
+      font-size: 15px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .lang-switch span {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: rgba(255,255,255,0.45);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .navbar-right { display: flex; align-items: center; gap: 14px; }
+
+    /* ─── TREŚĆ ─── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 64px 0;
+    }
+
+    .notice {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 16px;
+      padding: 52px 48px 44px;
+      text-align: center;
+      box-shadow: 0 4px 40px rgba(26, 39, 68, 0.09);
+    }
+
+    .notice-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 26px;
+      background: #FDF0E8;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notice-icon i { font-size: 34px; color: var(--clay); }
+
+    .notice h1 {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .notice p {
+      font-size: 15px;
+      color: #5a6270;
+      line-height: 1.75;
+      max-width: 460px;
+      margin: 0 auto 32px;
+    }
+
+    /* Numer telefonu jest tu jedyną drogą do celu, po który klient
+       przyszedł — dostaje więc wagę głównego przycisku, a nie linijki
+       w stopce. Na telefonie wystarczy jedno dotknięcie. */
+    .phone-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 17px 38px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(200, 98, 42, 0.42), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .phone-btn:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .phone-btn:active { transform: translateY(0); }
+    .phone-btn i { font-size: 22px; }
+
+    .notice-meta {
+      margin-top: 30px;
+      padding-top: 26px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .meta-item i { font-size: 16px; color: var(--clay); }
+    .meta-item a { color: var(--muted); transition: color 0.15s; }
+    .meta-item a:hover { color: var(--navy); }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 30px;
+      font-size: 14px;
+      color: var(--navy);
+      opacity: 0.6;
+      transition: opacity 0.15s;
+    }
+
+    .back-link:hover { opacity: 1; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--navy);
+      padding: 26px 0;
+      flex-shrink: 0;
+    }
+
+    .footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+    .footer-bloome { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
+
+    @media (max-width: 720px) {
+      .navbar { height: 84px; }
+      .navbar-logos img { height: 64px; }
+      .logos-divider { height: 46px; }
+      .nav-back span { display: none; }
+      .notice { padding: 40px 26px 34px; }
+      .notice h1 { font-size: 24px; }
+      .phone-btn { font-size: 17px; padding: 15px 28px; width: 100%; justify-content: center; }
+      .notice-meta { gap: 16px; flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-logos">
+        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
+        <div class="logos-divider"></div>
+        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
+      </div>
+
+      <div class="navbar-right">
+        <div class="lang-switch" onclick="toggleLang()">
+          <span class="lang-pl-span active">PL</span>
+          <span class="lang-en-span">EN</span>
+        </div>
+        <a href="index.html" class="nav-back">
+          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="notice">
+        <div class="notice-icon"><i class="ti ti-calendar-clock"></i></div>
+
+        <h1 data-i18n="notice_title">Rezerwacja online — w przygotowaniu</h1>
+
+        <p data-i18n="notice_text">Pracujemy nad możliwością rezerwowania kortu przez internet. Zanim ją uruchomimy, termin rezerwujesz telefonicznie — zadzwoń, a znajdziemy dla Ciebie wolny kort.</p>
+
+        <!-- TU WSTAW PRAWDZIWY NUMER — w dwóch miejscach: w href="tel:"
+             (bez spacji, ze +48) oraz w widocznym tekście przycisku. -->
+        <a href="tel:+48000000000" class="phone-btn">
+          <i class="ti ti-phone"></i> +48 000 000 000
+        </a>
+
+        <div class="notice-meta">
+          <div class="meta-item">
+            <i class="ti ti-clock"></i> <span data-i18n="meta_hours">Codziennie 8:00 – 22:00</span>
+          </div>
+          <div class="meta-item">
+            <i class="ti ti-mail"></i> <a href="mailto:kontakt@kortylublin.pl">kontakt@kortylublin.pl</a>
+          </div>
+          <div class="meta-item">
+            <i class="ti ti-map-pin"></i> <span>Andrzeja Struga 8, Lublin</span>
+          </div>
+        </div>
+
+        <a href="index.html#aktualnosci" class="back-link">
+          <i class="ti ti-news"></i> <span data-i18n="back_news">Zobacz aktualności</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa</div>
+      <div class="footer-bloome">Bloome</div>
+    </div>
+  </footer>
+
+  <script>
+    /* Ta podstrona ma własny, mały słownik tłumaczeń zamiast współdzielić
+       ten ze strony głównej. Powód: współdzielenie wymagałoby wydzielenia
+       tłumaczeń do osobnego pliku .js, a wtedy każda podstrona pobierałaby
+       teksty, których nie używa. Przy dwóch stronach i kilku zdaniach
+       powielenie jest tańsze niż abstrakcja. */
+    const TRANSLATIONS = {
+      pl: {
+        nav_back: 'Strona główna',
+        notice_title: 'Rezerwacja online — w przygotowaniu',
+        notice_text: 'Pracujemy nad możliwością rezerwowania kortu przez internet. Zanim ją uruchomimy, termin rezerwujesz telefonicznie — zadzwoń, a znajdziemy dla Ciebie wolny kort.',
+        meta_hours: 'Codziennie 8:00 – 22:00',
+        back_news: 'Zobacz aktualności',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+      },
+      en: {
+        nav_back: 'Home',
+        notice_title: 'Online booking — coming soon',
+        notice_text: 'We are working on online court booking. Until it goes live, you can book by phone — give us a call and we will find you a free court.',
+        meta_hours: 'Every day 8:00 – 22:00',
+        back_news: 'See our news',
+        footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+      },
+    };
+
+    let currentLang = 'pl';
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.title = lang === 'pl'
+        ? 'Rezerwacja — Korty Budowlani Lublin'
+        : 'Booking — Budowlani Lublin Tennis Courts';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+      });
+    }
+
+    function toggleLang() {
+      document.querySelectorAll('.lang-pl-span').forEach(el => el.classList.toggle('active'));
+      document.querySelectorAll('.lang-en-span').forEach(el => el.classList.toggle('active'));
+      applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
+    }
+  </script>
+
+</body>
+</html>
