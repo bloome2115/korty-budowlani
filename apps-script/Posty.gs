@@ -20,7 +20,8 @@
  *               ?action=postsAdmin      wszystkie posty, też szkice (wymaga sesji)
  *   doPost(e) -> action="login"         sprawdza hasło, wydaje token sesji
  *               action="savePost"       tworzy albo aktualizuje post
- *               action="deletePost"     ukrywa post (nie kasuje wiersza!)
+ *               action="deletePost"     ukrywa post (wiersz zostaje)
+ *               action="purgePost"     usuwa wiersz NA ZAWSZE
  *               action="uploadImage"    wrzuca zdjęcie na Drive, zwraca URL
  *
  * ZASADA BEZPIECZEŃSTWA:
@@ -60,7 +61,7 @@ const POSTY_CONFIG = {
   MAX_IMAGE_BYTES: 8 * 1024 * 1024, // 8 MB po stronie serwera; panel i tak zmniejsza zdjęcia wcześniej
 };
 
-const POSTY_VERSION = '2026-09-28-b';
+const POSTY_VERSION = '2026-09-28-d';
 
 // Kolumny arkusza. KOLEJNOŚĆ MA ZNACZENIE — czyta ją cały ten plik.
 // Dopisując nową kolumnę, dodaj ją NA KOŃCU, nigdy w środku.
@@ -144,6 +145,11 @@ function routePostyPost_(body) {
   if (action === 'deletePost') {
     requireSession_(body.session);
     return hidePost_(body.id);
+  }
+
+  if (action === 'purgePost') {
+    requireSession_(body.session);
+    return purgePost_(body.id);
   }
 
   if (action === 'uploadImage') {
@@ -270,9 +276,12 @@ function rowToPost_(row) {
     format: String(row[COL.format - 1] || ''),
     wpisowe: String(row[COL.wpisowe - 1] || ''),
     zapisy_do: dateToIso_(row[COL.zapisy_do - 1]),
-    // W arkuszu trzymamy słowo "tak", nie TRUE — żeby człowiek
-    // otwierający zakładkę od razu wiedział, co ta kolumna znaczy.
-    wyrozniony: String(row[COL.wyrozniony - 1] || '').toLowerCase() === 'tak',
+    // Zapisujemy słowo "tak", żeby człowiek otwierający arkusz od razu
+    // rozumiał kolumnę. Czytamy szerzej: ktoś poprawiający wpis ręcznie
+    // napisze TRUE, PRAWDA albo postawi iks — i ma prawo oczekiwać,
+    // że zadziała. Wyrozumiałość przy czytaniu, konsekwencja przy zapisie.
+    wyrozniony: ['tak', 'true', 'prawda', 'x', '1']
+      .indexOf(String(row[COL.wyrozniony - 1] || '').trim().toLowerCase()) !== -1,
   };
 }
 
@@ -448,6 +457,45 @@ function hidePost_(id) {
   return { success: true, id: id };
 }
 
+/**
+ * Usuwa wiersz z arkusza NA ZAWSZE. Odwrotność hidePost_.
+ *
+ * DLACZEGO ISTNIEJE OBOK UKRYWANIA: ukrycie jest właściwe dla wpisu, który
+ * spełnił swoją rolę i może kiedyś wrócić. Ale szkic zrobiony przez pomyłkę
+ * albo wpis testowy nie ma po co zalegać w arkuszu i zaśmiecać listy.
+ * Dwie różne potrzeby, dwie różne operacje — mylenie ich kończy się tym,
+ * że ludzie boją się jednej i nadużywają drugiej.
+ *
+ * DLACZEGO BLOKADA: między odnalezieniem wiersza a jego usunięciem inny
+ * zapis mógłby dodać wiersz i przesunąć numerację. Usunęlibyśmy wtedy
+ * NIE TEN wpis — błąd cichy i nieodwracalny. Blokada zamyka tę szczelinę.
+ *
+ * Zdjęć z Dysku nie ruszamy. Plik może być podlinkowany gdzie indziej,
+ * a kasowanie cudzych danych „przy okazji" to zła zasada.
+ */
+function purgePost_(id) {
+  if (!id) throw new Error('Brak id wpisu.');
+
+  const sheet = getPostySheet_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+
+  try {
+    const row = findRowById_(sheet, id);
+    if (row < 0) throw new Error('Nie znaleziono wpisu o id ' + id + '. Mógł już zostać usunięty.');
+
+    const tytul = sheet.getRange(row, COL.tytul).getValue();
+    sheet.deleteRow(row);
+
+    // Zostawiamy ślad w logu — to jedyna rzecz, jaka po wpisie zostaje.
+    Logger.log('USUNIĘTO TRWALE: "' + tytul + '" (id ' + id + ')');
+
+    return { success: true, id: id, tytul: String(tytul) };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function findRowById_(sheet, id) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return -1;
@@ -546,6 +594,17 @@ function setupPosty() {
   }
 
   Logger.log('Zakładka "' + POSTY_CONFIG.SHEET_NAME + '" gotowa. Wierszy: ' + (sheet.getLastRow() - 1));
+
+  // Wypisujemy prawdziwe nagłówki z arkusza i porównujemy z oczekiwanymi.
+  // To jedno spojrzenie rozstrzyga, czy migracja kolumn się wykonała —
+  // bez tego brak kolumny objawia się jako "funkcja nie działa", bez
+  // żadnej wskazówki gdzie szukać.
+  const realHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  Logger.log('Kolumny w arkuszu (' + realHeaders.length + '): ' + realHeaders.join(', '));
+  const missing = POSTY_HEADERS.filter(h => realHeaders.indexOf(h) === -1);
+  Logger.log(missing.length
+    ? 'BRAKUJE KOLUMN: ' + missing.join(', ')
+    : 'Wszystkie oczekiwane kolumny są na miejscu.');
   // Obie wartości sprawdzamy TU i głośno, zamiast czekać, aż odezwą się
   // w najgorszym momencie — czyli gdy recepcja pierwszy raz wrzuci zdjęcie.
   const props = PropertiesService.getScriptProperties();

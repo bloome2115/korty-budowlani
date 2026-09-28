@@ -550,6 +550,18 @@
 
     .busy { opacity: 0.55; pointer-events: none; }
 
+    /* Wiersz w trakcie zapisu: ikona już pokazuje nowy stan, ale wiersz
+       jest przygaszony i nieklikalny, żeby nikt nie wcisnął drugi raz. */
+    .post-row.saving { opacity: 0.6; pointer-events: none; }
+
+    .post-row.saving .post-main::after {
+      content: 'zapisuję…';
+      display: block;
+      font-size: 11px;
+      color: var(--clay);
+      margin-top: 2px;
+    }
+
     /* ─── MOBILE ─── */
     @media (max-width: 620px) {
       .type-picker { grid-template-columns: repeat(2, 1fr); }
@@ -981,7 +993,7 @@ function renderList() {
         <i class="ti ti-star${post.wyrozniony ? '-filled' : ''}"></i></button>`;
 
     return `
-      <div class="post-row">
+      <div class="post-row${pendingIds.has(post.id) ? ' saving' : ''}">
         ${thumb}
         <div class="post-main">
           <div class="post-tags">
@@ -1005,12 +1017,49 @@ function iconForType(typ) {
   return { ogloszenie: 'speakerphone', turniej: 'trophy', promocja: 'discount', galeria: 'photo' }[typ] || 'file';
 }
 
+/* Wpisy, dla których trwa właśnie zapis. Wiersz jest wtedy przygaszony
+   i nieklikalny — inaczej niecierpliwy człowiek klika trzy razy i wysyła
+   trzy sprzeczne żądania. */
+const pendingIds = new Set();
+
+/* ZMIANA NAJPIERW NA EKRANIE, POTEM NA SERWERZE.
+   ---------------------------------------------------------
+   Apps Script odpowiada 1-3 sekundy. Jeśli ikona czeka na odpowiedź,
+   przez ten czas kliknięcie wygląda, jakby nie zadziałało — i człowiek
+   klika ponownie. Dlatego zmieniamy stan lokalnie i rysujemy od razu,
+   a zapytanie leci w tle. Gdy serwer odmówi, cofamy zmianę i mówimy
+   dlaczego.
+
+   To nie jest oszukiwanie: interfejs pokazuje zamiar, który prawie
+   zawsze się powiedzie, i uczciwie się wycofuje, gdy się nie powiódł. */
+async function optimisticChange(post, changes, request, message) {
+  const before = { ...post };
+
+  Object.assign(post, changes);
+  pendingIds.add(post.id);
+  renderList();
+
+  try {
+    await request();
+    pendingIds.delete(post.id);
+    toast(message);
+    // Dociągamy stan z serwera — zmiana mogła przestawić kolejność
+    // (wyróżnione idą na górę), a tego lokalnie nie odtwarzamy.
+    await loadPosts();
+  } catch (err) {
+    Object.assign(post, before);
+    pendingIds.delete(post.id);
+    renderList();
+    handleApiError(err);
+  }
+}
+
 el('post-list').addEventListener('click', async (e) => {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
 
   const post = allPosts.find(p => p.id === btn.dataset.id);
-  if (!post) return;
+  if (!post || pendingIds.has(post.id)) return;
 
   if (btn.dataset.action === 'edit') {
     openForm(post);
@@ -1021,30 +1070,26 @@ el('post-list').addEventListener('click', async (e) => {
     // Ukrycie jest odwracalne jednym kliknięciem, więc nie pytamy
     // „czy na pewno". Pytanie potwierdzające ma sens tam, gdzie skutku
     // nie da się cofnąć — tutaj tylko spowalnia.
-    try {
-      await apiPost({ action: 'deletePost', session: session, id: post.id });
-      toast('Wpis ukryty — zniknął ze strony.');
-      await loadPosts();
-    } catch (err) { handleApiError(err); }
+    await optimisticChange(post, { status: 'ukryty' },
+      () => apiPost({ action: 'deletePost', session: session, id: post.id }),
+      'Wpis ukryty — zniknął ze strony.');
     return;
   }
 
   if (btn.dataset.action === 'star') {
-    try {
-      await apiPost({ action: 'savePost', session: session,
-                      post: { ...post, wyrozniony: !post.wyrozniony } });
-      toast(post.wyrozniony ? 'Wpis przestał być wyróżniony.' : 'Wpis wyróżniony — pokaże się jako pierwszy.');
-      await loadPosts();
-    } catch (err) { handleApiError(err); }
+    const next = !post.wyrozniony;
+    await optimisticChange(post, { wyrozniony: next },
+      () => apiPost({ action: 'savePost', session: session,
+                      post: { ...post, wyrozniony: next } }),
+      next ? 'Wyróżnione — wpis pokaże się jako pierwszy.' : 'Wyróżnienie zdjęte.');
     return;
   }
 
   if (btn.dataset.action === 'show') {
-    try {
-      await apiPost({ action: 'savePost', session: session, post: { ...post, status: 'opublikowany' } });
-      toast('Wpis znów jest widoczny na stronie.');
-      await loadPosts();
-    } catch (err) { handleApiError(err); }
+    await optimisticChange(post, { status: 'opublikowany' },
+      () => apiPost({ action: 'savePost', session: session,
+                      post: { ...post, status: 'opublikowany' } }),
+      'Wpis znów jest widoczny na stronie.');
   }
 });
 
