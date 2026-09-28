@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel aktualności — Korty Budowlani</title>
+  <!-- Panel nie ma czego szukać w Google. To nie jest zabezpieczenie (hasła
+       broni Apps Script), tylko higiena: adres panelu nie musi krążyć po sieci. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --text:   #1A2744;
+      --muted:  #888;
+      --border: #e6e6e6;
+      --ok-bg:  #EAF3DE;
+      --ok-fg:  #3B6D11;
+      --err-bg: #FCF0EB;
+      --err-fg: #993C1D;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); font-size: inherit; }
+    input, textarea, select { font-family: var(--font-body); font-size: 16px; }
+    /* 16px w polach nie jest estetyką — iOS powiększa stronę przy focusie
+       na polu mniejszym niż 16px, a recepcja pracuje z telefonu. */
+
+    [hidden] { display: none !important; }
+
+    .container { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+    /* ─── EKRAN LOGOWANIA ─── */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 44px 36px 36px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 40px rgba(26, 39, 68, 0.09);
+    }
+
+    .login-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 22px;
+      background: #FDF0E8;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-icon i { font-size: 30px; color: var(--clay); }
+
+    .login-card h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .login-card p { font-size: 14px; color: var(--muted); margin-bottom: 26px; }
+
+    /* ─── FORMULARZE ─── */
+    .field { margin-bottom: 18px; text-align: left; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .field .hint {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 3px;
+    }
+
+    input[type="text"], input[type="password"], input[type="date"], textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--clay);
+    }
+
+    textarea { resize: vertical; min-height: 150px; line-height: 1.7; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 24px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .btn-primary { background: var(--clay); color: #fff; }
+    .btn-primary:hover { background: #b5571f; }
+    .btn-primary:disabled { background: #d9b3a0; cursor: not-allowed; }
+
+    .btn-dark { background: var(--navy); color: #fff; }
+    .btn-dark:hover { opacity: 0.88; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--navy); }
+
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+
+    /* ─── NAGŁÓWEK PANELU ─── */
+    .topbar {
+      background: var(--navy);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topbar-title {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-title i { color: var(--clay); font-size: 20px; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+    .topbar-link {
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .topbar-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    /* ─── WIDOK LISTY ─── */
+    .page { padding: 28px 0 60px; }
+
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .page-head h2 { font-size: 22px; font-weight: 600; }
+
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+
+    .filter-chip {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 15px;
+      font-size: 13px;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .filter-chip.active {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .post-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .post-row {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .post-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 9px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #eee;
+    }
+
+    .post-thumb-empty {
+      width: 56px;
+      height: 56px;
+      border-radius: 9px;
+      flex-shrink: 0;
+      background: #FDF0E8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-thumb-empty i { font-size: 22px; color: var(--clay); }
+
+    .post-main { flex: 1; min-width: 0; }
+
+    .post-tags { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; flex-wrap: wrap; }
+
+    .tag {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .tag.ogloszenie { background: #EEF1F7; color: var(--navy); }
+    .tag.turniej    { background: #FDF0E8; color: var(--clay); }
+    .tag.promocja   { background: #EAF3DE; color: var(--ok-fg); }
+    .tag.galeria    { background: #F2ECF7; color: #5B3B7A; }
+
+    .tag.st-opublikowany { background: var(--ok-bg); color: var(--ok-fg); }
+    .tag.st-szkic        { background: #F3F3F3; color: #777; }
+    .tag.st-ukryty       { background: var(--err-bg); color: var(--err-fg); }
+
+    .post-title {
+      font-size: 15px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-date { font-size: 12px; color: var(--muted); }
+
+    .post-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .icon-btn i { font-size: 17px; }
+
+    .empty-state {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 50px 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .empty-state i { font-size: 38px; color: #ddd; display: block; margin-bottom: 14px; }
+
+    /* ─── WIDOK FORMULARZA ─── */
+    .form-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 26px 26px 30px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .type-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+    .type-option {
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 14px 8px;
+      background: var(--white);
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .type-option i { font-size: 22px; display: block; margin-bottom: 5px; color: var(--muted); }
+    .type-option span { font-size: 12px; color: var(--muted); }
+
+    .type-option.active { border-color: var(--clay); background: #FDF7F3; }
+    .type-option.active i, .type-option.active span { color: var(--clay); }
+
+    .template-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #FDF7F3;
+      border: 1px solid #F0DCCE;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #8a5a3c;
+    }
+
+    .template-bar i { color: var(--clay); font-size: 17px; flex-shrink: 0; }
+    .template-bar button { margin-left: auto; flex-shrink: 0; }
+
+    /* ─── ZDJĘCIA ─── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .photo-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+
+    .photo-badge {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      background: rgba(26,39,68,0.85);
+      color: #fff;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 7px;
+      border-radius: 20px;
+    }
+
+    .photo-tools {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .photo-tools button {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      border: none;
+      background: rgba(255,255,255,0.92);
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .photo-tools button:hover { background: #fff; }
+
+    .photo-add {
+      aspect-ratio: 1;
+      border: 1.5px dashed #ccc;
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+
+    .photo-add:hover { border-color: var(--clay); color: var(--clay); }
+    .photo-add i { font-size: 22px; }
+
+    /* ─── PODGLĄD ─── */
+    .preview-wrap {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 4px;
+    }
+
+    .preview-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .news-card {
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 330px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .news-media { aspect-ratio: 16 / 10; overflow: hidden; background: #eee; }
+    .news-media img { width: 100%; height: 100%; object-fit: cover; }
+    .news-body { padding: 22px 22px 24px; }
+    .news-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .news-date { font-size: 12px; color: #bbb; }
+    .news-title { font-size: 17px; font-weight: 500; line-height: 1.35; margin-bottom: 8px; }
+    .news-excerpt { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .news-extra {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; color: var(--clay); margin-top: 14px; font-weight: 500;
+    }
+
+    /* ─── PASEK AKCJI FORMULARZA ─── */
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .form-actions .spacer { flex: 1; }
+
+    /* ─── KOMUNIKATY ─── */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+      z-index: 200;
+      max-width: calc(100vw - 32px);
+      text-align: center;
+    }
+
+    .toast.ok  { background: var(--ok-fg); color: #fff; }
+    .toast.err { background: var(--err-fg); color: #fff; }
+
+    .inline-error {
+      background: var(--err-bg);
+      color: var(--err-fg);
+      border-radius: 9px;
+      padding: 11px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .busy { opacity: 0.55; pointer-events: none; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 620px) {
+      .type-picker { grid-template-columns: repeat(2, 1fr); }
+      .post-row { flex-wrap: wrap; }
+      .post-actions { width: 100%; justify-content: flex-end; }
+      .form-actions .btn { flex: 1; }
+      .form-actions .spacer { display: none; }
+      .topbar-link span { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     EKRAN LOGOWANIA
+     ══════════════════════════════════════════════════════ -->
+<div class="login-screen" id="view-login">
+  <div class="login-card">
+    <div class="login-icon"><i class="ti ti-lock"></i></div>
+    <h1>Panel aktualności</h1>
+    <p>Korty Budowlani&nbsp;/ GoRun</p>
+
+    <div class="inline-error" id="login-error" hidden></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="login-password">Hasło</label>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" id="login-btn">Zaloguj</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL
+     ══════════════════════════════════════════════════════ -->
+<div id="view-app" hidden>
+
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar-title"><i class="ti ti-news"></i> Aktualności</div>
+      <div class="topbar-actions">
+        <a href="index.html#aktualnosci" target="_blank" rel="noopener" class="topbar-link">
+          <i class="ti ti-external-link"></i> <span>Zobacz stronę</span>
+        </a>
+        <button class="topbar-link" id="logout-btn" style="border:none;background:none;">
+          <i class="ti ti-logout"></i> <span>Wyloguj</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── LISTA ─── -->
+  <div class="page" id="view-list">
+    <div class="container">
+      <div class="page-head">
+        <h2>Wpisy</h2>
+        <button class="btn btn-primary" id="new-post-btn"><i class="ti ti-plus"></i> Nowy wpis</button>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter-chip active" data-filter="wszystkie">Wszystkie</button>
+        <button class="filter-chip" data-filter="opublikowany">Opublikowane</button>
+        <button class="filter-chip" data-filter="szkic">Szkice</button>
+        <button class="filter-chip" data-filter="ukryty">Ukryte</button>
+      </div>
+
+      <div class="post-list" id="post-list"></div>
+    </div>
+  </div>
+
+  <!-- ─── FORMULARZ ─── -->
+  <div class="page" id="view-form" hidden>
+    <div class="container">
+      <div class="page-head">
+        <h2 id="form-heading">Nowy wpis</h2>
+        <button class="btn btn-ghost btn-sm" id="back-btn"><i class="ti ti-arrow-left"></i> Wróć do listy</button>
+      </div>
+
+      <div class="form-card">
+        <div class="inline-error" id="form-error" hidden></div>
+
+        <div class="field">
+          <label>Rodzaj wpisu</label>
+          <div class="type-picker" id="type-picker">
+            <button type="button" class="type-option" data-type="ogloszenie">
+              <i class="ti ti-speakerphone"></i><span>Ogłoszenie</span>
+            </button>
+            <button type="button" class="type-option" data-type="turniej">
+              <i class="ti ti-trophy"></i><span>Turniej</span>
+            </button>
+            <button type="button" class="type-option" data-type="promocja">
+              <i class="ti ti-discount"></i><span>Promocja</span>
+            </button>
+            <button type="button" class="type-option" data-type="galeria">
+              <i class="ti ti-photo"></i><span>Galeria</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-tytul">Tytuł</label>
+          <input type="text" id="f-tytul" maxlength="120" placeholder="np. Turniej singla — jesień 2026">
+        </div>
+
+        <div class="field">
+          <div class="template-bar" id="template-bar" hidden>
+            <i class="ti ti-template"></i>
+            <span>Szablon ogłoszenia turniejowego — wypełnij, czego nie potrzebujesz, po prostu skasuj.</span>
+            <button type="button" class="btn btn-ghost btn-sm" id="template-btn">Wstaw</button>
+          </div>
+
+          <label for="f-tresc">
+            Treść
+            <span class="hint">Piszesz zwykłym tekstem. Enter robi nowy akapit — bez żadnych znaczków.</span>
+          </label>
+          <textarea id="f-tresc" placeholder="Napisz, co chcesz ogłosić…"></textarea>
+        </div>
+
+        <div class="field" id="field-data-wydarzenia" hidden>
+          <label for="f-data-wydarzenia">
+            Data turnieju
+            <span class="hint">Tylko wpisy z datą w przyszłości trafiają do ramki „Nadchodzące wydarzenia" na stronie głównej.</span>
+          </label>
+          <input type="date" id="f-data-wydarzenia">
+        </div>
+
+        <div class="field" id="field-wazny-do" hidden>
+          <label for="f-wazny-do">
+            Promocja obowiązuje do
+            <span class="hint">Po tej dacie wpis zniknie ze strony sam — nie trzeba o nim pamiętać.</span>
+          </label>
+          <input type="date" id="f-wazny-do">
+        </div>
+
+        <div class="field">
+          <label>
+            Zdjęcia <span class="hint" id="photo-hint">Maksymalnie 6. Pierwsze zdjęcie pokazuje się na karcie wpisu.</span>
+          </label>
+          <div class="photo-grid" id="photo-grid"></div>
+          <input type="file" id="photo-input" accept="image/*" multiple hidden>
+        </div>
+
+        <div class="field">
+          <label for="f-data-publikacji">
+            Data wpisu
+            <span class="hint">Decyduje o kolejności na stronie. Datę w przyszłości można ustawić, żeby wpis pojawił się później.</span>
+          </label>
+          <input type="date" id="f-data-publikacji">
+        </div>
+
+        <div class="field">
+          <label for="f-autor">Kto dodaje <span class="hint">Widoczne tylko tutaj, nie na stronie.</span></label>
+          <input type="text" id="f-autor" maxlength="40" placeholder="np. recepcja">
+        </div>
+
+        <div class="preview-wrap">
+          <div class="preview-label">Tak wpis będzie wyglądał na stronie</div>
+          <div id="preview"></div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-ghost" id="save-draft-btn"><i class="ti ti-device-floppy"></i> Zapisz szkic</button>
+          <div class="spacer"></div>
+          <button class="btn btn-primary" id="publish-btn"><i class="ti ti-send"></i> Opublikuj</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   KONFIGURACJA
+   ========================================================= */
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
+
+const MAX_PHOTOS = 6;
+const PHOTO_MAX_DIMENSION = 1600; // px dłuższego boku
+const PHOTO_QUALITY = 0.82;
+
+const SESSION_KEY = 'korty_admin_session';
+const AUTHOR_KEY  = 'korty_admin_autor';
+
+/* Szablon ogłoszenia turniejowego.
+   Po co: puste pole tekstowe nie podpowiada, o czym trzeba napisać, i zawsze
+   coś wypada — najczęściej wpisowe albo termin zapisów, czyli dokładnie to,
+   o co potem dzwonią ludzie. Szkielet zamienia „napisz ogłoszenie" na
+   „uzupełnij luki", co jest dużo łatwiejszym zadaniem. */
+const TURNIEJ_TEMPLATE =
+`Kategoria: (np. singiel open / +45 / debel mikst)
+Termin: (dzień i godzina rozpoczęcia)
+Format: (np. system grupowy, mecze do dwóch wygranych setów)
+
+Wpisowe: ... zł
+Zapisy: do (data) — telefonicznie lub w recepcji
+Limit miejsc: ...
+
+Nagrody: ...
+
+Gramy na kortach mączkowych, piłki zapewnia organizator.`;
+
+/* =========================================================
+   STAN
+   ========================================================= */
+let session = null;
+let allPosts = [];
+let currentFilter = 'wszystkie';
+let editing = null; // null = nowy wpis, inaczej obiekt edytowanego posta
+let photos = [];    // adresy zdjęć aktualnie w formularzu
+
+/* =========================================================
+   KOMUNIKACJA Z SERWEREM
+   ========================================================= */
+
+/* Uwaga na Content-Type: wysyłamy text/plain, mimo że treść jest JSON-em.
+   Apps Script nie obsługuje zapytania wstępnego (preflight), które
+   przeglądarka wysyła przy application/json — a text/plain go nie wywołuje.
+   Serwer i tak parsuje ciało jako JSON. */
+async function apiPost(payload) {
+  const res = await fetch(WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function apiGet(params) {
+  const qs = new URLSearchParams(params).toString();
+  const res = await fetch(WEB_APP_URL + '?' + qs);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+/* =========================================================
+   NARZĘDZIA
+   ========================================================= */
+function el(id) { return document.getElementById(id); }
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function todayIso() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+const MONTHS = ['stycznia','lutego','marca','kwietnia','maja','czerwca',
+                'lipca','sierpnia','września','października','listopada','grudnia'];
+
+function formatDate(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  return `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}`;
+}
+
+const TYPE_LABELS = {
+  ogloszenie: 'Ogłoszenie', turniej: 'Turniej',
+  promocja: 'Promocja', galeria: 'Galeria',
+};
+
+const STATUS_LABELS = {
+  opublikowany: 'Opublikowany', szkic: 'Szkic', ukryty: 'Ukryty',
+};
+
+let toastTimer = null;
+function toast(message, kind) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const node = document.createElement('div');
+  node.className = 'toast ' + (kind || 'ok');
+  node.textContent = message;
+  document.body.appendChild(node);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => node.remove(), 4000);
+}
+
+function showError(id, message) {
+  const box = el(id);
+  box.textContent = message;
+  box.hidden = false;
+}
+
+function hideError(id) { el(id).hidden = true; }
+
+/* Sesja wygasła to jedyny błąd, który wymaga innej reakcji niż pokazanie
+   komunikatu — trzeba wrócić do logowania, zamiast zostawiać człowieka
+   przed panelem, który nic nie robi. */
+function handleApiError(err, errorBoxId) {
+  const message = String(err.message || err);
+  if (/sesj/i.test(message)) {
+    logout();
+    showError('login-error', 'Sesja wygasła. Zaloguj się ponownie.');
+    return;
+  }
+  if (errorBoxId) showError(errorBoxId, message);
+  else toast(message, 'err');
+}
+
+/* =========================================================
+   LOGOWANIE
+   ========================================================= */
+el('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideError('login-error');
+
+  const btn = el('login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+
+  try {
+    const result = await apiPost({ action: 'login', password: el('login-password').value });
+    session = result.session;
+    try { localStorage.setItem(SESSION_KEY, session); } catch (_) {}
+    el('login-password').value = '';
+    await enterApp();
+  } catch (err) {
+    showError('login-error', String(err.message || err));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Zaloguj';
+  }
+});
+
+el('logout-btn').addEventListener('click', logout);
+
+function logout() {
+  session = null;
+  try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
+  el('view-app').hidden = true;
+  el('view-login').hidden = false;
+}
+
+async function enterApp() {
+  el('view-login').hidden = true;
+  el('view-app').hidden = false;
+  showList();
+  await loadPosts();
+}
+
+/* =========================================================
+   LISTA WPISÓW
+   ========================================================= */
+async function loadPosts() {
+  try {
+    const data = await apiGet({ action: 'postsAdmin', session: session });
+    allPosts = data.posts || [];
+    renderList();
+  } catch (err) {
+    handleApiError(err);
+  }
+}
+
+el('filters').addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  currentFilter = chip.dataset.filter;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c === chip));
+  renderList();
+});
+
+function renderList() {
+  const list = el('post-list');
+  const posts = currentFilter === 'wszystkie'
+    ? allPosts
+    : allPosts.filter(p => p.status === currentFilter);
+
+  if (posts.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i class="ti ti-inbox"></i>
+        ${currentFilter === 'wszystkie'
+          ? 'Nie ma jeszcze żadnych wpisów.<br>Kliknij „Nowy wpis", żeby dodać pierwszy.'
+          : 'Brak wpisów w tej kategorii.'}
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = posts.map(post => {
+    const thumb = post.zdjecia && post.zdjecia.length
+      ? `<img class="post-thumb" src="${escapeHtml(post.zdjecia[0])}" alt="">`
+      : `<div class="post-thumb-empty"><i class="ti ti-${iconForType(post.typ)}"></i></div>`;
+
+    const hideOrShow = post.status === 'ukryty'
+      ? `<button class="icon-btn" data-action="show" data-id="${post.id}" title="Przywróć"><i class="ti ti-eye"></i></button>`
+      : `<button class="icon-btn" data-action="hide" data-id="${post.id}" title="Ukryj"><i class="ti ti-eye-off"></i></button>`;
+
+    return `
+      <div class="post-row">
+        ${thumb}
+        <div class="post-main">
+          <div class="post-tags">
+            <span class="tag ${post.typ}">${TYPE_LABELS[post.typ] || post.typ}</span>
+            <span class="tag st-${post.status}">${STATUS_LABELS[post.status] || post.status}</span>
+          </div>
+          <div class="post-title">${escapeHtml(post.tytul)}</div>
+          <div class="post-date">${formatDate(post.data_publikacji)}</div>
+        </div>
+        <div class="post-actions">
+          <button class="icon-btn" data-action="edit" data-id="${post.id}" title="Edytuj"><i class="ti ti-pencil"></i></button>
+          ${hideOrShow}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function iconForType(typ) {
+  return { ogloszenie: 'speakerphone', turniej: 'trophy', promocja: 'discount', galeria: 'photo' }[typ] || 'file';
+}
+
+el('post-list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+
+  const post = allPosts.find(p => p.id === btn.dataset.id);
+  if (!post) return;
+
+  if (btn.dataset.action === 'edit') {
+    openForm(post);
+    return;
+  }
+
+  if (btn.dataset.action === 'hide') {
+    // Ukrycie jest odwracalne jednym kliknięciem, więc nie pytamy
+    // „czy na pewno". Pytanie potwierdzające ma sens tam, gdzie skutku
+    // nie da się cofnąć — tutaj tylko spowalnia.
+    try {
+      await apiPost({ action: 'deletePost', session: session, id: post.id });
+      toast('Wpis ukryty — zniknął ze strony.');
+      await loadPosts();
+    } catch (err) { handleApiError(err); }
+    return;
+  }
+
+  if (btn.dataset.action === 'show') {
+    try {
+      await apiPost({ action: 'savePost', session: session, post: { ...post, status: 'opublikowany' } });
+      toast('Wpis znów jest widoczny na stronie.');
+      await loadPosts();
+    } catch (err) { handleApiError(err); }
+  }
+});
+
+/* =========================================================
+   PRZEŁĄCZANIE WIDOKÓW
+   ========================================================= */
+function showList() {
+  el('view-list').hidden = false;
+  el('view-form').hidden = true;
+  window.scrollTo(0, 0);
+}
+
+function showForm() {
+  el('view-list').hidden = true;
+  el('view-form').hidden = false;
+  window.scrollTo(0, 0);
+}
+
+el('new-post-btn').addEventListener('click', () => openForm(null));
+el('back-btn').addEventListener('click', () => { showList(); loadPosts(); });
+
+/* =========================================================
+   FORMULARZ
+   ========================================================= */
+let currentType = 'ogloszenie';
+
+function openForm(post) {
+  editing = post;
+  hideError('form-error');
+
+  el('form-heading').textContent = post ? 'Edycja wpisu' : 'Nowy wpis';
+
+  currentType = post ? post.typ : 'ogloszenie';
+  el('f-tytul').value = post ? post.tytul : '';
+  el('f-tresc').value = post ? post.tresc : '';
+  el('f-data-wydarzenia').value = post ? post.data_wydarzenia : '';
+  el('f-wazny-do').value = post ? post.wazny_do : '';
+  el('f-data-publikacji').value = post ? post.data_publikacji : todayIso();
+  el('f-autor').value = post ? post.autor : (localStorage.getItem(AUTHOR_KEY) || '');
+
+  photos = post && Array.isArray(post.zdjecia) ? post.zdjecia.slice() : [];
+
+  applyType();
+  renderPhotos();
+  renderPreview();
+  showForm();
+}
+
+el('type-picker').addEventListener('click', (e) => {
+  const option = e.target.closest('.type-option');
+  if (!option) return;
+  currentType = option.dataset.type;
+  applyType();
+  renderPreview();
+});
+
+/* Pola zależne od typu pojawiają się i znikają, zamiast być stale
+   widoczne i „nieaktywne". Formularz, który pokazuje tylko to, co
+   w danej chwili ma sens, jest krótszy i trudniej w nim o pomyłkę. */
+function applyType() {
+  document.querySelectorAll('.type-option').forEach(o =>
+    o.classList.toggle('active', o.dataset.type === currentType));
+
+  el('field-data-wydarzenia').hidden = currentType !== 'turniej';
+  el('field-wazny-do').hidden = currentType !== 'promocja';
+  el('template-bar').hidden = currentType !== 'turniej';
+
+  el('photo-hint').textContent = currentType === 'galeria'
+    ? 'Wpis typu galeria musi mieć przynajmniej jedno zdjęcie. Maksymalnie 6.'
+    : 'Maksymalnie 6. Pierwsze zdjęcie pokazuje się na karcie wpisu.';
+}
+
+/* Szablon wstawiamy dopiero na kliknięcie, a nie automatycznie po wyborze
+   typu — automat nadpisałby tekst komuś, kto najpierw napisał treść,
+   a dopiero potem kliknął „Turniej". */
+el('template-btn').addEventListener('click', () => {
+  const field = el('f-tresc');
+  if (field.value.trim() !== '' &&
+      !confirm('W polu treści jest już tekst. Zastąpić go szablonem?')) {
+    return;
+  }
+  field.value = TURNIEJ_TEMPLATE;
+  field.focus();
+  renderPreview();
+});
+
+['f-tytul', 'f-tresc', 'f-data-wydarzenia', 'f-wazny-do', 'f-data-publikacji']
+  .forEach(id => el(id).addEventListener('input', renderPreview));
+
+/* =========================================================
+   ZDJĘCIA
+   ========================================================= */
+function renderPhotos() {
+  const grid = el('photo-grid');
+
+  const items = photos.map((url, i) => `
+    <div class="photo-item">
+      <img src="${escapeHtml(url)}" alt="">
+      ${i === 0 ? '<span class="photo-badge">główne</span>' : ''}
+      <div class="photo-tools">
+        ${i > 0 ? `<button type="button" data-photo="left" data-i="${i}" title="Przesuń w lewo"><i class="ti ti-chevron-left"></i></button>` : ''}
+        <button type="button" data-photo="remove" data-i="${i}" title="Usuń"><i class="ti ti-x"></i></button>
+      </div>
+    </div>`).join('');
+
+  const addButton = photos.length < MAX_PHOTOS
+    ? `<button type="button" class="photo-add" id="photo-add">
+         <i class="ti ti-camera-plus"></i> Dodaj
+       </button>`
+    : '';
+
+  grid.innerHTML = items + addButton;
+
+  const addBtn = el('photo-add');
+  if (addBtn) addBtn.addEventListener('click', () => el('photo-input').click());
+}
+
+el('photo-grid').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-photo]');
+  if (!btn) return;
+  const i = parseInt(btn.dataset.i, 10);
+
+  if (btn.dataset.photo === 'remove') {
+    photos.splice(i, 1);
+  } else if (btn.dataset.photo === 'left') {
+    [photos[i - 1], photos[i]] = [photos[i], photos[i - 1]];
+  }
+
+  renderPhotos();
+  renderPreview();
+});
+
+el('photo-input').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = ''; // pozwala wybrać ten sam plik ponownie
+  if (files.length === 0) return;
+
+  const room = MAX_PHOTOS - photos.length;
+  if (files.length > room) {
+    toast(`Zmieszczą się jeszcze ${room} zdjęcia — resztę pomijam.`, 'err');
+  }
+
+  const grid = el('photo-grid');
+  grid.classList.add('busy');
+
+  for (const file of files.slice(0, room)) {
+    try {
+      const { base64, mime } = await prepareImage(file);
+      const result = await apiPost({
+        action: 'uploadImage',
+        session: session,
+        filename: file.name,
+        mimeType: mime,
+        dataBase64: base64,
+      });
+      photos.push(result.url);
+      renderPhotos();
+      renderPreview();
+    } catch (err) {
+      handleApiError(err);
+      break;
+    }
+  }
+
+  grid.classList.remove('busy');
+  toast('Zdjęcia dodane.');
+});
+
+/* Zmniejszanie zdjęcia PO STRONIE PRZEGLĄDARKI, przed wysłaniem.
+   Zdjęcie z telefonu ma 4–8 MB i 4000 px szerokości. Do internetu nie
+   potrzeba więcej niż ~1600 px, a kodowanie base64 (którego wymaga
+   Apps Script) dokłada jeszcze jedną trzecią objętości. Bez tego kroku
+   recepcja czekałaby minutę na każde zdjęcie i regularnie trafiała
+   w limit wielkości zapytania. */
+async function prepareImage(file) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, PHOTO_MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, 'image/jpeg', PHOTO_QUALITY));
+
+    return { base64: await blobToBase64(blob), mime: 'image/jpeg' };
+  } catch (err) {
+    // Część przeglądarek nie odczyta niektórych formatów (np. HEIC
+    // z iPhone'a w starszym Chrome). Wtedy wysyłamy oryginał — serwer
+    // i tak pilnuje limitu wielkości i odrzuci, jeśli będzie za duży.
+    console.warn('Nie udało się zmniejszyć zdjęcia, wysyłam oryginał:', err);
+    return { base64: await blobToBase64(file), mime: file.type || 'image/jpeg' };
+  }
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/* =========================================================
+   PODGLĄD
+   ========================================================= */
+function excerpt(text, maxChars) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (clean.length <= maxChars) return clean;
+  return clean.slice(0, clean.lastIndexOf(' ', maxChars)) + '…';
+}
+
+function renderPreview() {
+  const tytul = el('f-tytul').value.trim() || '(tytuł wpisu)';
+  const tresc = el('f-tresc').value.trim();
+  const dataPub = el('f-data-publikacji').value || todayIso();
+
+  let extra = '';
+  if (currentType === 'turniej' && el('f-data-wydarzenia').value) {
+    extra = `<div class="news-extra"><i class="ti ti-calendar-event"></i> Termin: ${formatDate(el('f-data-wydarzenia').value)}</div>`;
+  } else if (currentType === 'promocja' && el('f-wazny-do').value) {
+    extra = `<div class="news-extra"><i class="ti ti-clock"></i> Obowiązuje do: ${formatDate(el('f-wazny-do').value)}</div>`;
+  }
+
+  const media = photos.length
+    ? `<div class="news-media"><img src="${escapeHtml(photos[0])}" alt=""></div>`
+    : '';
+
+  el('preview').innerHTML = `
+    <article class="news-card">
+      ${media}
+      <div class="news-body">
+        <div class="news-top">
+          <span class="tag ${currentType}">${TYPE_LABELS[currentType]}</span>
+          <span class="news-date">${formatDate(dataPub)}</span>
+        </div>
+        <h3 class="news-title">${escapeHtml(tytul)}</h3>
+        <p class="news-excerpt">${escapeHtml(excerpt(tresc, 140)) || '(treść wpisu)'}</p>
+        ${extra}
+      </div>
+    </article>`;
+}
+
+/* =========================================================
+   ZAPIS
+   ========================================================= */
+el('save-draft-btn').addEventListener('click', () => savePost('szkic'));
+el('publish-btn').addEventListener('click', () => savePost('opublikowany'));
+
+/* Sprawdzamy te same reguły co serwer. Nie dlatego, że serwerowi nie
+   ufamy — dlatego, że komunikat pojawiający się natychmiast, przy polu,
+   jest dla piszącego czymś zupełnie innym niż błąd po wysłaniu. */
+function validate(status) {
+  const tytul = el('f-tytul').value.trim();
+  const tresc = el('f-tresc').value.trim();
+
+  if (!tytul) return 'Wpis musi mieć tytuł.';
+
+  // Szkic może być niedokończony — to jego jedyny sens.
+  if (status === 'szkic') return null;
+
+  if (currentType === 'galeria' && photos.length === 0) {
+    return 'Wpis typu galeria musi mieć przynajmniej jedno zdjęcie.';
+  }
+  if (currentType !== 'galeria' && !tresc) {
+    return 'Wpis musi mieć treść.';
+  }
+  if (currentType === 'turniej' && !el('f-data-wydarzenia').value) {
+    return 'Wpis o turnieju musi mieć datę wydarzenia.';
+  }
+  if (currentType === 'promocja' && !el('f-wazny-do').value) {
+    return 'Promocja musi mieć datę, do kiedy obowiązuje.';
+  }
+  return null;
+}
+
+async function savePost(status) {
+  hideError('form-error');
+
+  const problem = validate(status);
+  if (problem) {
+    showError('form-error', problem);
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  const autor = el('f-autor').value.trim();
+  try { if (autor) localStorage.setItem(AUTHOR_KEY, autor); } catch (_) {}
+
+  const post = {
+    id: editing ? editing.id : '',
+    status: status,
+    typ: currentType,
+    tytul: el('f-tytul').value.trim(),
+    tresc: el('f-tresc').value.trim(),
+    data_publikacji: el('f-data-publikacji').value || todayIso(),
+    data_wydarzenia: currentType === 'turniej' ? el('f-data-wydarzenia').value : '',
+    wazny_do: currentType === 'promocja' ? el('f-wazny-do').value : '',
+    zdjecia: photos,
+    autor: autor,
+  };
+
+  const buttons = [el('save-draft-btn'), el('publish-btn')];
+  buttons.forEach(b => b.disabled = true);
+
+  try {
+    await apiPost({ action: 'savePost', session: session, post: post });
+    toast(status === 'opublikowany'
+      ? 'Opublikowane — wpis jest już na stronie.'
+      : 'Szkic zapisany. Nie widać go na stronie.');
+    await loadPosts();
+    showList();
+  } catch (err) {
+    handleApiError(err, 'form-error');
+    window.scrollTo(0, 0);
+  } finally {
+    buttons.forEach(b => b.disabled = false);
+  }
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+(async function init() {
+  let saved = null;
+  try { saved = localStorage.getItem(SESSION_KEY); } catch (_) {}
+
+  if (!saved) return; // pokazujemy ekran logowania (domyślny)
+
+  // Sesja z poprzedniej wizyty mogła już wygasnąć po stronie serwera.
+  // Sprawdzamy to jednym zapytaniem, zamiast wpuszczać kogoś do panelu,
+  // który zaraz i tak odmówi współpracy.
+  session = saved;
+  try {
+    const data = await apiGet({ action: 'postsAdmin', session: session });
+    allPosts = data.posts || [];
+    el('view-login').hidden = true;
+    el('view-app').hidden = false;
+    showList();
+    renderList();
+  } catch (err) {
+    logout();
+  }
+})();
+</script>
+
+</body>
+</html>
