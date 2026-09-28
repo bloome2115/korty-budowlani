@@ -181,7 +181,6 @@
     .badge-past { background: #F0F0F0; color: #888; }
     .badge-pinned { background: #FFF4D6; color: #8A6400; }
 
-    .news-date { font-size: 12px; color: #bbb; }
 
     .news-title { font-size: 20px; font-weight: 500; color: var(--navy); line-height: 1.35; margin-bottom: 8px; }
     .news-excerpt { font-size: 14px; color: var(--muted); line-height: 1.7; flex: 0 0 auto; white-space: pre-line; }
@@ -692,7 +691,6 @@ function render() {
             <span class="news-badge ${escapeHtml(post.typ)}">${t('typ_' + post.typ)}</span>
             ${post.wyrozniony && !minal ? `<span class="news-badge badge-pinned">${t('badge_pinned')}</span>` : ''}
             ${minal ? `<span class="news-badge badge-past">${t('badge_past')}</span>` : ''}
-            <span class="news-date">${formatDateLong(post.data_publikacji)}</span>
           </div>
           <h2 class="news-title">${escapeHtml(post.tytul)}</h2>
           <p class="news-excerpt">${escapeHtml(post.tresc)}</p>
