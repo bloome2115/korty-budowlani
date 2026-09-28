@@ -521,6 +521,76 @@
 
     .widget-cta:hover { background: #b5571f; }
 
+
+    /* ─── PODIUM ZWYCIĘZCÓW ───
+       Zajmuje miejsce plakatu na kafelku turnieju, który już się odbył.
+       Plakat zapraszał na wydarzenie, którego nie ma — podium mówi,
+       jak się skończyło. Ta sama przestrzeń, inna treść, zależnie
+       od tego, po której stronie daty jesteśmy. */
+    .podium-media {
+      flex: 0 0 32% !important;
+      background: #F0EBE3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      padding: 26px 20px 22px;
+      cursor: default;
+      min-height: 220px;
+    }
+
+    .podium-place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .podium-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--navy);
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 7px;
+      /* Nazwiska bywają długie, a słupek wąski — dwie linijki i koniec,
+         reszta wielokropkiem. Lepiej uciąć nazwisko niż rozwalić podium. */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    .podium-bar {
+      width: 100%;
+      border-radius: 7px 7px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 600;
+      color: #fff;
+      /* Wysokości słupków niosą informację same z siebie — widać
+         kolejność, zanim się przeczyta cyfry. */
+    }
+
+    .podium-place.p1 .podium-bar { height: 92px; background: #D9A520; }
+    .podium-place.p2 .podium-bar { height: 66px; background: #A8AEB8; }
+    .podium-place.p3 .podium-bar { height: 48px; background: #B87333; }
+
+    /* Kolejność wizualna 2-1-3, jak na prawdziwym podium. W kodzie
+       zostają w kolejności miejsc, żeby czytnik ekranu i telefon
+       odczytały je od zwycięzcy. */
+    .podium-place.p1 { order: 2; }
+    .podium-place.p2 { order: 1; }
+    .podium-place.p3 { order: 3; }
+
+    @media (max-width: 900px) {
+      .podium-media { flex: 0 0 auto !important; width: 100%; min-height: 200px; }
+    }
+
     /* ─── STATS BAR ─── */
     .stats-bar { background: var(--navy); }
 
@@ -844,6 +914,12 @@
     .news-badge.turniej    { background: #FDF0E8; color: var(--clay); }
     .news-badge.promocja   { background: #EAF3DE; color: var(--free-fg); }
     .news-badge.galeria    { background: #F2ECF7; color: #5B3B7A; }
+    .news-badge.badge-past { background: #F0F0F0; color: #888; }
+
+    /* Zakończony turniej przygaszony — ta sama zasada co na podstronie
+       aktualności: archiwum ma być czytelne, ale nie udawać oferty. */
+    .news-card.past { opacity: 0.68; }
+    .news-card.past:hover { opacity: 1; }
 
     .news-date { font-size: 12px; color: #bbb; }
 
@@ -1905,6 +1981,7 @@
         spec_wpisowe: 'Wpisowe', spec_zapisy: 'Zapisy do',
         spec_godzina: 'Godzina rozpoczęcia',
         chip_zapisy: 'zapisy do',
+        badge_past: 'Zakończony',
 
         section_cennik_eyebrow: 'Przejrzyste stawki',
         section_cennik_title: 'Cennik',
@@ -1987,6 +2064,7 @@
         spec_wpisowe: 'Entry fee', spec_zapisy: 'Sign-ups until',
         spec_godzina: 'Start time',
         chip_zapisy: 'sign-ups until',
+        badge_past: 'Finished',
 
         section_cennik_eyebrow: 'Transparent rates',
         section_cennik_title: 'Pricing',
@@ -2260,6 +2338,27 @@
         </div>`).join('') + `</dl>`;
     }
 
+/* Rysuje podium z wypełnionych miejsc. Gdy zna tylko zwycięzcę,
+       pokazuje sam jego słupek — trzy puste pudełka z pustymi podpisami
+       wyglądałyby na niedokończony wpis, a nie na turniej, w którym
+       liczyło się pierwsze miejsce. */
+    function renderPodium(post) {
+      const miejsca = [
+        { nr: 1, kto: post.miejsce_1 },
+        { nr: 2, kto: post.miejsce_2 },
+        { nr: 3, kto: post.miejsce_3 },
+      ].filter(m => m.kto && String(m.kto).trim() !== '');
+
+      if (miejsca.length === 0) return '';
+
+      return `<div class="news-media podium-media" aria-label="Podium">` +
+        miejsca.map(m => `
+          <div class="podium-place p${m.nr}">
+            <span class="podium-name">${escapeHtml(m.kto)}</span>
+            <div class="podium-bar">${m.nr}</div>
+          </div>`).join('') + `</div>`;
+    }
+
     function renderNewsSection() {
       const section = document.getElementById('aktualnosci');
       const grid = document.getElementById('news-grid');
@@ -2285,12 +2384,18 @@
           ? `<span class="news-more-photos"><i class="ti ti-photo"></i> +${post.zdjecia.length - 1}</span>`
           : '';
 
-        const media = hasImage
+        // Turniej po terminie: zamiast plakatu pokazujemy podium, jeśli
+        // wyniki są już wpisane. Plakat zapraszałby na coś, co minęło.
+        const minal = post.typ === 'turniej' && post.data_wydarzenia
+                      && post.data_wydarzenia < todayIso();
+        const podium = minal ? renderPodium(post) : '';
+
+        const media = podium || (hasImage
           ? `<div class="news-media" data-post-id="${escapeHtml(post.id)}" role="button" tabindex="0" aria-label="Powiększ zdjęcie">
                <img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy">
                ${morePhotos}
              </div>`
-          : '';
+          : '');
 
         // Turniej dostaje listę konkretów, reszta typów jedną linijkę
         // albo nic. Wpisowe i termin to informacje, dla których ludzie
@@ -2312,11 +2417,12 @@
         }
 
         return `
-          <article class="news-card">
+          <article class="news-card${minal ? ' past' : ''}">
             ${media}
             <div class="news-body">
               <div class="news-top">
                 <span class="news-badge ${escapeHtml(post.typ)}">${t('typ_' + post.typ)}</span>
+                ${minal ? `<span class="news-badge badge-past">${t('badge_past')}</span>` : ''}
                 <span class="news-date">${formatDateLong(post.data_publikacji)}</span>
               </div>
               <h3 class="news-title">${escapeHtml(post.tytul)}</h3>
@@ -2364,8 +2470,14 @@
           return;
         }
 
-        let width = ratio * MEDIA_TARGET_HEIGHT;
-        let height = MEDIA_TARGET_HEIGHT;
+        /* Wysokość bierzemy z WIĘKSZEJ z dwóch wartości: zakładanej
+           i rzeczywistej wysokości tekstu obok. Bez tego przy dłuższej
+           treści kafelek rósł za tekstem, kolumna ze zdjęciem rozciągała
+           się razem z nim, a cover przycinał plakat po bokach. */
+        const body = card.querySelector('.news-body');
+        const tekst = body ? body.scrollHeight : 0;
+        let height = Math.max(MEDIA_TARGET_HEIGHT, tekst);
+        let width = ratio * height;
 
         const maxWidth = card.clientWidth * MEDIA_MAX_WIDTH;
         if (width > maxWidth) {

@@ -215,6 +215,76 @@
       .spec-row { border-bottom: none; padding: 5px 0; }
     }
 
+
+    /* ─── PODIUM ZWYCIĘZCÓW ───
+       Zajmuje miejsce plakatu na kafelku turnieju, który już się odbył.
+       Plakat zapraszał na wydarzenie, którego nie ma — podium mówi,
+       jak się skończyło. Ta sama przestrzeń, inna treść, zależnie
+       od tego, po której stronie daty jesteśmy. */
+    .podium-media {
+      flex: 0 0 32% !important;
+      background: #F0EBE3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      padding: 26px 20px 22px;
+      cursor: default;
+      min-height: 220px;
+    }
+
+    .podium-place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .podium-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--navy);
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 7px;
+      /* Nazwiska bywają długie, a słupek wąski — dwie linijki i koniec,
+         reszta wielokropkiem. Lepiej uciąć nazwisko niż rozwalić podium. */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    .podium-bar {
+      width: 100%;
+      border-radius: 7px 7px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 600;
+      color: #fff;
+      /* Wysokości słupków niosą informację same z siebie — widać
+         kolejność, zanim się przeczyta cyfry. */
+    }
+
+    .podium-place.p1 .podium-bar { height: 92px; background: #D9A520; }
+    .podium-place.p2 .podium-bar { height: 66px; background: #A8AEB8; }
+    .podium-place.p3 .podium-bar { height: 48px; background: #B87333; }
+
+    /* Kolejność wizualna 2-1-3, jak na prawdziwym podium. W kodzie
+       zostają w kolejności miejsc, żeby czytnik ekranu i telefon
+       odczytały je od zwycięzcy. */
+    .podium-place.p1 { order: 2; }
+    .podium-place.p2 { order: 1; }
+    .podium-place.p3 { order: 3; }
+
+    @media (max-width: 900px) {
+      .podium-media { flex: 0 0 auto !important; width: 100%; min-height: 200px; }
+    }
+
     /* ─── STANY ─── */
     .state {
       background: var(--white);
@@ -531,6 +601,27 @@ function renderSpec(rows) {
     </div>`).join('') + `</dl>`;
 }
 
+/* Rysuje podium z wypełnionych miejsc. Gdy zna tylko zwycięzcę,
+       pokazuje sam jego słupek — trzy puste pudełka z pustymi podpisami
+       wyglądałyby na niedokończony wpis, a nie na turniej, w którym
+       liczyło się pierwsze miejsce. */
+    function renderPodium(post) {
+      const miejsca = [
+        { nr: 1, kto: post.miejsce_1 },
+        { nr: 2, kto: post.miejsce_2 },
+        { nr: 3, kto: post.miejsce_3 },
+      ].filter(m => m.kto && String(m.kto).trim() !== '');
+
+      if (miejsca.length === 0) return '';
+
+      return `<div class="news-media podium-media" aria-label="Podium">` +
+        miejsca.map(m => `
+          <div class="podium-place p${m.nr}">
+            <span class="podium-name">${escapeHtml(m.kto)}</span>
+            <div class="podium-bar">${m.nr}</div>
+          </div>`).join('') + `</div>`;
+    }
+
 function render() {
   const box = el('content');
 
@@ -568,12 +659,15 @@ function render() {
       ? `<span class="news-more-photos"><i class="ti ti-photo"></i> +${post.zdjecia.length - 1}</span>`
       : '';
 
-    const media = hasImage
+    // Po terminie plakat ustępuje miejsca podium — o ile wyniki są wpisane.
+    const podium = minal ? renderPodium(post) : '';
+
+    const media = podium || (hasImage
       ? `<div class="news-media" data-post-id="${escapeHtml(post.id)}" role="button" tabindex="0" aria-label="Powiększ zdjęcie">
            <img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy">
            ${morePhotos}
          </div>`
-      : '';
+      : '');
 
     let extra = '';
     if (post.typ === 'turniej') {
@@ -628,8 +722,15 @@ function fitMedia() {
       return;
     }
 
-    let width = ratio * MEDIA_TARGET_HEIGHT;
-    let height = MEDIA_TARGET_HEIGHT;
+    /* Wysokość bierzemy z WIĘKSZEJ z dwóch wartości: zakładanej
+       i rzeczywistej wysokości tekstu obok. Bez tego przy dłuższym
+       opisie kafelek rósł za tekstem, a kolumna ze zdjęciem rozciągała
+       się razem z nim — i cover przycinał plakat po bokach. Teraz to
+       zdjęcie dostaje szerokość odpowiednią do tej wysokości. */
+    const body = card.querySelector('.news-body');
+    const tekst = body ? body.scrollHeight : 0;
+    let height = Math.max(MEDIA_TARGET_HEIGHT, tekst);
+    let width = ratio * height;
 
     const maxWidth = card.clientWidth * MEDIA_MAX_WIDTH;
     if (width > maxWidth) {

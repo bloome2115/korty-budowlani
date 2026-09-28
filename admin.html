@@ -386,6 +386,20 @@
     .template-bar i { color: var(--clay); font-size: 17px; flex-shrink: 0; }
     .template-bar button { margin-left: auto; flex-shrink: 0; }
 
+    /* Wyniki wizualnie oddzielone — wypełnia się je tygodnie po reszcie
+       formularza, więc nie powinny mieszać się z polami zapowiedzi. */
+    .wyniki-box {
+      background: #FFFCF4;
+      border: 1.5px solid #F0E2BC;
+      border-radius: 11px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    .wyniki-head { display: flex; align-items: flex-start; gap: 11px; margin-bottom: 16px; }
+    .wyniki-head i { font-size: 20px; color: #C79210; flex-shrink: 0; margin-top: 2px; }
+    .wyniki-title { display: block; font-size: 13px; font-weight: 500; color: var(--navy); }
+
     /* ─── ZDJĘCIA ─── */
     .photo-grid {
       display: grid;
@@ -819,6 +833,29 @@
           <div class="field">
             <label for="f-zapisy-do">Zapisy do <span class="hint">ostatni dzień, w którym można się zgłosić</span></label>
             <input type="date" id="f-zapisy-do">
+          </div>
+
+          <div class="wyniki-box">
+            <div class="wyniki-head">
+              <i class="ti ti-trophy"></i>
+              <div>
+                <span class="wyniki-title">Wyniki — uzupełnij po turnieju</span>
+                <span class="hint">Gdy termin minie, a miejsca będą wypełnione, na stronie zamiast plakatu pokaże się podium. Wystarczy samo pierwsze miejsce.</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="f-miejsce-1">1. miejsce</label>
+              <input type="text" id="f-miejsce-1" maxlength="80" placeholder="imię i nazwisko lub para">
+            </div>
+            <div class="field">
+              <label for="f-miejsce-2">2. miejsce</label>
+              <input type="text" id="f-miejsce-2" maxlength="80">
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label for="f-miejsce-3">3. miejsce</label>
+              <input type="text" id="f-miejsce-3" maxlength="80">
+            </div>
           </div>
         </div>
 
@@ -1268,6 +1305,9 @@ function openForm(post) {
   el('f-format').value    = post ? (post.format || '') : '';
   el('f-wpisowe').value   = post ? (post.wpisowe || '') : '';
   el('f-zapisy-do').value = post ? (post.zapisy_do || '') : '';
+  el('f-miejsce-1').value = post ? (post.miejsce_1 || '') : '';
+  el('f-miejsce-2').value = post ? (post.miejsce_2 || '') : '';
+  el('f-miejsce-3').value = post ? (post.miejsce_3 || '') : '';
   el('f-wazny-do').value = post ? post.wazny_do : '';
   el('f-data-publikacji').value = post ? post.data_publikacji : todayIso();
   el('f-autor').value = post ? post.autor : (localStorage.getItem(AUTHOR_KEY) || '');
@@ -1617,6 +1657,9 @@ async function savePost(status) {
     format:    currentType === 'turniej' ? el('f-format').value.trim() : '',
     wpisowe:   currentType === 'turniej' ? el('f-wpisowe').value.trim() : '',
     zapisy_do: currentType === 'turniej' ? el('f-zapisy-do').value : '',
+    miejsce_1: currentType === 'turniej' ? el('f-miejsce-1').value.trim() : '',
+    miejsce_2: currentType === 'turniej' ? el('f-miejsce-2').value.trim() : '',
+    miejsce_3: currentType === 'turniej' ? el('f-miejsce-3').value.trim() : '',
     wyrozniony: el('f-wyrozniony').checked,
   };
 

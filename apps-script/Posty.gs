@@ -61,7 +61,7 @@ const POSTY_CONFIG = {
   MAX_IMAGE_BYTES: 8 * 1024 * 1024, // 8 MB po stronie serwera; panel i tak zmniejsza zdjęcia wcześniej
 };
 
-const POSTY_VERSION = '2026-09-28-e';
+const POSTY_VERSION = '2026-09-28-g';
 
 // Kolumny arkusza. KOLEJNOŚĆ MA ZNACZENIE — czyta ją cały ten plik.
 // Dopisując nową kolumnę, dodaj ją NA KOŃCU, nigdy w środku.
@@ -90,6 +90,12 @@ const POSTY_HEADERS = [
   // Sztywne pole czasu zmusiłoby recepcję do wybrania jednej wartości
   // i przepisania plakatu na swoje — czyli do wprowadzenia rozbieżności.
   'godzina',          // Q — godzina rozpoczęcia, tylko turniej
+  // Wyniki uzupełniane PO turnieju. Trzy osobne kolumny, nie jedno pole
+  // "zwycięzcy": strona rysuje z nich podium, a do tego musi wiedzieć,
+  // kto zajął które miejsce. Z jednego zdania by tego nie wyczytała.
+  'miejsce_1',        // R
+  'miejsce_2',        // S
+  'miejsce_3',        // T
 ];
 
 /* Numery kolumn liczone z nazw, a nie wpisane ręcznie.
@@ -286,8 +292,31 @@ function rowToPost_(row) {
     // że zadziała. Wyrozumiałość przy czytaniu, konsekwencja przy zapisie.
     wyrozniony: ['tak', 'true', 'prawda', 'x', '1']
       .indexOf(String(row[COL.wyrozniony - 1] || '').trim().toLowerCase()) !== -1,
-    godzina: String(row[COL.godzina - 1] || '').trim(),
+    godzina: timeToText_(row[COL.godzina - 1]),
+    miejsce_1: String(row[COL.miejsce_1 - 1] || '').trim(),
+    miejsce_2: String(row[COL.miejsce_2 - 1] || '').trim(),
+    miejsce_3: String(row[COL.miejsce_3 - 1] || '').trim(),
   };
+}
+
+/**
+ * Zamienia zawartość pola "godzina" na czytelny tekst.
+ *
+ * PROBLEM: Arkusze Google same interpretują to, co wygląda na liczbę lub
+ * datę. Wpisane "14:00" przestaje być napisem i staje się wartością czasu,
+ * zapisaną jako 30 grudnia 1899 o 14:00 (to zerowa data ich kalendarza).
+ * Odczytane przez String() daje potworka w rodzaju
+ * "Sat Dec 30 1899 14:00:00 GMT+0124".
+ *
+ * Zapisowi zapobiegamy wymuszając format tekstowy (patrz savePost_),
+ * ale wiersze zapisane wcześniej trzeba umieć odczytać — stąd ta funkcja.
+ * Zasada: przy zapisie bądź rygorystyczny, przy odczycie wyrozumiały.
+ */
+function timeToText_(value) {
+  if (value instanceof Date) {
+    return Utilities.formatDate(value, CONFIG.TIMEZONE, 'HH:mm');
+  }
+  return String(value == null ? '' : value).trim();
 }
 
 function dateToIso_(value) {
@@ -416,6 +445,9 @@ function savePost_(post) {
     typ === 'turniej' ? String(post.zapisy_do || '').trim() : '',
     post.wyrozniony ? 'tak' : '',
     typ === 'turniej' ? String(post.godzina || '').trim() : '',
+    typ === 'turniej' ? String(post.miejsce_1 || '').trim() : '',
+    typ === 'turniej' ? String(post.miejsce_2 || '').trim() : '',
+    typ === 'turniej' ? String(post.miejsce_3 || '').trim() : '',
   ];
 
   // Blokada na czas odczytu + zapisu. Dwie osoby zapisujące jednocześnie
@@ -427,14 +459,31 @@ function savePost_(post) {
 
   try {
     const existingRow = post.id ? findRowById_(sheet, post.id) : -1;
+    let row;
+    let created;
 
     if (existingRow > 0) {
       sheet.getRange(existingRow, 1, 1, POSTY_HEADERS.length).setValues([rowValues]);
-      return { success: true, id: rowValues[0], created: false };
+      row = existingRow;
+      created = false;
+    } else {
+      sheet.appendRow(rowValues);
+      row = sheet.getLastRow();
+      created = true;
     }
 
-    sheet.appendRow(rowValues);
-    return { success: true, id: rowValues[0], created: true };
+    /* WYMUSZENIE FORMATU TEKSTOWEGO na polach, które Arkusze lubią
+       „poprawiać". "14:00" zamieniłoby się w wartość czasu, a "1/2"
+       w datę — i wpis wracałby ze strony w formie, której nikt nie wpisał.
+       Format ustawiamy PO zapisie i od razu wpisujemy wartość ponownie,
+       bo samo ustawienie formatu nie cofa już dokonanej konwersji. */
+    [COL.godzina, COL.wpisowe].forEach(function (kolumna) {
+      const cel = sheet.getRange(row, kolumna);
+      cel.setNumberFormat('@');
+      cel.setValue(rowValues[kolumna - 1]);
+    });
+
+    return { success: true, id: rowValues[0], created: created };
   } finally {
     lock.releaseLock();
   }
@@ -605,6 +654,14 @@ function setupPosty() {
   // To jedno spojrzenie rozstrzyga, czy migracja kolumn się wykonała —
   // bez tego brak kolumny objawia się jako "funkcja nie działa", bez
   // żadnej wskazówki gdzie szukać.
+  /* Ustawiamy format tekstowy na całych kolumnach, nie tylko w nowych
+     wierszach — dzięki temu wartości wpisywane RĘCZNIE w arkuszu też
+     nie zamienią się w daty. Bezpieczne przy wielokrotnym uruchomieniu. */
+  [COL.godzina, COL.wpisowe].forEach(function (kolumna) {
+    sheet.getRange(2, kolumna, Math.max(sheet.getMaxRows() - 1, 1), 1).setNumberFormat('@');
+  });
+  Logger.log('Kolumny godzina i wpisowe ustawione na format tekstowy.');
+
   const realHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   Logger.log('Kolumny w arkuszu (' + realHeaders.length + '): ' + realHeaders.join(', '));
   const missing = POSTY_HEADERS.filter(h => realHeaders.indexOf(h) === -1);
