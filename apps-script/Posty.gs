@@ -40,10 +40,14 @@ const POSTY_CONFIG = {
   SHEET_ID: '1aQ2MSbqAJAvZzYumEO1ILstigGckJ5N4w7hhxEDwq1s',
   SHEET_NAME: 'Posty',
 
-  // ID folderu na Google Drive, do którego trafiają zdjęcia z postów.
-  // JAK ZDOBYĆ: utwórz folder na Drive, wejdź w niego, skopiuj z adresu
-  // fragment po /folders/ — to jest to ID.
-  DRIVE_FOLDER_ID: 'TU_WKLEJ_ID_FOLDERU',
+  /* ID folderu na zdjęcia NIE stoi już tutaj — czytamy je ze Script
+     Properties, klucz DRIVE_FOLDER_ID (tak samo jak hasło).
+
+     DLACZEGO SIĘ PRZENIOSŁO: przy aktualizacji tego pliku podmienia się
+     całą jego zawartość, więc ID wpisane w kodzie ginie razem ze starą
+     wersją — i upload przestaje działać bez żadnego widocznego powodu.
+     Właściwości skryptu żyją poza kodem i przeżywają każdą podmianę.
+     Zasada ogólna: co różni się między instalacjami, nie należy do kodu. */
 
   // Ile trwa sesja w panelu. CacheService przechowuje maksymalnie
   // 6 godzin, więc to jest sufit, nie nasz wybór.
@@ -56,7 +60,7 @@ const POSTY_CONFIG = {
   MAX_IMAGE_BYTES: 8 * 1024 * 1024, // 8 MB po stronie serwera; panel i tak zmniejsza zdjęcia wcześniej
 };
 
-const POSTY_VERSION = '2026-09-28-a';
+const POSTY_VERSION = '2026-09-28-b';
 
 // Kolumny arkusza. KOLEJNOŚĆ MA ZNACZENIE — czyta ją cały ten plik.
 // Dopisując nową kolumnę, dodaj ją NA KOŃCU, nigdy w środku.
@@ -80,7 +84,16 @@ const POSTY_HEADERS = [
   'format',           // M — np. system grupowy, do dwóch wygranych setów
   'wpisowe',          // N — tekst, nie liczba: bywa "60 zł od osoby"
   'zapisy_do',        // O — data zamknięcia zapisów
+  'wyrozniony',       // P — "tak" = wpis idzie na górę niezależnie od daty
 ];
+
+/* Numery kolumn liczone z nazw, a nie wpisane ręcznie.
+   POWÓD Z ŻYCIA: po dodaniu kolumn turniejowych funkcja hidePost_
+   zapisywała znacznik czasu do POSTY_HEADERS.length, czyli do "ostatniej
+   kolumny" — a ostatnia przestała być tą, o którą chodziło, i data lądowała
+   w polu "zapisy_do". Przy nazwach taki błąd nie ma jak powstać. */
+const COL = {};
+POSTY_HEADERS.forEach(function (name, i) { COL[name] = i + 1; });
 
 const POSTY_TYPES = ['ogloszenie', 'turniej', 'promocja', 'galeria'];
 const POSTY_STATUSES = ['szkic', 'opublikowany', 'ukryty'];
@@ -253,10 +266,13 @@ function rowToPost_(row) {
     zdjecia: String(row[8] || '').split(',').map(s => s.trim()).filter(Boolean),
     autor: String(row[9] || ''),
     zaktualizowano: dateToIso_(row[10]),
-    kategoria: String(row[11] || ''),
-    format: String(row[12] || ''),
-    wpisowe: String(row[13] || ''),
-    zapisy_do: dateToIso_(row[14]),
+    kategoria: String(row[COL.kategoria - 1] || ''),
+    format: String(row[COL.format - 1] || ''),
+    wpisowe: String(row[COL.wpisowe - 1] || ''),
+    zapisy_do: dateToIso_(row[COL.zapisy_do - 1]),
+    // W arkuszu trzymamy słowo "tak", nie TRUE — żeby człowiek
+    // otwierający zakładkę od razu wiedział, co ta kolumna znaczy.
+    wyrozniony: String(row[COL.wyrozniony - 1] || '').toLowerCase() === 'tak',
   };
 }
 
@@ -277,7 +293,11 @@ function getAllPosts_() {
   return values
     .filter(row => row[0]) // wiersze bez id to śmieci albo pusty wiersz na dole
     .map(rowToPost_)
-    .sort((a, b) => (b.data_publikacji || '').localeCompare(a.data_publikacji || ''));
+    .sort(function (a, b) {
+      // Wyróżnione zawsze przed resztą, wewnątrz każdej grupy od najnowszego.
+      if (a.wyrozniony !== b.wyrozniony) return a.wyrozniony ? -1 : 1;
+      return (b.data_publikacji || '').localeCompare(a.data_publikacji || '');
+    });
 }
 
 /**
@@ -333,20 +353,27 @@ function savePost_(post) {
   }
   if (!tytul) throw new Error('Wpis musi mieć tytuł.');
 
-  // Galeria może nie mieć treści, ale musi mieć chociaż jedno zdjęcie —
-  // inaczej na stronie pojawi się pusta ramka.
   const zdjecia = Array.isArray(post.zdjecia) ? post.zdjecia.filter(Boolean) : [];
-  if (typ === 'galeria' && zdjecia.length === 0) {
-    throw new Error('Wpis typu galeria musi mieć przynajmniej jedno zdjęcie.');
-  }
-  if (typ !== 'galeria' && !tresc) {
-    throw new Error('Wpis musi mieć treść.');
-  }
-  if (typ === 'turniej' && !post.data_wydarzenia) {
-    throw new Error('Wpis o turnieju musi mieć datę wydarzenia.');
-  }
-  if (typ === 'promocja' && !post.wazny_do) {
-    throw new Error('Promocja musi mieć datę, do kiedy obowiązuje.');
+
+  /* KOMPLETNOŚCI WYMAGAMY DOPIERO OD WPISU PUBLIKOWANEGO.
+     Szkic z definicji jest niedokończony — to jego jedyny sens. Wcześniej
+     te reguły działały tu bez wyjątku, więc panel przepuszczał szkic
+     (bo o statusie wiedział), a serwer go odrzucał komunikatem „Wpis musi
+     mieć treść". Sprawdzenie musi znać status, inaczej dwie warstwy
+     walidacji mówią co innego — a wygrywa ta, która mówi „nie". */
+  if (status === 'opublikowany') {
+    if (typ === 'galeria' && zdjecia.length === 0) {
+      throw new Error('Wpis typu galeria musi mieć przynajmniej jedno zdjęcie.');
+    }
+    if (typ !== 'galeria' && !tresc) {
+      throw new Error('Wpis musi mieć treść.');
+    }
+    if (typ === 'turniej' && !post.data_wydarzenia) {
+      throw new Error('Wpis o turnieju musi mieć datę wydarzenia.');
+    }
+    if (typ === 'promocja' && !post.wazny_do) {
+      throw new Error('Promocja musi mieć datę, do kiedy obowiązuje.');
+    }
   }
 
   const sheet = getPostySheet_();
@@ -373,6 +400,7 @@ function savePost_(post) {
     typ === 'turniej' ? String(post.format || '').trim() : '',
     typ === 'turniej' ? String(post.wpisowe || '').trim() : '',
     typ === 'turniej' ? String(post.zapisy_do || '').trim() : '',
+    post.wyrozniony ? 'tak' : '',
   ];
 
   // Blokada na czas odczytu + zapisu. Dwie osoby zapisujące jednocześnie
@@ -412,8 +440,8 @@ function hidePost_(id) {
   const row = findRowById_(sheet, id);
   if (row < 0) throw new Error('Nie znaleziono wpisu o id ' + id);
 
-  sheet.getRange(row, 2).setValue('ukryty'); // kolumna B = status
-  sheet.getRange(row, POSTY_HEADERS.length).setValue(
+  sheet.getRange(row, COL.status).setValue('ukryty');
+  sheet.getRange(row, COL.zaktualizowano).setValue(
     Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm')
   );
 
@@ -446,14 +474,24 @@ function findRowById_(sheet, id) {
  * PRZED wysłaniem — zdjęcie prosto z telefonu ma 4–8 MB, a do internetu
  * i tak nikt nie potrzebuje więcej niż ~1600 px szerokości.
  */
+function getDriveFolderId_() {
+  const id = PropertiesService.getScriptProperties().getProperty('DRIVE_FOLDER_ID');
+  if (!id) {
+    throw new Error(
+      'Nie ustawiono folderu na zdjęcia. W Apps Script: Ustawienia projektu ' +
+      '(zębatka) > Właściwości skryptu > Dodaj właściwość: DRIVE_FOLDER_ID, ' +
+      'a jako wartość ID folderu z Dysku (fragment adresu po /folders/).'
+    );
+  }
+  return id;
+}
+
 function uploadImage_(filename, mimeType, dataBase64) {
   if (!dataBase64) throw new Error('Brak danych pliku.');
   if (String(mimeType || '').indexOf('image/') !== 0) {
     throw new Error('Dozwolone są tylko pliki graficzne.');
   }
-  if (POSTY_CONFIG.DRIVE_FOLDER_ID === 'TU_WKLEJ_ID_FOLDERU') {
-    throw new Error('Nie ustawiono DRIVE_FOLDER_ID w POSTY_CONFIG.');
-  }
+  const folderId = getDriveFolderId_();
 
   const bytes = Utilities.base64Decode(dataBase64);
   if (bytes.length > POSTY_CONFIG.MAX_IMAGE_BYTES) {
@@ -468,7 +506,7 @@ function uploadImage_(filename, mimeType, dataBase64) {
   const blob = Utilities.newBlob(bytes, mimeType,
     Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyyMMdd-HHmmss') + '-' + safeName);
 
-  const folder = DriveApp.getFolderById(POSTY_CONFIG.DRIVE_FOLDER_ID);
+  const folder = DriveApp.getFolderById(folderId);
   const file = folder.createFile(blob);
 
   // Plik musi być publiczny, inaczej <img> na stronie pokaże pustą ramkę.
@@ -508,9 +546,11 @@ function setupPosty() {
   }
 
   Logger.log('Zakładka "' + POSTY_CONFIG.SHEET_NAME + '" gotowa. Wierszy: ' + (sheet.getLastRow() - 1));
-  Logger.log('Pamiętaj o dwóch rzeczach:');
-  Logger.log('  1. Script Properties > ADMIN_PASSWORD (hasło do panelu)');
-  Logger.log('  2. POSTY_CONFIG.DRIVE_FOLDER_ID (folder na zdjęcia)');
+  // Obie wartości sprawdzamy TU i głośno, zamiast czekać, aż odezwą się
+  // w najgorszym momencie — czyli gdy recepcja pierwszy raz wrzuci zdjęcie.
+  const props = PropertiesService.getScriptProperties();
+  Logger.log('ADMIN_PASSWORD ustawione: ' + (props.getProperty('ADMIN_PASSWORD') ? 'TAK' : 'NIE  <-- panel nie wpuści nikogo'));
+  Logger.log('DRIVE_FOLDER_ID ustawione: ' + (props.getProperty('DRIVE_FOLDER_ID') ? 'TAK' : 'NIE  <-- upload zdjęć nie zadziała'));
 }
 
 /** Diagnostyka: pokazuje, co zobaczy strona publiczna. Nic nie zapisuje. */

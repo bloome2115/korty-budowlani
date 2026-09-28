@@ -670,28 +670,27 @@
        co ładnie wyrównywało karty, ale z pionowego plakatu turniejowego
        zostawał środek — bez tytułu, dat i wpisowego, czyli bez wszystkiego,
        po co ten plakat powstał. Teraz wysokość karty wynika ze zdjęcia. */
+    /* Zdjęcie wypełnia kolumnę na całą szerokość i wysokość — żadnych
+       pasów tła dookoła.
+       Żeby przy tym NIE było przycinane, wysokość kafelka musi wynikać
+       ze zdjęcia, a nie ze zdjęcia dopasowywanego do kafelka. Minimalną
+       wysokość liczy JavaScript z prawdziwych proporcji pliku (patrz
+       fitMediaHeights) — CSS sam z siebie nie zna wymiarów obrazka.
+       Gdy tekst obok okaże się wyższy, kolumna rozciąga się za nim,
+       a wtedy object-fit: cover przycina — świadomie, bo alternatywą
+       byłaby dziura pod zdjęciem. */
     .news-media {
-      flex: 0 0 38%;
+      flex: 0 0 34%;
       position: relative;
       overflow: hidden;
-      /* Tło w kolorze kremu, nie szare: pionowy plakat nie wypełnia
-         kolumny na całą szerokość, więc pasy po bokach muszą wyglądać
-         jak część projektu, a nie jak brakujący obrazek. */
       background: #F0EBE3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: zoom-in;
     }
 
     .news-media img {
-      width: auto;
-      max-width: 100%;
-      height: auto;
-      /* Sufit wysokości — bez niego bardzo wysoki plakat rozciągałby
-         rząd na pół ekranu. Zdjęcie nadal nie jest przycinane, tylko
-         skalowane w dół; pełny rozmiar jest pod kliknięciem. */
-      max-height: 360px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
       transition: opacity 0.15s;
     }
@@ -1291,7 +1290,6 @@
          telefonu byłaby znaczkiem pocztowym obok ściany tekstu. */
       .news-card { flex-direction: column; }
       .news-media { flex: 0 0 auto; width: 100%; }
-      .news-media img { max-height: 420px; }
       .news-body { padding: 22px 22px 24px; }
       .news-title { font-size: 18px; }
     }
@@ -2203,7 +2201,46 @@
             </div>
           </article>`;
       }).join('');
+
+      watchMediaImages();
     }
+
+    /* Nadaje kolumnie ze zdjęciem minimalną wysokość wyliczoną z prawdziwych
+       proporcji pliku. Dzięki temu zdjęcie mieści się w całości przy pełnej
+       szerokości kolumny, zamiast być przycinanym albo otoczonym pasami tła.
+
+       Górny sufit istnieje, bo bardzo wysoki plakat potrafiłby rozciągnąć
+       jeden rząd na półtora ekranu. Powyżej sufitu zdjęcie zostaje
+       przycięte — ale pełny rozmiar jest zawsze pod kliknięciem. */
+    const MAX_MEDIA_HEIGHT = 560;
+
+    function fitMediaHeights() {
+      document.querySelectorAll('.news-media').forEach(media => {
+        const img = media.querySelector('img');
+        if (!img || !img.naturalWidth) return;
+        const width = media.clientWidth;
+        if (!width) return;
+        const natural = img.naturalHeight / img.naturalWidth * width;
+        media.style.minHeight = Math.round(Math.min(natural, MAX_MEDIA_HEIGHT)) + 'px';
+      });
+    }
+
+    // Zdjęcia dochodzą asynchronicznie, więc liczymy po załadowaniu każdego
+    // z osobna, a nie raz po narysowaniu kart.
+    function watchMediaImages() {
+      document.querySelectorAll('.news-media img').forEach(img => {
+        if (img.complete) fitMediaHeights();
+        else img.addEventListener('load', fitMediaHeights, { once: true });
+      });
+    }
+
+    // Zmiana szerokości okna zmienia szerokość kolumny, więc wysokość
+    // trzeba przeliczyć — inaczej po obróceniu telefonu zostaje stara.
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(fitMediaHeights, 150);
+    });
 
     /* =========================================================
        POWIĘKSZENIE ZDJĘCIA

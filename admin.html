@@ -275,6 +275,33 @@
     .tag.promocja   { background: #EAF3DE; color: var(--ok-fg); }
     .tag.galeria    { background: #F2ECF7; color: #5B3B7A; }
 
+    .tag.wyrozniony { background: #FFF4D6; color: #8A6400; }
+
+    .icon-btn.starred {
+      border-color: #E8B42A;
+      background: #FFF9E8;
+      color: #C79210;
+    }
+
+    /* Przełącznik wyróżnienia w formularzu — cały wiersz jest klikalny,
+       nie tylko kwadracik. Na telefonie trafienie w 16-pikselowy checkbox
+       kciukiem to loteria. */
+    .switch-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #FFFCF4;
+      border: 1.5px solid #F0E2BC;
+      border-radius: 11px;
+      padding: 14px 16px;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+
+    .switch-field input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #C79210; }
+    .switch-field .switch-label { font-size: 13px; font-weight: 500; color: var(--navy); }
+    .switch-field .hint { margin-top: 2px; }
+
     .tag.st-opublikowany { background: var(--ok-bg); color: var(--ok-fg); }
     .tag.st-szkic        { background: #F3F3F3; color: #777; }
     .tag.st-ukryty       { background: var(--err-bg); color: var(--err-fg); }
@@ -700,6 +727,14 @@
           <input type="date" id="f-data-publikacji">
         </div>
 
+        <label class="switch-field" for="f-wyrozniony">
+          <input type="checkbox" id="f-wyrozniony">
+          <span>
+            <span class="switch-label">Wyróżnij ten wpis</span>
+            <span class="hint">Pokaże się na stronie jako pierwszy, niezależnie od daty. Przydaje się przy turnieju, na który trwają zapisy.</span>
+          </span>
+        </label>
+
         <div class="field">
           <label for="f-autor">Kto dodaje <span class="hint">Widoczne tylko tutaj, nie na stronie.</span></label>
           <input type="text" id="f-autor" maxlength="40" placeholder="np. recepcja">
@@ -941,6 +976,10 @@ function renderList() {
       ? `<button class="icon-btn" data-action="show" data-id="${post.id}" title="Przywróć"><i class="ti ti-eye"></i></button>`
       : `<button class="icon-btn" data-action="hide" data-id="${post.id}" title="Ukryj"><i class="ti ti-eye-off"></i></button>`;
 
+    const star = `<button class="icon-btn${post.wyrozniony ? ' starred' : ''}" data-action="star" data-id="${post.id}"
+        title="${post.wyrozniony ? 'Przestań wyróżniać' : 'Wyróżnij — pokaże się jako pierwszy'}">
+        <i class="ti ti-star${post.wyrozniony ? '-filled' : ''}"></i></button>`;
+
     return `
       <div class="post-row">
         ${thumb}
@@ -948,11 +987,13 @@ function renderList() {
           <div class="post-tags">
             <span class="tag ${post.typ}">${TYPE_LABELS[post.typ] || post.typ}</span>
             <span class="tag st-${post.status}">${STATUS_LABELS[post.status] || post.status}</span>
+            ${post.wyrozniony ? '<span class="tag wyrozniony">Wyróżniony</span>' : ''}
           </div>
           <div class="post-title">${escapeHtml(post.tytul)}</div>
           <div class="post-date">${formatDate(post.data_publikacji)}</div>
         </div>
         <div class="post-actions">
+          ${star}
           <button class="icon-btn" data-action="edit" data-id="${post.id}" title="Edytuj"><i class="ti ti-pencil"></i></button>
           ${hideOrShow}
         </div>
@@ -983,6 +1024,16 @@ el('post-list').addEventListener('click', async (e) => {
     try {
       await apiPost({ action: 'deletePost', session: session, id: post.id });
       toast('Wpis ukryty — zniknął ze strony.');
+      await loadPosts();
+    } catch (err) { handleApiError(err); }
+    return;
+  }
+
+  if (btn.dataset.action === 'star') {
+    try {
+      await apiPost({ action: 'savePost', session: session,
+                      post: { ...post, wyrozniony: !post.wyrozniony } });
+      toast(post.wyrozniony ? 'Wpis przestał być wyróżniony.' : 'Wpis wyróżniony — pokaże się jako pierwszy.');
       await loadPosts();
     } catch (err) { handleApiError(err); }
     return;
@@ -1037,6 +1088,7 @@ function openForm(post) {
   el('f-wazny-do').value = post ? post.wazny_do : '';
   el('f-data-publikacji').value = post ? post.data_publikacji : todayIso();
   el('f-autor').value = post ? post.autor : (localStorage.getItem(AUTHOR_KEY) || '');
+  el('f-wyrozniony').checked = post ? !!post.wyrozniony : false;
 
   photos = post && Array.isArray(post.zdjecia) ? post.zdjecia.slice() : [];
 
@@ -1327,6 +1379,7 @@ async function savePost(status) {
     format:    currentType === 'turniej' ? el('f-format').value.trim() : '',
     wpisowe:   currentType === 'turniej' ? el('f-wpisowe').value.trim() : '',
     zapisy_do: currentType === 'turniej' ? el('f-zapisy-do').value : '',
+    wyrozniony: el('f-wyrozniony').checked,
   };
 
   const buttons = [el('save-draft-btn'), el('publish-btn')];
