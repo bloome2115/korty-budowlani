@@ -520,6 +520,101 @@
     .form-actions .spacer { flex: 1; }
 
     /* ─── KOMUNIKATY ─── */
+    /* ─── OKIENKO POTWIERDZENIA ───
+       Własne, a nie systemowe confirm(), z dwóch powodów: systemowe nie
+       pozwala pokazać tytułu wpisu w czytelnej formie ani rozróżnić
+       przycisków wagą, a część przeglądarek potrafi je zablokować. */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 18, 35, 0.55);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 30px 28px 24px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.25);
+    }
+
+    .modal-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 18px;
+      background: var(--err-bg);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-icon i { font-size: 26px; color: var(--err-fg); }
+
+    .modal h3 { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 10px; }
+
+    .modal p {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    .modal .modal-title-quote {
+      display: block;
+      font-weight: 500;
+      color: var(--navy);
+      margin: 10px 0;
+      word-break: break-word;
+    }
+
+    .modal-warning {
+      background: var(--err-bg);
+      color: var(--err-fg);
+      border-radius: 9px;
+      padding: 10px 13px;
+      font-size: 13px;
+      text-align: center;
+      margin: 16px 0 20px;
+    }
+
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-actions .btn { flex: 1; }
+
+    .btn-danger { background: var(--err-fg); color: #fff; }
+    .btn-danger:hover { background: #7d3017; }
+    .btn-danger:disabled { background: #c9a096; cursor: not-allowed; }
+
+    /* Usuwanie odcięte od reszty formularza — nie sąsiaduje z „Opublikuj",
+       żeby zmęczony człowiek nie trafił w nie odruchowo. */
+    .danger-zone {
+      margin-top: 30px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .danger-zone .hint { max-width: 380px; }
+
+    .btn-danger-ghost {
+      background: transparent;
+      color: var(--err-fg);
+      border: 1.5px solid #E8C4B8;
+    }
+
+    .btn-danger-ghost:hover { border-color: var(--err-fg); background: var(--err-bg); }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -762,6 +857,36 @@
           <div class="spacer"></div>
           <button class="btn btn-primary" id="publish-btn"><i class="ti ti-send"></i> Opublikuj</button>
         </div>
+
+        <!-- Widoczne tylko przy edycji istniejącego wpisu -->
+        <div class="danger-zone" id="danger-zone" hidden>
+          <span class="hint">
+            Jeśli wpis ma zniknąć tylko ze strony, użyj przekreślonego oka na liście —
+            to da się cofnąć. Usunięcie kasuje wpis z arkusza bezpowrotnie.
+          </span>
+          <button class="btn btn-danger-ghost btn-sm" id="delete-btn">
+            <i class="ti ti-trash"></i> Usuń wpis
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── POTWIERDZENIE USUNIĘCIA ─── -->
+  <div class="modal-backdrop" id="delete-modal" hidden>
+    <div class="modal">
+      <div class="modal-icon"><i class="ti ti-trash"></i></div>
+      <h3>Usunąć ten wpis?</h3>
+      <p>
+        Zamierzasz trwale usunąć wpis
+        <span class="modal-title-quote" id="delete-modal-title"></span>
+      </p>
+      <div class="modal-warning">
+        Tej operacji nie da się cofnąć — wpis zniknie z arkusza.
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="delete-cancel">Anuluj</button>
+        <button class="btn btn-danger" id="delete-confirm">Usuń trwale</button>
       </div>
     </div>
   </div>
@@ -1137,11 +1262,64 @@ function openForm(post) {
 
   photos = post && Array.isArray(post.zdjecia) ? post.zdjecia.slice() : [];
 
+  // Usuwać można tylko coś, co już istnieje w arkuszu.
+  el('danger-zone').hidden = !post;
+
   applyType();
   renderPhotos();
   renderPreview();
   showForm();
 }
+
+/* =========================================================
+   USUWANIE WPISU
+   ========================================================= */
+el('delete-btn').addEventListener('click', () => {
+  if (!editing) return;
+  el('delete-modal-title').textContent = '„' + editing.tytul + '"';
+  el('delete-modal').hidden = false;
+});
+
+function closeDeleteModal() {
+  el('delete-modal').hidden = true;
+}
+
+el('delete-cancel').addEventListener('click', closeDeleteModal);
+
+// Kliknięcie w tło i Escape też anulują — anulowanie ma być łatwiejsze
+// niż potwierdzenie, bo pomyłka w jedną stronę jest odwracalna,
+// a w drugą nie.
+el('delete-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'delete-modal') closeDeleteModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !el('delete-modal').hidden) closeDeleteModal();
+});
+
+el('delete-confirm').addEventListener('click', async () => {
+  if (!editing) return;
+
+  const btn = el('delete-confirm');
+  btn.disabled = true;
+  btn.textContent = 'Usuwam…';
+
+  try {
+    await apiPost({ action: 'purgePost', session: session, id: editing.id });
+    closeDeleteModal();
+    toast('Wpis usunięty.');
+    editing = null;
+    await loadPosts();
+    showList();
+  } catch (err) {
+    closeDeleteModal();
+    handleApiError(err, 'form-error');
+    window.scrollTo(0, 0);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Usuń trwale';
+  }
+});
 
 el('type-picker').addEventListener('click', (e) => {
   const option = e.target.closest('.type-option');
