@@ -109,8 +109,11 @@ Trzy ligi Rakietmania + UKT Go Run (open, 40+, kobiet) jako równorzędne kafelk
 każdy z przyciskiem na stronę ligi w kluby.org, plus sekcja „Jak dołączyć".
 Regulaminów NIE przepisujemy — żyją w kluby.org, a kopia na naszej stronie
 rozjechałaby się z oryginałem przy pierwszej zmianie sezonu.
-⚠️ Wszystkie trzy adresy `url` w tablicy `LIGI` są puste — przyciski pokazują
-„Zapisy wkrótce". Dopisanie czwartej ligi = jeden obiekt w tablicy `LIGI`.
+Adresy lig w kluby.org (pole `url` w tablicy `LIGI`):
+`…/liga/rakietmania-772` (open), `…/liga/rakietmania-771` (40+),
+`…/liga/rakietmania` (kobiet). Pusty `url` przełącza przycisk w nieaktywne
+„Zapisy wkrótce" — przydatne między sezonami. Dopisanie czwartej ligi =
+jeden obiekt w tablicy `LIGI`.
 
 ### `o-nas.html` — podstrona o klubie ✅ gotowa
 Historia obiektu (pełna wersja; strona główna ma tylko skrót), 4 fakty,
@@ -249,6 +252,7 @@ przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żad
       przełącznika PL/EN na logo na telefonie)
 - [x] Prawdziwe numery telefonów: stopka `index.html`, `rezerwacja-wkrotce.html`,
       kafelki trenerów
+- [x] Adresy trzech lig w kluby.org wpisane w `liga.html`
 
 **Kod jest skończony.** Wszystko, co zostało, to dane od klienta.
 
@@ -257,7 +261,6 @@ przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żad
 - [ ] Trzy stawki w Cenniku oznaczone `[do uzupełnienia]`
 - [ ] Akceptacja tekstu „O nas" przez klienta
 - [ ] Link do strony klubu na kluby.org → stała `REZERWACJA_URL` w `index.html`
-- [ ] Trzy adresy lig na kluby.org → pola `url` w tablicy `LIGI` w `liga.html`
 - [ ] Nazwiska i krótkie opisy trenerów → tablica `TRENERZY` w `o-nas.html`
 - [ ] Zdjęcia trenerów (opcjonalnie — bez nich kółka pokazują inicjały)
 - [ ] Testy na telefonie z osobą, która realnie będzie dodawać posty
@@ -270,7 +273,6 @@ przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żad
 | `[do uzupełnienia]` ×3 | tabela cennika w `index.html` |
 | Tekst „O nas" | szkic, niezaakceptowany |
 | Brak nazwisk i opisów trenerów | tablica `TRENERZY` w `o-nas.html` |
-| Puste `url` ×3 | tablica `LIGI` w `liga.html` — przyciski „Zapisy wkrótce" |
 
 
 ---
