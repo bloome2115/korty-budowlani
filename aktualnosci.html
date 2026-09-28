@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aktualności — Korty Budowlani Lublin</title>
+  <meta name="description" content="Turnieje, promocje i ogłoszenia z kortów Budowlani Lublin. Aktualne terminy, wpisowe i zapisy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --text:   #1A2744;
+      --muted:  #888;
+      --border: #eee;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    /* Ta sama reguła co w index.html i z tego samego powodu: `hidden`
+       przegrywa z własnym `display`, a nakładka powiększenia ma flex. */
+    [hidden] { display: none !important; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+    /* ─── NAVBAR ─── */
+    .navbar { background: var(--navy); height: 104px; display: flex; align-items: center; flex-shrink: 0; }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
+    .navbar-logos { display: flex; align-items: center; gap: 18px; }
+    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
+    .logos-divider { width: 2px; height: 62px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .navbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.7); font-size: 15px;
+      padding: 10px 18px; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .lang-switch {
+      display: flex; align-items: center; background: rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 4px; cursor: pointer; user-select: none;
+    }
+    .lang-switch span {
+      font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
+      color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s;
+    }
+    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ─── NAGŁÓWEK STRONY ─── */
+    main { flex: 1; padding: 46px 0 70px; }
+
+    .page-head { margin-bottom: 26px; }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 500; color: var(--clay);
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;
+    }
+
+    .page-head h1 { font-size: 34px; font-weight: 600; color: var(--navy); }
+    .page-head p { font-size: 15px; color: var(--muted); margin-top: 6px; }
+
+    /* ─── FILTRY ─── */
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+
+    .filter-chip {
+      background: var(--white);
+      border: 1.5px solid #e6e6e6;
+      border-radius: 22px;
+      padding: 8px 17px;
+      font-size: 13px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+    }
+
+    .filter-chip:hover { border-color: #ccc; }
+
+    .filter-chip.active {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    /* Licznik przy filtrze mówi, ile wpisów się pod nim kryje — dzięki
+       temu widać, że pusta kategoria jest pusta, ZANIM się w nią kliknie. */
+    .filter-count {
+      font-size: 11px;
+      background: rgba(0,0,0,0.06);
+      padding: 1px 7px;
+      border-radius: 20px;
+    }
+
+    .filter-chip.active .filter-count { background: rgba(255,255,255,0.18); }
+    .filter-chip.empty { opacity: 0.45; }
+
+    /* ─── LISTA WPISÓW ─── */
+    .news-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .news-card {
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+    }
+
+    .news-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
+
+    /* Turniej, który się już odbył, jest przygaszony. Bez tego lista
+       mieszałaby zapowiedzi z historią, a wpis sprzed miesiąca z napisem
+       „Zapisy do 9.10" wyglądałby jak aktualna oferta. */
+    .news-card.past { opacity: 0.68; }
+    .news-card.past:hover { opacity: 1; }
+
+    .news-media {
+      flex: 0 0 30%;
+      position: relative;
+      overflow: hidden;
+      background: #F0EBE3;
+      cursor: zoom-in;
+    }
+
+    .news-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.15s; }
+    .news-media:hover img { opacity: 0.92; }
+
+    .news-more-photos {
+      position: absolute; right: 10px; bottom: 10px;
+      background: rgba(26, 39, 68, 0.82); color: #fff;
+      font-size: 11px; font-weight: 500; padding: 5px 11px; border-radius: 20px;
+      display: flex; align-items: center; gap: 5px; pointer-events: none;
+    }
+    .news-more-photos i { font-size: 13px; }
+
+    .news-body {
+      padding: 28px 30px;
+      display: flex; flex-direction: column;
+      justify-content: center; flex: 1; min-width: 0;
+    }
+
+    .news-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+
+    .news-badge {
+      font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    .news-badge.ogloszenie { background: #EEF1F7; color: var(--navy); }
+    .news-badge.turniej    { background: #FDF0E8; color: var(--clay); }
+    .news-badge.promocja   { background: #EAF3DE; color: #3B6D11; }
+    .news-badge.galeria    { background: #F2ECF7; color: #5B3B7A; }
+
+    .badge-past { background: #F0F0F0; color: #888; }
+    .badge-pinned { background: #FFF4D6; color: #8A6400; }
+
+    .news-date { font-size: 12px; color: #bbb; }
+
+    .news-title { font-size: 20px; font-weight: 500; color: var(--navy); line-height: 1.35; margin-bottom: 8px; }
+    .news-excerpt { font-size: 14px; color: var(--muted); line-height: 1.7; flex: 0 0 auto; white-space: pre-line; }
+
+    .news-extra {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; color: var(--clay); margin-top: 14px; font-weight: 500;
+    }
+    .news-extra i { font-size: 15px; }
+
+    /* ─── SPECYFIKACJA TURNIEJU ─── */
+    .spec { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+    .spec-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 14px; padding: 7px 0; border-bottom: 1px solid var(--border);
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row dt { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .spec-row dd { font-size: 14px; font-weight: 500; color: var(--navy); text-align: right; min-width: 0; }
+    .spec-row.highlight dd { color: var(--clay); }
+
+    @media (min-width: 901px) {
+      .spec {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 32px;
+        row-gap: 2px;
+        grid-auto-flow: column;
+      }
+      .spec-row { border-bottom: none; padding: 5px 0; }
+    }
+
+    /* ─── STANY ─── */
+    .state {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 60px 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .state i { font-size: 40px; color: #ddd; display: block; margin-bottom: 16px; }
+
+    /* ─── POWIĘKSZENIE ZDJĘCIA ─── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(10, 18, 35, 0.94);
+      display: flex; align-items: center; justify-content: center;
+      padding: 56px 20px;
+    }
+
+    .lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 6px; }
+
+    .lb-btn {
+      position: absolute; background: rgba(255,255,255,0.12); border: none; color: #fff;
+      border-radius: 50%; width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; transition: background 0.15s;
+    }
+    .lb-btn:hover { background: rgba(255,255,255,0.25); }
+    .lb-close { top: 16px; right: 16px; }
+    .lb-prev  { left: 16px;  top: 50%; transform: translateY(-50%); }
+    .lb-next  { right: 16px; top: 50%; transform: translateY(-50%); }
+
+    .lb-counter {
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.65); font-size: 13px; letter-spacing: 1px;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer { background: var(--navy); padding: 26px 0; flex-shrink: 0; }
+    .footer .container {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+    .footer-bloome { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .navbar { height: 84px; }
+      .navbar-logos img { height: 64px; }
+      .logos-divider { height: 46px; }
+      .nav-back span { display: none; }
+
+      .page-head h1 { font-size: 26px; }
+
+      .news-card { flex-direction: column; }
+      .news-media { flex: 0 0 auto !important; width: 100%; }
+      .news-body { padding: 22px 22px 24px; }
+      .news-title { font-size: 18px; }
+
+      .lightbox { padding: 64px 12px; }
+      .lb-btn { width: 40px; height: 40px; font-size: 19px; }
+      .lb-prev { left: 8px; }
+      .lb-next { right: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-logos">
+        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
+        <div class="logos-divider"></div>
+        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
+      </div>
+
+      <div class="navbar-right">
+        <div class="lang-switch" onclick="toggleLang()">
+          <span class="lang-pl-span active">PL</span>
+          <span class="lang-en-span">EN</span>
+        </div>
+        <a href="index.html" class="nav-back">
+          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="page-eyebrow" data-i18n="page_eyebrow">Co u nas słychać</div>
+        <h1 data-i18n="page_title">Aktualności</h1>
+        <p data-i18n="page_sub">Turnieje, promocje i ogłoszenia z kortów Budowlani.</p>
+      </div>
+
+      <div class="filters" id="filters" hidden></div>
+
+      <div id="content">
+        <div class="state" data-i18n="state_loading">Wczytywanie…</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ─── POWIĘKSZENIE ZDJĘCIA ─── -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-btn lb-close" id="lb-close" aria-label="Zamknij"><i class="ti ti-x"></i></button>
+    <button class="lb-btn lb-prev" id="lb-prev" aria-label="Poprzednie zdjęcie"><i class="ti ti-chevron-left"></i></button>
+    <img id="lb-img" alt="">
+    <button class="lb-btn lb-next" id="lb-next" aria-label="Następne zdjęcie"><i class="ti ti-chevron-right"></i></button>
+    <div class="lb-counter" id="lb-counter"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa</div>
+      <div class="footer-bloome">Bloome</div>
+    </div>
+  </footer>
+
+<script>
+/* =========================================================
+   KONFIGURACJA
+   ========================================================= */
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbweDoh7M6ecSZvrNb4Q2S98c2dVMWRPcmN4pd2MoNF5N2u9GTRRWRUnImD_86hCNBKy/exec';
+
+const MEDIA_TARGET_HEIGHT = 300;
+const MEDIA_MAX_WIDTH = 0.42;
+
+/* =========================================================
+   TŁUMACZENIA
+   ========================================================= */
+const TRANSLATIONS = {
+  pl: {
+    nav_back: 'Strona główna',
+    page_eyebrow: 'Co u nas słychać',
+    page_title: 'Aktualności',
+    page_sub: 'Turnieje, promocje i ogłoszenia z kortów Budowlani.',
+    state_loading: 'Wczytywanie…',
+    state_empty: 'Nie ma jeszcze żadnych wpisów.<br>Zajrzyj wkrótce.',
+    state_empty_filter: 'W tej kategorii nie ma jeszcze wpisów.',
+    state_error: 'Nie udało się wczytać aktualności.<br>Spróbuj odświeżyć stronę za chwilę.',
+    filter_all: 'Wszystkie',
+    typ_ogloszenie: 'Ogłoszenie', typ_turniej: 'Turniej', typ_promocja: 'Promocja', typ_galeria: 'Galeria',
+    filter_ogloszenie: 'Ogłoszenia', filter_turniej: 'Turnieje',
+    filter_promocja: 'Promocje', filter_galeria: 'Galeria',
+    badge_past: 'Zakończony', badge_pinned: 'Wyróżniony',
+    news_valid_until: 'Obowiązuje do:',
+    spec_termin: 'Termin', spec_godzina: 'Godzina rozpoczęcia', spec_zapisy: 'Zapisy do',
+    spec_kategoria: 'Kategoria', spec_format: 'Format', spec_wpisowe: 'Wpisowe',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+  en: {
+    nav_back: 'Home',
+    page_eyebrow: "What's new",
+    page_title: 'News',
+    page_sub: 'Tournaments, promotions and announcements from Budowlani courts.',
+    state_loading: 'Loading…',
+    state_empty: 'No posts yet.<br>Check back soon.',
+    state_empty_filter: 'No posts in this category yet.',
+    state_error: 'Could not load the news.<br>Please refresh in a moment.',
+    filter_all: 'All',
+    typ_ogloszenie: 'Announcement', typ_turniej: 'Tournament', typ_promocja: 'Promotion', typ_galeria: 'Gallery',
+    filter_ogloszenie: 'Announcements', filter_turniej: 'Tournaments',
+    filter_promocja: 'Promotions', filter_galeria: 'Gallery',
+    badge_past: 'Finished', badge_pinned: 'Featured',
+    news_valid_until: 'Valid until:',
+    spec_termin: 'Date', spec_godzina: 'Start time', spec_zapisy: 'Sign-ups until',
+    spec_kategoria: 'Category', spec_format: 'Format', spec_wpisowe: 'Entry fee',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+};
+
+let currentLang = 'pl';
+
+function t(key) {
+  return TRANSLATIONS[currentLang][key] !== undefined ? TRANSLATIONS[currentLang][key] : key;
+}
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.title = lang === 'pl'
+    ? 'Aktualności — Korty Budowlani Lublin'
+    : 'News — Budowlani Lublin Tennis Courts';
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+  });
+
+  // Treść rysowana z JavaScriptu nie ma atrybutów data-i18n,
+  // więc po zmianie języka trzeba ją przerysować.
+  renderFilters();
+  render();
+}
+
+function toggleLang() {
+  document.querySelectorAll('.lang-pl-span').forEach(el => el.classList.toggle('active'));
+  document.querySelectorAll('.lang-en-span').forEach(el => el.classList.toggle('active'));
+  applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
+}
+
+/* =========================================================
+   NARZĘDZIA
+   ========================================================= */
+function el(id) { return document.getElementById(id); }
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Ręczne rozbicie daty zamiast new Date(tekst) — ten drugi w części
+// przeglądarek czyta "2026-10-24" jako UTC i cofa datę o dzień.
+function parseIsoDate(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+
+const MONTHS_LONG = {
+  pl: ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+};
+
+function formatDateLong(iso) {
+  const d = parseIsoDate(iso);
+  if (!d) return '';
+  return currentLang === 'pl'
+    ? `${d.getDate()} ${MONTHS_LONG.pl[d.getMonth()]} ${d.getFullYear()}`
+    : `${MONTHS_LONG.en[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function todayIso() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/* =========================================================
+   POBIERANIE
+   ========================================================= */
+let allPosts = null;
+let loadFailed = false;
+let currentFilter = 'wszystkie';
+
+async function loadPosts() {
+  try {
+    const res = await fetch(WEB_APP_URL + '?action=posts');
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    allPosts = Array.isArray(data.posts) ? data.posts : [];
+  } catch (err) {
+    loadFailed = true;
+    allPosts = [];
+    console.error('Nie udało się pobrać aktualności:', err);
+  }
+  renderFilters();
+  render();
+}
+
+/* =========================================================
+   FILTRY
+   ========================================================= */
+const TYPES = ['ogloszenie', 'turniej', 'promocja', 'galeria'];
+
+function renderFilters() {
+  const box = el('filters');
+  if (!allPosts || allPosts.length === 0) { box.hidden = true; return; }
+
+  // Filtr z jednym typem wpisów nie ma czego filtrować — chowamy cały pasek,
+  // zamiast pokazywać przełącznik, który niczego nie przełącza.
+  const obecne = TYPES.filter(typ => allPosts.some(p => p.typ === typ));
+  if (obecne.length < 2) { box.hidden = true; return; }
+
+  box.hidden = false;
+
+  const chip = (klucz, etykieta, ile) => `
+    <button class="filter-chip${currentFilter === klucz ? ' active' : ''}${ile === 0 ? ' empty' : ''}"
+            data-filter="${klucz}">
+      ${escapeHtml(etykieta)} <span class="filter-count">${ile}</span>
+    </button>`;
+
+  box.innerHTML =
+    chip('wszystkie', t('filter_all'), allPosts.length) +
+    obecne.map(typ => chip(typ, t('filter_' + typ), allPosts.filter(p => p.typ === typ).length)).join('');
+}
+
+el('filters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-chip');
+  if (!btn) return;
+  currentFilter = btn.dataset.filter;
+  renderFilters();
+  render();
+});
+
+/* =========================================================
+   RYSOWANIE LISTY
+   ========================================================= */
+function renderSpec(rows) {
+  const filled = rows.filter(r => r.value && String(r.value).trim() !== '');
+  if (filled.length === 0) return '';
+
+  const rowCount = Math.ceil(filled.length / 2);
+
+  return `<dl class="spec" style="grid-template-rows: repeat(${rowCount}, auto)">` + filled.map(r => `
+    <div class="spec-row${r.highlight ? ' highlight' : ''}">
+      <dt>${escapeHtml(r.label)}</dt>
+      <dd>${escapeHtml(r.value)}</dd>
+    </div>`).join('') + `</dl>`;
+}
+
+function render() {
+  const box = el('content');
+
+  if (allPosts === null) {
+    box.innerHTML = `<div class="state">${t('state_loading')}</div>`;
+    return;
+  }
+
+  if (loadFailed) {
+    box.innerHTML = `<div class="state"><i class="ti ti-cloud-off"></i>${t('state_error')}</div>`;
+    return;
+  }
+
+  if (allPosts.length === 0) {
+    box.innerHTML = `<div class="state"><i class="ti ti-inbox"></i>${t('state_empty')}</div>`;
+    return;
+  }
+
+  const posts = currentFilter === 'wszystkie'
+    ? allPosts
+    : allPosts.filter(p => p.typ === currentFilter);
+
+  if (posts.length === 0) {
+    box.innerHTML = `<div class="state"><i class="ti ti-inbox"></i>${t('state_empty_filter')}</div>`;
+    return;
+  }
+
+  const dzis = todayIso();
+
+  box.innerHTML = `<div class="news-list">` + posts.map(post => {
+    const hasImage = Array.isArray(post.zdjecia) && post.zdjecia.length > 0;
+    const minal = post.typ === 'turniej' && post.data_wydarzenia && post.data_wydarzenia < dzis;
+
+    const morePhotos = hasImage && post.zdjecia.length > 1
+      ? `<span class="news-more-photos"><i class="ti ti-photo"></i> +${post.zdjecia.length - 1}</span>`
+      : '';
+
+    const media = hasImage
+      ? `<div class="news-media" data-post-id="${escapeHtml(post.id)}" role="button" tabindex="0" aria-label="Powiększ zdjęcie">
+           <img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy">
+           ${morePhotos}
+         </div>`
+      : '';
+
+    let extra = '';
+    if (post.typ === 'turniej') {
+      extra = renderSpec([
+        { label: t('spec_termin'),    value: formatDateLong(post.data_wydarzenia), highlight: true },
+        { label: t('spec_godzina'),   value: post.godzina },
+        { label: t('spec_zapisy'),    value: formatDateLong(post.zapisy_do) },
+        { label: t('spec_kategoria'), value: post.kategoria },
+        { label: t('spec_format'),    value: post.format },
+        { label: t('spec_wpisowe'),   value: post.wpisowe, highlight: true },
+      ]);
+    } else if (post.typ === 'promocja' && post.wazny_do) {
+      extra = `<div class="news-extra"><i class="ti ti-clock"></i> ${t('news_valid_until')} ${formatDateLong(post.wazny_do)}</div>`;
+    }
+
+    // Na pełnej liście pokazujemy CAŁĄ treść, nie skrót — po to się tu wchodzi.
+    return `
+      <article class="news-card${minal ? ' past' : ''}">
+        ${media}
+        <div class="news-body">
+          <div class="news-top">
+            <span class="news-badge ${escapeHtml(post.typ)}">${t('typ_' + post.typ)}</span>
+            ${post.wyrozniony && !minal ? `<span class="news-badge badge-pinned">${t('badge_pinned')}</span>` : ''}
+            ${minal ? `<span class="news-badge badge-past">${t('badge_past')}</span>` : ''}
+            <span class="news-date">${formatDateLong(post.data_publikacji)}</span>
+          </div>
+          <h2 class="news-title">${escapeHtml(post.tytul)}</h2>
+          <p class="news-excerpt">${escapeHtml(post.tresc)}</p>
+          ${extra}
+        </div>
+      </article>`;
+  }).join('') + `</div>`;
+
+  watchMediaImages();
+}
+
+/* =========================================================
+   DOPASOWANIE ZDJĘCIA (identycznie jak na stronie głównej)
+   ========================================================= */
+function fitMedia() {
+  document.querySelectorAll('.news-media').forEach(media => {
+    const img = media.querySelector('img');
+    const card = media.closest('.news-card');
+    if (!img || !img.naturalWidth || !card) return;
+
+    const ratio = img.naturalWidth / img.naturalHeight;
+
+    if (getComputedStyle(card).flexDirection === 'column') {
+      media.style.flexBasis = '';
+      const width = media.clientWidth;
+      if (width) media.style.minHeight = Math.round(width / ratio) + 'px';
+      return;
+    }
+
+    let width = ratio * MEDIA_TARGET_HEIGHT;
+    let height = MEDIA_TARGET_HEIGHT;
+
+    const maxWidth = card.clientWidth * MEDIA_MAX_WIDTH;
+    if (width > maxWidth) {
+      width = maxWidth;
+      height = width / ratio;
+    }
+
+    media.style.flexBasis = Math.round(width) + 'px';
+    media.style.minHeight = Math.round(height) + 'px';
+  });
+}
+
+function watchMediaImages() {
+  document.querySelectorAll('.news-media img').forEach(img => {
+    if (img.complete) fitMedia();
+    else img.addEventListener('load', fitMedia, { once: true });
+  });
+}
+
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(fitMedia, 150);
+});
+
+/* =========================================================
+   POWIĘKSZENIE ZDJĘCIA
+   ========================================================= */
+let lbPhotos = [];
+let lbIndex = 0;
+
+function openLightbox(photos, startIndex) {
+  if (!photos || photos.length === 0) return;
+  lbPhotos = photos;
+  lbIndex = startIndex || 0;
+  el('lightbox').hidden = false;
+  document.body.style.overflow = 'hidden';
+  showLightboxPhoto();
+}
+
+function closeLightbox() {
+  el('lightbox').hidden = true;
+  document.body.style.overflow = '';
+}
+
+function showLightboxPhoto() {
+  el('lb-img').src = lbPhotos[lbIndex];
+  const many = lbPhotos.length > 1;
+  el('lb-prev').hidden = !many;
+  el('lb-next').hidden = !many;
+  el('lb-counter').textContent = many ? `${lbIndex + 1} / ${lbPhotos.length}` : '';
+}
+
+function stepLightbox(delta) {
+  lbIndex = (lbIndex + delta + lbPhotos.length) % lbPhotos.length;
+  showLightboxPhoto();
+}
+
+function otworzZKarty(target) {
+  const media = target.closest('.news-media');
+  if (!media) return false;
+  const post = (allPosts || []).find(p => p.id === media.dataset.postId);
+  if (post) openLightbox(post.zdjecia, 0);
+  return true;
+}
+
+el('content').addEventListener('click', (e) => otworzZKarty(e.target));
+
+el('content').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  if (otworzZKarty(e.target)) e.preventDefault();
+});
+
+el('lb-close').addEventListener('click', closeLightbox);
+el('lb-prev').addEventListener('click', () => stepLightbox(-1));
+el('lb-next').addEventListener('click', () => stepLightbox(1));
+
+el('lightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'lightbox') closeLightbox();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (el('lightbox').hidden) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') stepLightbox(-1);
+  if (e.key === 'ArrowRight') stepLightbox(1);
+});
+
+/* =========================================================
+   START
+   ========================================================= */
+loadPosts();
+</script>
+
+</body>
+</html>
