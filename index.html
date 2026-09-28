@@ -464,6 +464,35 @@
       overflow: hidden;
     }
 
+    /* ─── DYMKI W WIDGECIE ───
+       Widget ma ~230 px na treść — pełna lista „nazwa: wartość" by się
+       tam nie zmieściła. Dymki niosą same wartości, bez etykiet: przy
+       „Mixt" i „150 zł od pary" nikt nie potrzebuje podpisu, żeby
+       wiedzieć, co to jest. Wyjątkiem są zapisy, gdzie sama data nic
+       nie znaczy — stąd słowo „do" przed nią. */
+    .event-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: #EEF1F7;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    /* Kolor niesie znaczenie: ceglasty to pieniądze, bursztynowy to
+       termin, którego można nie zdążyć. Reszta zostaje spokojna —
+       gdyby wszystko krzyczało, nic by nie krzyczało. */
+    .chip-price { background: #FDF0E8; color: var(--clay); }
+    .chip-deadline { background: #FFF4D6; color: #8A6400; }
+
     /* Stan pusty i stan ładowania są tu pełnoprawnymi widokami, nie
        „awarią". Widget bez wydarzeń to normalna sytuacja — poza sezonem
        turniejowym będzie tak przez większość roku. */
@@ -1231,6 +1260,30 @@
 
     .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
 
+    /* Wejście do panelu — dyskretne, ale nie ukryte.
+       Ukrycie go na dobre (tajny skrót klawiszowy, kliknięcie w logo)
+       nie dałoby żadnego bezpieczeństwa, bo o nim decyduje hasło
+       sprawdzane na serwerze — dałoby tylko telefon od recepcji
+       „jak ja się tam dostaję?". Widoczny dla szukającego,
+       niezauważalny dla przeglądającego. */
+    .footer-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.22);
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .footer-admin:hover {
+      color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .footer-admin i { font-size: 13px; }
+
     @media (max-width: 900px) {
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
       .footer-bloome { align-items: flex-start; }
@@ -1751,6 +1804,9 @@
 
       <div class="footer-bottom">
         <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.</div>
+        <a href="admin.html" class="footer-admin" rel="nofollow">
+          <i class="ti ti-lock"></i> <span data-i18n="footer_admin">Panel</span>
+        </a>
       </div>
     </div>
   </footer>
@@ -1848,6 +1904,7 @@
         spec_termin: 'Termin', spec_kategoria: 'Kategoria', spec_format: 'Format',
         spec_wpisowe: 'Wpisowe', spec_zapisy: 'Zapisy do',
         spec_godzina: 'Godzina rozpoczęcia',
+        chip_zapisy: 'zapisy do',
 
         section_cennik_eyebrow: 'Przejrzyste stawki',
         section_cennik_title: 'Cennik',
@@ -1881,6 +1938,7 @@
         footer_contact_title: 'Kontakt',
         footer_bloome_label: 'Projekt i realizacja',
         footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. Wszelkie prawa zastrzeżone.',
+        footer_admin: 'Panel',
       },
       en: {
         nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_aktualnosci: 'News',
@@ -1928,6 +1986,7 @@
         spec_termin: 'Date', spec_kategoria: 'Category', spec_format: 'Format',
         spec_wpisowe: 'Entry fee', spec_zapisy: 'Sign-ups until',
         spec_godzina: 'Start time',
+        chip_zapisy: 'sign-ups until',
 
         section_cennik_eyebrow: 'Transparent rates',
         section_cennik_title: 'Pricing',
@@ -1961,6 +2020,7 @@
         footer_contact_title: 'Contact',
         footer_bloome_label: 'Design & development by',
         footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa. All rights reserved.',
+        footer_admin: 'Panel',
       },
     };
 
@@ -2065,6 +2125,14 @@
       return new Date(+m[1], +m[2] - 1, +m[3]);
     }
 
+    // Krótka data do dymków — w wąskim widgecie „23 października 2026"
+    // zajęłoby dwa wiersze samo z siebie.
+    function formatDateShort(iso) {
+      const d = parseIsoDate(iso);
+      if (!d) return '';
+      return `${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
     function formatDateLong(iso) {
       const d = parseIsoDate(iso);
       if (!d) return '';
@@ -2134,6 +2202,21 @@
         const day = d ? d.getDate() : '';
         const month = d ? MONTHS_SHORT[currentLang][d.getMonth()] : '';
 
+        const chips = [
+          { text: ev.kategoria },
+          { text: ev.format },
+          { text: ev.wpisowe, klasa: 'chip-price' },
+          { text: ev.zapisy_do ? `${t('chip_zapisy')} ${formatDateShort(ev.zapisy_do)}` : '',
+            klasa: 'chip-deadline' },
+        ].filter(c => c.text && String(c.text).trim() !== '');
+
+        // Gdy wpis nie ma wypełnionych pól turniejowych, wracamy do opisu —
+        // pusty pasek pod tytułem wyglądałby na brakujący element.
+        const details = chips.length
+          ? `<div class="event-chips">` + chips.map(c =>
+              `<span class="chip ${c.klasa || ''}">${escapeHtml(c.text)}</span>`).join('') + `</div>`
+          : `<div class="event-meta">${escapeHtml(ev.tresc)}</div>`;
+
         return `
           <div class="event-item">
             <div class="event-date">
@@ -2142,7 +2225,7 @@
             </div>
             <div class="event-body">
               <div class="event-title">${escapeHtml(ev.tytul)}</div>
-              <div class="event-meta">${escapeHtml(ev.tresc)}</div>
+              ${details}
             </div>
           </div>`;
       }).join('');
