@@ -46,44 +46,91 @@
 
     .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
 
-    /* ─── NAVBAR ─── */
+    /* ─── NAVBAR — identyczny jak na stronie głównej ─── */
     .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       background: var(--navy);
-      height: 104px;
+      height: 116px;
       display: flex;
       align-items: center;
-      flex-shrink: 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      transition: height 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .navbar.scrolled {
+      height: 96px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.32);
     }
 
     .navbar .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 0 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      max-width: 100%;
     }
 
-    .navbar-logos { display: flex; align-items: center; gap: 18px; }
-    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
+    .navbar-logos {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-logos img {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .navbar-logos img {
+      height: 80px;
+    }
 
     .logos-divider {
       width: 2px;
-      height: 62px;
+      height: 72px;
       background: rgba(255,255,255,0.2);
       border-radius: 2px;
+      transition: height 0.25s ease;
     }
 
-    .nav-back {
-      display: inline-flex;
+    .navbar.scrolled .logos-divider {
+      height: 56px;
+    }
+
+    .navbar-menu {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.7);
-      font-size: 15px;
-      padding: 10px 18px;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      color: rgba(255,255,255,0.70);
+      /* Sześć pozycji zamiast czterech — zwężamy odstępy, żeby menu
+         nie zaczęło się zawijać na węższych laptopach. */
+      font-size: 16px;
+      font-weight: 400;
+      padding: 10px 13px;
       border-radius: 8px;
+      letter-spacing: 0.2px;
       transition: background 0.15s, color 0.15s;
     }
 
-    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .navbar-menu a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
     .lang-switch {
       display: flex;
@@ -91,6 +138,7 @@
       background: rgba(255,255,255,0.08);
       border-radius: 24px;
       padding: 4px;
+      gap: 0;
       cursor: pointer;
       user-select: none;
     }
@@ -104,9 +152,95 @@
       transition: background 0.2s, color 0.2s;
     }
 
-    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+    .lang-switch span.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
 
-    .navbar-right { display: flex; align-items: center; gap: 14px; }
+    .btn-reserve-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(200, 98, 42, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav::after {
+      content: '→';
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-reserve-nav:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav:hover::after {
+      transform: translateX(4px);
+    }
+
+    .btn-reserve-nav:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(200, 98, 42, 0.4);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 2px;
+    }
+
+    /* ─── MOBILE MENU ─── */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--navy);
+      padding: 16px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mobile-menu .btn-reserve-nav {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .mobile-menu .lang-switch {
+      margin-top: 16px;
+      justify-content: center;
+      width: fit-content;
+    }
 
     /* ─── TREŚĆ ─── */
     main {
@@ -158,6 +292,14 @@
     /* Numer telefonu jest tu jedyną drogą do celu, po który klient
        przyszedł — dostaje więc wagę głównego przycisku, a nie linijki
        w stopce. Na telefonie wystarczy jedno dotknięcie. */
+    /* Dwa numery zamiast jednego: na szerokim ekranie obok siebie,
+       na telefonie jeden pod drugim. Imię mniejsze od numeru — numer
+       jest tym, po co ktoś tu przyszedł. */
+    .phone-list {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    }
+    .phone-kto { opacity: 0.75; font-weight: 400; }
+
     .phone-btn {
       display: inline-flex;
       align-items: center;
@@ -237,12 +379,11 @@
     .footer-bloome { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
 
     @media (max-width: 720px) {
-      .navbar { height: 84px; }
-      .navbar-logos img { height: 64px; }
-      .logos-divider { height: 46px; }
-      .nav-back span { display: none; }
+      .navbar-menu, .navbar-right .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
+      .hamburger { display: flex; }
       .notice { padding: 40px 26px 34px; }
       .notice h1 { font-size: 24px; }
+      .phone-list { flex-direction: column; width: 100%; }
       .phone-btn { font-size: 17px; padding: 15px 28px; width: 100%; justify-content: center; }
       .notice-meta { gap: 16px; flex-direction: column; align-items: center; }
     }
@@ -251,25 +392,59 @@
 
 <body>
 
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-logos">
-        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
-        <div class="logos-divider"></div>
-        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
-      </div>
-
-      <div class="navbar-right">
-        <div class="lang-switch" onclick="toggleLang()">
-          <span class="lang-pl-span active">PL</span>
-          <span class="lang-en-span">EN</span>
+  <!-- ─── NAVBAR ─── -->
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-logos">
+          <a href="index.html">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Tenis Budowlani Lublin" height="100">
+          </a>
+          <div class="logos-divider"></div>
+          <a href="index.html">
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86">
+          </a>
         </div>
-        <a href="index.html" class="nav-back">
-          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
-        </a>
+
+        <ul class="navbar-menu">
+          <li><a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a></li>
+          <li><a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a></li>
+          <li><a href="liga.html" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="o-nas.html" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
+        </ul>
+
+        <div class="navbar-right">
+          <div class="lang-switch" onclick="toggleLang()">
+            <span class="lang-pl-span active">PL</span>
+            <span class="lang-en-span">EN</span>
+          </div>
+          <a href="#telefony">
+            <button class="btn-reserve-nav" data-i18n="btn_call">Zadzwoń</button>
+          </a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </div>
       </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a>
+      <a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a>
+      <a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a>
+      <a href="liga.html" data-i18n="nav_liga">Liga</a>
+      <a href="o-nas.html" data-i18n="nav_o_nas">O nas</a>
+      <a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a>
+      <div class="lang-switch" onclick="toggleLang()">
+        <span class="lang-pl-span active">PL</span>
+        <span class="lang-en-span">EN</span>
+      </div>
+      <a href="#telefony" class="btn-reserve-nav" data-i18n="btn_call">Zadzwoń</a>
     </div>
-  </nav>
+  </header>
 
   <main>
     <div class="container">
@@ -280,11 +455,14 @@
 
         <p data-i18n="notice_text">Pracujemy nad możliwością rezerwowania kortu przez internet. Zanim ją uruchomimy, termin rezerwujesz telefonicznie — zadzwoń, a znajdziemy dla Ciebie wolny kort.</p>
 
-        <!-- TU WSTAW PRAWDZIWY NUMER — w dwóch miejscach: w href="tel:"
-             (bez spacji, ze +48) oraz w widocznym tekście przycisku. -->
-        <a href="tel:+48000000000" class="phone-btn">
-          <i class="ti ti-phone"></i> +48 000 000 000
-        </a>
+        <div class="phone-list" id="telefony">
+          <a href="tel:+48732889991" class="phone-btn">
+            <i class="ti ti-phone"></i> <span class="phone-kto">Adrian</span> +48 732 889 991
+          </a>
+          <a href="tel:+48798702932" class="phone-btn">
+            <i class="ti ti-phone"></i> <span class="phone-kto">Michał</span> +48 798 702 932
+          </a>
+        </div>
 
         <div class="notice-meta">
           <div class="meta-item">
@@ -320,7 +498,9 @@
        powielenie jest tańsze niż abstrakcja. */
     const TRANSLATIONS = {
       pl: {
-        nav_back: 'Strona główna',
+        nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_aktualnosci: 'Aktualności',
+    nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+    btn_reserve: 'Zarezerwuj kort', btn_call: 'Zadzwoń',
         notice_title: 'Rezerwacja online — w przygotowaniu',
         notice_text: 'Pracujemy nad możliwością rezerwowania kortu przez internet. Zanim ją uruchomimy, termin rezerwujesz telefonicznie — zadzwoń, a znajdziemy dla Ciebie wolny kort.',
         meta_hours: 'Codziennie 8:00 – 22:00',
@@ -328,7 +508,9 @@
         footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
       },
       en: {
-        nav_back: 'Home',
+        nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_aktualnosci: 'News',
+    nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+    btn_reserve: 'Book a court', btn_call: 'Call us',
         notice_title: 'Online booking — coming soon',
         notice_text: 'We are working on online court booking. Until it goes live, you can book by phone — give us a call and we will find you a free court.',
         meta_hours: 'Every day 8:00 – 22:00',
@@ -352,7 +534,19 @@
       });
     }
 
-    function toggleLang() {
+    /* =========================================================
+   NAWIGACJA — ten sam kod co na stronie głównej
+   ========================================================= */
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+window.addEventListener('scroll', function () {
+  document.querySelector('.navbar')
+    .classList.toggle('scrolled', window.scrollY > 10);
+});
+
+function toggleLang() {
       document.querySelectorAll('.lang-pl-span').forEach(el => el.classList.toggle('active'));
       document.querySelectorAll('.lang-en-span').forEach(el => el.classList.toggle('active'));
       applyLanguage(currentLang === 'pl' ? 'en' : 'pl');

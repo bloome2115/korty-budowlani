@@ -44,31 +44,201 @@
 
     .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
 
-    /* ─── NAVBAR ─── */
-    .navbar { background: var(--navy); height: 104px; display: flex; align-items: center; flex-shrink: 0; }
-    .navbar .container { display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
-    .navbar-logos { display: flex; align-items: center; gap: 18px; }
-    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
-    .logos-divider { width: 2px; height: 62px; background: rgba(255,255,255,0.2); border-radius: 2px; }
-    .navbar-right { display: flex; align-items: center; gap: 14px; }
+    /* ─── NAVBAR — identyczny jak na stronie głównej ─── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      height: 116px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      transition: height 0.25s ease, box-shadow 0.25s ease;
+    }
 
-    .nav-back {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: rgba(255,255,255,0.7); font-size: 15px;
-      padding: 10px 18px; border-radius: 8px;
+    .navbar.scrolled {
+      height: 96px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.32);
+    }
+
+    .navbar .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logos {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-logos img {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .navbar-logos img {
+      height: 80px;
+    }
+
+    .logos-divider {
+      width: 2px;
+      height: 72px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .logos-divider {
+      height: 56px;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      color: rgba(255,255,255,0.70);
+      /* Sześć pozycji zamiast czterech — zwężamy odstępy, żeby menu
+         nie zaczęło się zawijać na węższych laptopach. */
+      font-size: 16px;
+      font-weight: 400;
+      padding: 10px 13px;
+      border-radius: 8px;
+      letter-spacing: 0.2px;
       transition: background 0.15s, color 0.15s;
     }
-    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .navbar-menu a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
     .lang-switch {
-      display: flex; align-items: center; background: rgba(255,255,255,0.08);
-      border-radius: 24px; padding: 4px; cursor: pointer; user-select: none;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 4px;
+      gap: 0;
+      cursor: pointer;
+      user-select: none;
     }
+
     .lang-switch span {
-      font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
-      color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: rgba(255,255,255,0.45);
+      transition: background 0.2s, color 0.2s;
     }
-    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .lang-switch span.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .btn-reserve-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(200, 98, 42, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav::after {
+      content: '→';
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-reserve-nav:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav:hover::after {
+      transform: translateX(4px);
+    }
+
+    .btn-reserve-nav:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(200, 98, 42, 0.4);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 2px;
+    }
+
+    /* ─── MOBILE MENU ─── */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--navy);
+      padding: 16px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mobile-menu .btn-reserve-nav {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .mobile-menu .lang-switch {
+      margin-top: 16px;
+      justify-content: center;
+      width: fit-content;
+    }
 
     /* ─── NAGŁÓWEK STRONY ─── */
     main { flex: 1; padding: 46px 0 70px; }
@@ -284,6 +454,8 @@
     .podium-place.p3 { order: 3; }
 
     @media (max-width: 900px) {
+      .navbar-menu, .navbar-right .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
+      .hamburger { display: flex; }
       .podium-media { flex: 0 0 auto !important; width: 100%; min-height: 200px; }
     }
 
@@ -337,10 +509,6 @@
 
     /* ─── MOBILE ─── */
     @media (max-width: 900px) {
-      .navbar { height: 84px; }
-      .navbar-logos img { height: 64px; }
-      .logos-divider { height: 46px; }
-      .nav-back span { display: none; }
 
       .page-head h1 { font-size: 26px; }
 
@@ -359,25 +527,61 @@
 
 <body>
 
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-logos">
-        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
-        <div class="logos-divider"></div>
-        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
-      </div>
-
-      <div class="navbar-right">
-        <div class="lang-switch" onclick="toggleLang()">
-          <span class="lang-pl-span active">PL</span>
-          <span class="lang-en-span">EN</span>
+  <!-- ─── NAVBAR ─── -->
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-logos">
+          <a href="index.html">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Tenis Budowlani Lublin" height="100">
+          </a>
+          <div class="logos-divider"></div>
+          <a href="index.html">
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86">
+          </a>
         </div>
-        <a href="index.html" class="nav-back">
-          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
-        </a>
+
+        <ul class="navbar-menu">
+          <li><a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a></li>
+          <li><a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a></li>
+          <li><a href="liga.html" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="o-nas.html" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
+        </ul>
+
+        <div class="navbar-right">
+          <div class="lang-switch" onclick="toggleLang()">
+            <span class="lang-pl-span active">PL</span>
+            <span class="lang-en-span">EN</span>
+          </div>
+          <!-- data-reserve-link: adres nadaje JavaScript ze stałej REZERWACJA_URL.
+               Patrz komentarz przy tej stałej na dole pliku. -->
+          <a href="index.html#kontakt" data-reserve-link>
+            <button class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</button>
+          </a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </div>
       </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a>
+      <a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a>
+      <a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a>
+      <a href="liga.html" data-i18n="nav_liga">Liga</a>
+      <a href="o-nas.html" data-i18n="nav_o_nas">O nas</a>
+      <a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a>
+      <div class="lang-switch" onclick="toggleLang()">
+        <span class="lang-pl-span active">PL</span>
+        <span class="lang-en-span">EN</span>
+      </div>
+      <a href="index.html#kontakt" data-reserve-link class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
     </div>
-  </nav>
+  </header>
 
   <main>
     <div class="container">
@@ -425,7 +629,9 @@ const MEDIA_MAX_WIDTH = 0.42;
    ========================================================= */
 const TRANSLATIONS = {
   pl: {
-    nav_back: 'Strona główna',
+    nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_aktualnosci: 'Aktualności',
+    nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+    btn_reserve: 'Zarezerwuj kort', btn_call: 'Zadzwoń',
     page_eyebrow: 'Co u nas słychać',
     page_title: 'Aktualności',
     page_sub: 'Turnieje, promocje i ogłoszenia z kortów Budowlani.',
@@ -444,7 +650,9 @@ const TRANSLATIONS = {
     footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
   },
   en: {
-    nav_back: 'Home',
+    nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_aktualnosci: 'News',
+    nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+    btn_reserve: 'Book a court', btn_call: 'Call us',
     page_eyebrow: "What's new",
     page_title: 'News',
     page_sub: 'Tournaments, promotions and announcements from Budowlani courts.',
@@ -486,6 +694,39 @@ function applyLanguage(lang) {
   // więc po zmianie języka trzeba ją przerysować.
   renderFilters();
   render();
+}
+
+/* =========================================================
+   NAWIGACJA — ten sam kod co na stronie głównej
+   ========================================================= */
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+window.addEventListener('scroll', function () {
+  document.querySelector('.navbar')
+    .classList.toggle('scrolled', window.scrollY > 10);
+});
+
+/* Ta sama stała co w index.html. Gdy klub założy konto w kluby.org,
+   adres trzeba wpisać w KAŻDYM pliku, który ma przycisk rezerwacji —
+   lista plików jest w PROJECT_CONTEXT.md. */
+const REZERWACJA_URL = '';
+const REZERWACJA_FALLBACK = 'rezerwacja-wkrotce.html';
+
+function applyReserveLinks() {
+  const hasUrl = REZERWACJA_URL.trim() !== '';
+  document.querySelectorAll('[data-reserve-link]').forEach(function (link) {
+    if (hasUrl) {
+      link.href = REZERWACJA_URL;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    } else {
+      link.href = REZERWACJA_FALLBACK;
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+    }
+  });
 }
 
 function toggleLang() {

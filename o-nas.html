@@ -44,31 +44,201 @@
 
     .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
 
-    /* ─── NAVBAR ─── */
-    .navbar { background: var(--navy); height: 104px; display: flex; align-items: center; flex-shrink: 0; }
-    .navbar .container { display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
-    .navbar-logos { display: flex; align-items: center; gap: 18px; }
-    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
-    .logos-divider { width: 2px; height: 62px; background: rgba(255,255,255,0.2); border-radius: 2px; }
-    .navbar-right { display: flex; align-items: center; gap: 14px; }
+    /* ─── NAVBAR — identyczny jak na stronie głównej ─── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      height: 116px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      transition: height 0.25s ease, box-shadow 0.25s ease;
+    }
 
-    .nav-back {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: rgba(255,255,255,0.7); font-size: 15px;
-      padding: 10px 18px; border-radius: 8px;
+    .navbar.scrolled {
+      height: 96px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.32);
+    }
+
+    .navbar .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logos {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-logos img {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .navbar-logos img {
+      height: 80px;
+    }
+
+    .logos-divider {
+      width: 2px;
+      height: 72px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      transition: height 0.25s ease;
+    }
+
+    .navbar.scrolled .logos-divider {
+      height: 56px;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      color: rgba(255,255,255,0.70);
+      /* Sześć pozycji zamiast czterech — zwężamy odstępy, żeby menu
+         nie zaczęło się zawijać na węższych laptopach. */
+      font-size: 16px;
+      font-weight: 400;
+      padding: 10px 13px;
+      border-radius: 8px;
+      letter-spacing: 0.2px;
       transition: background 0.15s, color 0.15s;
     }
-    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .navbar-menu a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
     .lang-switch {
-      display: flex; align-items: center; background: rgba(255,255,255,0.08);
-      border-radius: 24px; padding: 4px; cursor: pointer; user-select: none;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 4px;
+      gap: 0;
+      cursor: pointer;
+      user-select: none;
     }
+
     .lang-switch span {
-      font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
-      color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: rgba(255,255,255,0.45);
+      transition: background 0.2s, color 0.2s;
     }
-    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .lang-switch span.active {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .btn-reserve-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #d96b2e 0%, #b5501a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(200, 98, 42, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav::after {
+      content: '→';
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-reserve-nav:hover {
+      background: linear-gradient(135deg, #e07535 0%, #c45c20 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 98, 42, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-reserve-nav:hover::after {
+      transform: translateX(4px);
+    }
+
+    .btn-reserve-nav:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(200, 98, 42, 0.4);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 2px;
+    }
+
+    /* ─── MOBILE MENU ─── */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--navy);
+      padding: 16px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mobile-menu .btn-reserve-nav {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .mobile-menu .lang-switch {
+      margin-top: 16px;
+      justify-content: center;
+      width: fit-content;
+    }
 
     /* ─── NAGŁÓWEK STRONY ─── */
     main { flex: 1; padding: 46px 0 70px; }
@@ -116,9 +286,14 @@
     .sekcja-head h2 { font-size: 24px; font-weight: 600; color: var(--navy); }
     .sekcja-head p { font-size: 14.5px; color: var(--muted); margin-top: 5px; }
 
+    /* Górny limit szerokości kafelka: przy dwóch trenerach `1fr`
+       rozciągnąłby każdy na pół ekranu i zostałoby w środku sporo pustki.
+       Sufit 340 px trzyma je w rozsądnym rozmiarze, a przy większej
+       kadrze siatka i tak zawija do kolejnego rzędu. */
     .kadra-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(270px, 340px));
+      justify-content: start;
       gap: 20px; margin-bottom: 54px;
     }
 
@@ -145,7 +320,7 @@
     }
     .trener-opis { font-size: 14.5px; color: #555; margin: 14px 0 18px; }
 
-    .trener-kontakt { margin-top: auto; display: grid; gap: 8px; }
+    .trener-kontakt { margin-top: auto; padding-top: 16px; display: grid; gap: 8px; }
     .trener-kontakt a, .trener-kontakt span {
       display: flex; align-items: center; gap: 9px;
       font-size: 14px; color: #555;
@@ -154,27 +329,10 @@
     .trener-kontakt a:hover { color: var(--clay); }
     .trener-kontakt i { color: var(--clay); font-size: 16px; flex-shrink: 0; }
 
-    /* ─── PASEK KOŃCOWY ─── */
-    .cta-box {
-      background: var(--navy); border-radius: 14px;
-      padding: 34px 32px; text-align: center; color: #fff;
-    }
-    .cta-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
-    .cta-box p { font-size: 14.5px; color: rgba(255,255,255,0.65); margin-bottom: 20px; }
-    .cta-btn {
-      display: inline-flex; align-items: center; gap: 9px;
-      background: var(--clay); color: #fff;
-      padding: 13px 26px; border-radius: 9px; font-size: 15px; font-weight: 500;
-      transition: background 0.15s;
-    }
-    .cta-btn:hover { background: #b0551f; }
-
     /* ─── MOBILE ─── */
     @media (max-width: 900px) {
-      .navbar { height: 84px; }
-      .navbar-logos img { height: 64px; }
-      .logos-divider { height: 46px; }
-      .nav-back span { display: none; }
+      .navbar-menu, .navbar-right .lang-switch, .navbar-right .btn-reserve-nav { display: none; }
+      .hamburger { display: flex; }
       .page-head h1 { font-size: 26px; }
       .about-wrap { grid-template-columns: 1fr; gap: 20px; }
       .about-text { padding: 26px 22px; }
@@ -184,25 +342,61 @@
 
 <body>
 
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-logos">
-        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
-        <div class="logos-divider"></div>
-        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
-      </div>
-
-      <div class="navbar-right">
-        <div class="lang-switch" onclick="toggleLang()">
-          <span class="lang-pl-span active">PL</span>
-          <span class="lang-en-span">EN</span>
+  <!-- ─── NAVBAR ─── -->
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-logos">
+          <a href="index.html">
+            <img src="assets/img/Budowlani_bez_tla.png" alt="Tenis Budowlani Lublin" height="100">
+          </a>
+          <div class="logos-divider"></div>
+          <a href="index.html">
+            <img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa" height="86">
+          </a>
         </div>
-        <a href="index.html" class="nav-back">
-          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
-        </a>
+
+        <ul class="navbar-menu">
+          <li><a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a></li>
+          <li><a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a></li>
+          <li><a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a></li>
+          <li><a href="liga.html" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="o-nas.html" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
+        </ul>
+
+        <div class="navbar-right">
+          <div class="lang-switch" onclick="toggleLang()">
+            <span class="lang-pl-span active">PL</span>
+            <span class="lang-en-span">EN</span>
+          </div>
+          <!-- data-reserve-link: adres nadaje JavaScript ze stałej REZERWACJA_URL.
+               Patrz komentarz przy tej stałej na dole pliku. -->
+          <a href="index.html#kontakt" data-reserve-link>
+            <button class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</button>
+          </a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </div>
       </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#oferta" data-i18n="nav_oferta">Oferta</a>
+      <a href="index.html#cennik" data-i18n="nav_cennik">Cennik</a>
+      <a href="aktualnosci.html" data-i18n="nav_aktualnosci">Aktualności</a>
+      <a href="liga.html" data-i18n="nav_liga">Liga</a>
+      <a href="o-nas.html" data-i18n="nav_o_nas">O nas</a>
+      <a href="index.html#kontakt" data-i18n="nav_kontakt">Kontakt</a>
+      <div class="lang-switch" onclick="toggleLang()">
+        <span class="lang-pl-span active">PL</span>
+        <span class="lang-en-span">EN</span>
+      </div>
+      <a href="index.html#kontakt" data-reserve-link class="btn-reserve-nav" data-i18n="btn_reserve">Zarezerwuj kort</a>
     </div>
-  </nav>
+  </header>
 
   <main>
     <div class="container">
@@ -260,13 +454,6 @@
       <!-- Kafelki trenerów rysuje JavaScript z tablicy TRENERZY. -->
       <div class="kadra-grid" id="kadra-grid"></div>
 
-      <div class="cta-box">
-        <h2 data-i18n="cta_title">Chcesz zacząć trenować?</h2>
-        <p data-i18n="cta_desc">Napisz do wybranego trenera albo zadzwoń do klubu — dobierzemy zajęcia do poziomu i wieku.</p>
-        <a href="index.html#kontakt" class="cta-btn">
-          <i class="ti ti-phone"></i> <span data-i18n="cta_btn">Kontakt</span>
-        </a>
-      </div>
     </div>
   </main>
 
@@ -295,32 +482,22 @@
    ========================================================= */
 const TRENERZY = [
   {
-    imie: '[Imię i nazwisko]',
-    rola: 'Trener główny',
-    rola_en: 'Head coach',
-    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
+    imie: 'Adrian',
+    rola: 'Trener',
+    rola_en: 'Coach',
+    opis: '',
     opis_en: '',
-    telefon: '',
+    telefon: '+48 732 889 991',
     email: '',
     zdjecie: '',
   },
   {
-    imie: '[Imię i nazwisko]',
+    imie: 'Michał',
     rola: 'Trener',
     rola_en: 'Coach',
-    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
+    opis: '',
     opis_en: '',
-    telefon: '',
-    email: '',
-    zdjecie: '',
-  },
-  {
-    imie: '[Imię i nazwisko]',
-    rola: 'Trener',
-    rola_en: 'Coach',
-    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
-    opis_en: '',
-    telefon: '',
+    telefon: '+48 798 702 932',
     email: '',
     zdjecie: '',
   },
@@ -331,7 +508,9 @@ const TRENERZY = [
    ========================================================= */
 const TRANSLATIONS = {
   pl: {
-    nav_back: 'Strona główna',
+    nav_oferta: 'Oferta', nav_cennik: 'Cennik', nav_aktualnosci: 'Aktualności',
+    nav_liga: 'Liga', nav_o_nas: 'O nas', nav_kontakt: 'Kontakt',
+    btn_reserve: 'Zarezerwuj kort', btn_call: 'Zadzwoń',
     page_eyebrow: 'Kim jesteśmy',
     page_title: 'O nas',
     page_sub: 'Korty przy Andrzeja Struga i ludzie, którzy je prowadzą.',
@@ -345,13 +524,12 @@ const TRANSLATIONS = {
     fact4_value: 'Andrzeja Struga 8', fact4_label: 'Lublin',
     kadra_title: 'Nasza kadra',
     kadra_sub: 'Trenerzy GoRun Akademii Tenisa — napisz albo zadzwoń bezpośrednio.',
-    cta_title: 'Chcesz zacząć trenować?',
-    cta_desc: 'Napisz do wybranego trenera albo zadzwoń do klubu — dobierzemy zajęcia do poziomu i wieku.',
-    cta_btn: 'Kontakt',
     footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
   },
   en: {
-    nav_back: 'Home',
+    nav_oferta: 'Offer', nav_cennik: 'Pricing', nav_aktualnosci: 'News',
+    nav_liga: 'League', nav_o_nas: 'About us', nav_kontakt: 'Contact',
+    btn_reserve: 'Book a court', btn_call: 'Call us',
     page_eyebrow: 'Who we are',
     page_title: 'About us',
     page_sub: 'The courts on Andrzeja Struga and the people who run them.',
@@ -365,9 +543,6 @@ const TRANSLATIONS = {
     fact4_value: 'Andrzeja Struga 8', fact4_label: 'Lublin',
     kadra_title: 'Our coaches',
     kadra_sub: 'The GoRun Tennis Academy team — write or call them directly.',
-    cta_title: 'Want to start training?',
-    cta_desc: 'Write to a coach or call the club — we will match the sessions to your level and age.',
-    cta_btn: 'Contact',
     footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
   },
 };
@@ -425,11 +600,13 @@ function renderKadra() {
     const opis = en && tr.opis_en ? tr.opis_en : tr.opis;
     const rola = en && tr.rola_en ? tr.rola_en : tr.rola;
 
+    // Pusty opis nie rysuje akapitu — kafelek bez biografii ma wyglądać
+    // na zwięzły, a nie na niedokończony.
     return '<article class="trener-card">' +
       avatar +
       '<h3>' + escapeHtml(tr.imie) + '</h3>' +
       (rola ? '<div class="trener-rola">' + escapeHtml(rola) + '</div>' : '') +
-      '<p class="trener-opis">' + escapeHtml(opis) + '</p>' +
+      (opis ? '<p class="trener-opis">' + escapeHtml(opis) + '</p>' : '') +
       (kontakt ? '<div class="trener-kontakt">' + kontakt + '</div>' : '') +
       '</article>';
   }).join('');
@@ -455,12 +632,46 @@ function applyLanguage(lang) {
   renderKadra();
 }
 
+/* =========================================================
+   NAWIGACJA — ten sam kod co na stronie głównej
+   ========================================================= */
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+window.addEventListener('scroll', function () {
+  document.querySelector('.navbar')
+    .classList.toggle('scrolled', window.scrollY > 10);
+});
+
+/* Ta sama stała co w index.html. Gdy klub założy konto w kluby.org,
+   adres trzeba wpisać w KAŻDYM pliku, który ma przycisk rezerwacji —
+   lista plików jest w PROJECT_CONTEXT.md. */
+const REZERWACJA_URL = '';
+const REZERWACJA_FALLBACK = 'rezerwacja-wkrotce.html';
+
+function applyReserveLinks() {
+  const hasUrl = REZERWACJA_URL.trim() !== '';
+  document.querySelectorAll('[data-reserve-link]').forEach(function (link) {
+    if (hasUrl) {
+      link.href = REZERWACJA_URL;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    } else {
+      link.href = REZERWACJA_FALLBACK;
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+    }
+  });
+}
+
 function toggleLang() {
   document.querySelectorAll('.lang-pl-span').forEach(function (el) { el.classList.toggle('active'); });
   document.querySelectorAll('.lang-en-span').forEach(function (el) { el.classList.toggle('active'); });
   applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
 }
 
+applyReserveLinks();
 applyLanguage('pl');
 </script>
 </body>

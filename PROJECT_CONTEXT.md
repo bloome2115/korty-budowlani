@@ -76,7 +76,9 @@ Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 ## 5. STRUKTURA STRONY
 
 ### `index.html` — strona główna ✅ gotowa
-1. **Navbar** — ciemny, oba loga, menu (Oferta / Cennik / Aktualności / Liga / O nas / Kontakt), przełącznik PL/EN, CTA
+1. **Navbar** — ciemny, oba loga, menu (Oferta / Cennik / Aktualności / Liga / O nas / Kontakt),
+   przełącznik PL/EN, CTA. **Ten sam navbar jest na każdej stronie serwisu** —
+   patrz „Navbar współdzielony" w sekcji 10
 2. **Hero** — zdjęcie kortu + gradient, nagłówek, dwa przyciski, **widget „Nadchodzące wydarzenia"** po prawej
 3. **Stats bar** — 4 korty mączkowe (3 kryte w przygotowaniu) / 8:00–22:00 / gotówka i karta / od 1974
 4. **Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Liga. Ceny „od …".
@@ -92,6 +94,16 @@ Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 8. **CTA** — granatowa sekcja z dużym przyciskiem
 9. **Footer** — loga, adres, godziny, kontakt (⚠️ telefon to atrapa), podpis Bloome
 
+### Navbar współdzielony — uwaga przy zmianach
+Navbar (HTML + CSS + `toggleMenu` + przyciski rezerwacji) jest **skopiowany**
+do `index.html`, `aktualnosci.html`, `liga.html`, `o-nas.html`
+i `rezerwacja-wkrotce.html`. Statyczna strona bez kompilacji nie ma jak
+współdzielić fragmentu pliku, a wstrzykiwanie navbara JavaScriptem sprawiłoby,
+że menu mrugałoby przy każdym wejściu. Świadomy koszt: **zmiana w menu wymaga
+poprawki w pięciu plikach.** Różnice celowe: na podstronach kotwice mają przedrostek
+`index.html#…`, a na `rezerwacja-wkrotce.html` przycisk rezerwacji jest zamieniony
+na „Zadzwoń" (kierowałby sam na siebie).
+
 ### `liga.html` — podstrona lig ✅ gotowa
 Trzy ligi Rakietmania + UKT Go Run (open, 40+, kobiet) jako równorzędne kafelki,
 każdy z przyciskiem na stronę ligi w kluby.org, plus sekcja „Jak dołączyć".
@@ -102,11 +114,13 @@ rozjechałaby się z oryginałem przy pierwszej zmianie sezonu.
 
 ### `o-nas.html` — podstrona o klubie ✅ gotowa
 Historia obiektu (pełna wersja; strona główna ma tylko skrót), 4 fakty,
-sekcja **Nasza kadra** pod kotwicą `#trenerzy` i pasek kontaktowy.
+sekcja **Nasza kadra** pod kotwicą `#trenerzy`.
 Trenerzy rysują się z tablicy `TRENERZY` — jeden obiekt to jeden kafelek.
 Bez zdjęcia kółko pokazuje inicjały; zdjęcie podmienia się bez ruszania układu,
 a zła ścieżka po cichu wraca do inicjałów.
-⚠️ Trzy kafelki to atrapy `[Imię i nazwisko]` — czekają na dane od klienta.
+Kadra: **Adrian +48 732 889 991**, **Michał +48 798 702 932**.
+⚠️ Brakuje nazwisk i krótkich opisów — kafelki renderują się bez nich poprawnie
+(pusty `opis` nie rysuje akapitu), ale wyglądają ubogo.
 
 ### `rezerwacja-wkrotce.html` — podstrona przejściowa ✅ gotowa
 Informuje, że rezerwacja online jest w przygotowaniu, i podaje numer telefonu jako
@@ -231,17 +245,20 @@ przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żad
 - [x] Podium zwycięzców na zakończonych turniejach
 - [x] `ADMIN_PASSWORD` i `DRIVE_FOLDER_ID` w Script Properties
 - [x] `liga.html` i `o-nas.html` — dwie podstrony, wpięte w menu i w kafelki oferty
+- [x] Jednolity navbar na wszystkich pięciu stronach (naprawia też nachodzenie
+      przełącznika PL/EN na logo na telefonie)
+- [x] Prawdziwe numery telefonów: stopka `index.html`, `rezerwacja-wkrotce.html`,
+      kafelki trenerów
 
 **Kod jest skończony.** Wszystko, co zostało, to dane od klienta.
 
 ### ⏭️ Następne kroki — wyłącznie treść
-- [ ] Prawdziwy numer telefonu (2 miejsca w `rezerwacja-wkrotce.html` + stopka `index.html`)
 - [ ] Prawdziwy adres e-mail (te same miejsca)
 - [ ] Trzy stawki w Cenniku oznaczone `[do uzupełnienia]`
 - [ ] Akceptacja tekstu „O nas" przez klienta
 - [ ] Link do strony klubu na kluby.org → stała `REZERWACJA_URL` w `index.html`
 - [ ] Trzy adresy lig na kluby.org → pola `url` w tablicy `LIGI` w `liga.html`
-- [ ] Trenerzy: imiona, opisy, telefony/maile → tablica `TRENERZY` w `o-nas.html`
+- [ ] Nazwiska i krótkie opisy trenerów → tablica `TRENERZY` w `o-nas.html`
 - [ ] Zdjęcia trenerów (opcjonalnie — bez nich kółka pokazują inicjały)
 - [ ] Testy na telefonie z osobą, która realnie będzie dodawać posty
 - [ ] Domena (dziś `bloome2115.github.io/korty-budowlani`)
@@ -249,11 +266,10 @@ przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żad
 ### ⚠️ Znane atrapy na stronie
 | Co | Gdzie |
 |---|---|
-| `+48 000 000 000` | stopka `index.html`, dwa miejsca w `rezerwacja-wkrotce.html` |
 | `kontakt@kortylublin.pl` | stopka `index.html`, `rezerwacja-wkrotce.html` |
 | `[do uzupełnienia]` ×3 | tabela cennika w `index.html` |
 | Tekst „O nas" | szkic, niezaakceptowany |
-| `[Imię i nazwisko]` ×3 | tablica `TRENERZY` w `o-nas.html` |
+| Brak nazwisk i opisów trenerów | tablica `TRENERZY` w `o-nas.html` |
 | Puste `url` ×3 | tablica `LIGI` w `liga.html` — przyciski „Zapisy wkrótce" |
 
 
