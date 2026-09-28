@@ -45,6 +45,14 @@
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--font-body); }
 
+    /* KONIECZNE, nie kosmetyczne: atrybut `hidden` działa tylko dopóki
+       element nie ma własnego `display`. Nasze `.lightbox` i `.lb-btn`
+       mają `display: flex`, który wygrywa z domyślnym `display: none`
+       — bez tej reguły ukryta nakładka leżałaby niewidoczna (przezroczysta
+       na czarnym tle to i tak pełny ekran) NA CAŁEJ STRONIE i przechwytywała
+       każde kliknięcie. Strona wyglądałaby normalnie i nie reagowała na nic. */
+    [hidden] { display: none !important; }
+
     .container {
       max-width: 1160px;
       margin: 0 auto;
@@ -633,10 +641,15 @@
        porzuconą stronę. Lepiej, żeby odwiedzający jej wtedy nie zobaczył. */
     .aktualnosci { background: var(--cream); padding: 80px 0; }
 
+    /* ─── UKŁAD: JEDEN WPIS NA RZĄD ───
+       Wcześniej była siatka trzykolumnowa. Odpadła, bo wysokość karty
+       wynika ze zdjęcia, a pionowy plakat turniejowy obok krótkiego
+       ogłoszenia zostawiał pod tym drugim ogromną dziurę. W rzędach
+       każdy wpis ma własną wysokość i nie ciągnie sąsiadów. */
     .news-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .news-card {
@@ -644,26 +657,137 @@
       border-radius: 14px;
       overflow: hidden;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: stretch;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       transition: box-shadow 0.2s, transform 0.2s;
     }
 
     .news-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
 
+    /* Zdjęcie pokazujemy w CAŁOŚCI, bez kadrowania.
+       Wcześniej ramka miała sztywne proporcje 16:10 i object-fit: cover,
+       co ładnie wyrównywało karty, ale z pionowego plakatu turniejowego
+       zostawał środek — bez tytułu, dat i wpisowego, czyli bez wszystkiego,
+       po co ten plakat powstał. Teraz wysokość karty wynika ze zdjęcia. */
     .news-media {
-      aspect-ratio: 16 / 10;
+      flex: 0 0 38%;
+      position: relative;
       overflow: hidden;
-      background: #eee;
+      /* Tło w kolorze kremu, nie szare: pionowy plakat nie wypełnia
+         kolumny na całą szerokość, więc pasy po bokach muszą wyglądać
+         jak część projektu, a nie jak brakujący obrazek. */
+      background: #F0EBE3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-in;
     }
 
     .news-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      /* Sufit wysokości — bez niego bardzo wysoki plakat rozciągałby
+         rząd na pół ekranu. Zdjęcie nadal nie jest przycinane, tylko
+         skalowane w dół; pełny rozmiar jest pod kliknięciem. */
+      max-height: 360px;
+      display: block;
+      transition: opacity 0.15s;
     }
 
-    .news-body { padding: 24px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+    .news-media:hover img { opacity: 0.92; }
+
+    /* Znacznik „jest więcej zdjęć". Bez niego karta galerii wygląda
+       jak wpis z jednym zdjęciem i nikt nie kliknie, żeby zobaczyć resztę. */
+    .news-more-photos {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background: rgba(26, 39, 68, 0.82);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 11px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none;
+    }
+
+    .news-more-photos i { font-size: 13px; }
+
+    /* ─── POWIĘKSZENIE ZDJĘCIA ─── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(10, 18, 35, 0.94);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 20px;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .lb-btn {
+      position: absolute;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: background 0.15s;
+    }
+
+    .lb-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .lb-close { top: 16px; right: 16px; }
+    .lb-prev  { left: 16px;  top: 50%; transform: translateY(-50%); }
+    .lb-next  { right: 16px; top: 50%; transform: translateY(-50%); }
+
+    .lb-counter {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 620px) {
+      .lightbox { padding: 64px 12px; }
+      .lb-btn { width: 40px; height: 40px; font-size: 19px; }
+      .lb-prev { left: 8px; }
+      .lb-next { right: 8px; }
+    }
+
+    .news-body {
+      padding: 28px 30px;
+      display: flex;
+      flex-direction: column;
+      /* Wyśrodkowanie w pionie. Przy krótkim ogłoszeniu obok wysokiego
+         zdjęcia tekst przyklejony do górnej krawędzi zostawiał pod sobą
+         pustkę wyglądającą na błąd. Wyśrodkowany czyta się jak decyzja. */
+      justify-content: center;
+      flex: 1;
+      min-width: 0;
+    }
 
     .news-top {
       display: flex;
@@ -694,7 +818,7 @@
     .news-date { font-size: 12px; color: #bbb; }
 
     .news-title {
-      font-size: 17px;
+      font-size: 20px;
       font-weight: 500;
       color: var(--navy);
       line-height: 1.35;
@@ -702,11 +826,17 @@
     }
 
     .news-excerpt {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
-      line-height: 1.65;
-      flex: 1;
+      line-height: 1.7;
+      /* W rzędzie treść nie ma się do czego rozpychać — flex:1 ciągnąłby
+         ją na całą wysokość karty i odklejał listę turniejową od tekstu. */
+      flex: 0 0 auto;
     }
+
+    /* Lista turniejowa ma tu więcej szerokości niż w kolumnie, więc
+       wartości mogą być odrobinę większe i lepiej się skanują. */
+    .news-card .spec-row dd { font-size: 14px; }
 
     .news-extra {
       display: flex;
@@ -719,6 +849,46 @@
     }
 
     .news-extra i { font-size: 15px; }
+
+    /* ─── SPECYFIKACJA TURNIEJU ───
+       Lista definicji (dl/dt/dd), a nie zwykłe divy — bo to dosłownie
+       pary nazwa-wartość. Czytnik ekranu ogłosi je wtedy jako „Wpisowe:
+       60 zł", zamiast czytać dwa oderwane kawałki tekstu obok siebie. */
+    .spec {
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .spec-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .spec-row:last-child { border-bottom: none; }
+
+    .spec-row dt {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .spec-row dd {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      text-align: right;
+      /* Format rozgrywek bywa długi — pozwalamy mu się zawinąć,
+         zamiast rozpychać kartę w poziomie. */
+      min-width: 0;
+    }
+
+    /* Termin i wpisowe to dwie rzeczy, których szuka się wzrokiem
+       najpierw — dostają kolor marki, reszta zostaje spokojna. */
+    .spec-row.highlight dd { color: var(--clay); }
 
     .news-footer { text-align: center; margin-top: 40px; }
 
@@ -1116,20 +1286,14 @@
       .card { flex: 0 0 88%; scroll-snap-align: center; scroll-snap-stop: always; }
       .card-desc { flex: 0 0 auto; }
 
-      /* Aktualności na mobile: ta sama karuzela co oferta. Spójność
-         zachowania w obrębie strony jest ważniejsza niż to, że siatka
-         też by zadziałała. */
-      .news-grid {
-        display: flex;
-        overflow-x: auto;
-        gap: 16px;
-        padding: 0 6% 10px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        align-items: flex-start;
-      }
-      .news-card { flex: 0 0 88%; scroll-snap-align: center; scroll-snap-stop: always; }
-      .news-excerpt { flex: 0 0 auto; }
+      /* Aktualności na mobile: rząd rozkłada się na pion — zdjęcie na
+         górze, treść pod spodem. Kolumna zdjęcia zajmująca 38% szerokości
+         telefonu byłaby znaczkiem pocztowym obok ściany tekstu. */
+      .news-card { flex-direction: column; }
+      .news-media { flex: 0 0 auto; width: 100%; }
+      .news-media img { max-height: 420px; }
+      .news-body { padding: 22px 22px 24px; }
+      .news-title { font-size: 18px; }
     }
 
     @media (max-width: 520px) {
@@ -1500,6 +1664,15 @@
     </div>
   </section>
 
+  <!-- ─── POWIĘKSZENIE ZDJĘCIA ─── -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-btn lb-close" id="lb-close" aria-label="Zamknij"><i class="ti ti-x"></i></button>
+    <button class="lb-btn lb-prev" id="lb-prev" aria-label="Poprzednie zdjęcie"><i class="ti ti-chevron-left"></i></button>
+    <img id="lb-img" alt="">
+    <button class="lb-btn lb-next" id="lb-next" aria-label="Następne zdjęcie"><i class="ti ti-chevron-right"></i></button>
+    <div class="lb-counter" id="lb-counter"></div>
+  </div>
+
   <!-- ─── CTA ─── -->
   <section class="cta-section">
     <div class="container">
@@ -1643,6 +1816,8 @@
         news_all_btn: 'Zobacz wszystkie wpisy →',
         typ_ogloszenie: 'Ogłoszenie', typ_turniej: 'Turniej', typ_promocja: 'Promocja', typ_galeria: 'Galeria',
         news_event_date: 'Termin:', news_valid_until: 'Obowiązuje do:',
+        spec_termin: 'Termin', spec_kategoria: 'Kategoria', spec_format: 'Format',
+        spec_wpisowe: 'Wpisowe', spec_zapisy: 'Zapisy do',
 
         section_cennik_eyebrow: 'Przejrzyste stawki',
         section_cennik_title: 'Cennik',
@@ -1720,6 +1895,8 @@
         news_all_btn: 'See all posts →',
         typ_ogloszenie: 'Announcement', typ_turniej: 'Tournament', typ_promocja: 'Promotion', typ_galeria: 'Gallery',
         news_event_date: 'Date:', news_valid_until: 'Valid until:',
+        spec_termin: 'Date', spec_kategoria: 'Category', spec_format: 'Format',
+        spec_wpisowe: 'Entry fee', spec_zapisy: 'Sign-ups until',
 
         section_cennik_eyebrow: 'Transparent rates',
         section_cennik_title: 'Pricing',
@@ -1950,6 +2127,20 @@
       return clean.slice(0, clean.lastIndexOf(' ', maxChars)) + '…';
     }
 
+    /* Rysuje listę „nazwa — wartość", pomijając pola, których nikt nie
+       wypełnił. Pusty wiersz z myślnikiem nie niesie żadnej informacji,
+       a sprawia wrażenie ogłoszenia zrobionego byle jak. */
+    function renderSpec(rows) {
+      const filled = rows.filter(r => r.value && String(r.value).trim() !== '');
+      if (filled.length === 0) return '';
+
+      return `<dl class="spec">` + filled.map(r => `
+        <div class="spec-row${r.highlight ? ' highlight' : ''}">
+          <dt>${escapeHtml(r.label)}</dt>
+          <dd>${escapeHtml(r.value)}</dd>
+        </div>`).join('') + `</dl>`;
+    }
+
     function renderNewsSection() {
       const section = document.getElementById('aktualnosci');
       const grid = document.getElementById('news-grid');
@@ -1969,15 +2160,31 @@
       grid.innerHTML = posts.map(post => {
         const hasImage = Array.isArray(post.zdjecia) && post.zdjecia.length > 0;
 
-        const media = hasImage
-          ? `<div class="news-media"><img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy"></div>`
+        // data-post-id pozwala po kliknięciu odnaleźć wpis i pokazać
+        // WSZYSTKIE jego zdjęcia, nie tylko to widoczne na karcie.
+        const morePhotos = hasImage && post.zdjecia.length > 1
+          ? `<span class="news-more-photos"><i class="ti ti-photo"></i> +${post.zdjecia.length - 1}</span>`
           : '';
 
-        // Dodatkowa linijka zależna od typu wpisu — turniej pokazuje
-        // termin, promocja datę ważności, reszta nic.
+        const media = hasImage
+          ? `<div class="news-media" data-post-id="${escapeHtml(post.id)}" role="button" tabindex="0" aria-label="Powiększ zdjęcie">
+               <img src="${escapeHtml(post.zdjecia[0])}" alt="${escapeHtml(post.tytul)}" loading="lazy">
+               ${morePhotos}
+             </div>`
+          : '';
+
+        // Turniej dostaje listę konkretów, reszta typów jedną linijkę
+        // albo nic. Wpisowe i termin to informacje, dla których ludzie
+        // dzwonią — mają być do odczytania z karty, bez wchodzenia głębiej.
         let extra = '';
-        if (post.typ === 'turniej' && post.data_wydarzenia) {
-          extra = `<div class="news-extra"><i class="ti ti-calendar-event"></i> ${t('news_event_date')} ${formatDateLong(post.data_wydarzenia)}</div>`;
+        if (post.typ === 'turniej') {
+          extra = renderSpec([
+            { label: t('spec_termin'),    value: formatDateLong(post.data_wydarzenia), highlight: true },
+            { label: t('spec_kategoria'), value: post.kategoria },
+            { label: t('spec_format'),    value: post.format },
+            { label: t('spec_wpisowe'),   value: post.wpisowe, highlight: true },
+            { label: t('spec_zapisy'),    value: formatDateLong(post.zapisy_do) },
+          ]);
         } else if (post.typ === 'promocja' && post.wazny_do) {
           extra = `<div class="news-extra"><i class="ti ti-clock"></i> ${t('news_valid_until')} ${formatDateLong(post.wazny_do)}</div>`;
         }
@@ -1997,6 +2204,83 @@
           </article>`;
       }).join('');
     }
+
+    /* =========================================================
+       POWIĘKSZENIE ZDJĘCIA
+       Karta pokazuje tylko pierwsze zdjęcie wpisu — tutaj dajemy
+       dostęp do całego kompletu, z przewijaniem.
+       ========================================================= */
+    let lbPhotos = [];
+    let lbIndex = 0;
+
+    function openLightbox(photos, startIndex) {
+      if (!photos || photos.length === 0) return;
+      lbPhotos = photos;
+      lbIndex = startIndex || 0;
+
+      document.getElementById('lightbox').hidden = false;
+      // Blokujemy przewijanie strony pod spodem — bez tego na telefonie
+      // gest powiększania przesuwa stronę zamiast zdjęcia.
+      document.body.style.overflow = 'hidden';
+      showLightboxPhoto();
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    function showLightboxPhoto() {
+      document.getElementById('lb-img').src = lbPhotos[lbIndex];
+
+      const many = lbPhotos.length > 1;
+      document.getElementById('lb-prev').hidden = !many;
+      document.getElementById('lb-next').hidden = !many;
+      document.getElementById('lb-counter').textContent =
+        many ? `${lbIndex + 1} / ${lbPhotos.length}` : '';
+    }
+
+    function stepLightbox(delta) {
+      // Modulo z dodaniem długości — zawijamy w obie strony, więc
+      // z ostatniego zdjęcia "dalej" wraca na pierwsze.
+      lbIndex = (lbIndex + delta + lbPhotos.length) % lbPhotos.length;
+      showLightboxPhoto();
+    }
+
+    document.getElementById('news-grid').addEventListener('click', (e) => {
+      const media = e.target.closest('.news-media');
+      if (!media) return;
+      const post = (allPosts || []).find(p => p.id === media.dataset.postId);
+      if (post) openLightbox(post.zdjecia, 0);
+    });
+
+    // Ta sama akcja z klawiatury — kafelek jest zwykłym <div>, więc
+    // sam z siebie nie reaguje na Enter tak jak przycisk.
+    document.getElementById('news-grid').addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const media = e.target.closest('.news-media');
+      if (!media) return;
+      e.preventDefault();
+      const post = (allPosts || []).find(p => p.id === media.dataset.postId);
+      if (post) openLightbox(post.zdjecia, 0);
+    });
+
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => stepLightbox(-1));
+    document.getElementById('lb-next').addEventListener('click', () => stepLightbox(1));
+
+    // Kliknięcie w tło zamyka, kliknięcie w samo zdjęcie nie — inaczej
+    // trudno byłoby je obejrzeć bez przypadkowego zamknięcia.
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('lightbox').hidden) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
 
     /* =========================================================
        START

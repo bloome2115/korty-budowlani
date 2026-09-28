@@ -455,8 +455,10 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    .news-media { aspect-ratio: 16 / 10; overflow: hidden; background: #eee; }
-    .news-media img { width: 100%; height: 100%; object-fit: cover; }
+    /* Bez kadrowania — dokładnie tak, jak na stronie. Podgląd, który
+       pokazuje coś innego niż strona, jest gorszy niż brak podglądu. */
+    .news-media { overflow: hidden; background: #eee; }
+    .news-media img { width: 100%; height: auto; display: block; }
     .news-body { padding: 22px 22px 24px; }
     .news-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
     .news-date { font-size: 12px; color: #bbb; }
@@ -466,6 +468,17 @@
       display: flex; align-items: center; gap: 7px;
       font-size: 12px; color: var(--clay); margin-top: 14px; font-weight: 500;
     }
+
+    /* Specyfikacja turnieju — identycznie jak na stronie */
+    .spec { margin-top: 16px; border-top: 1px solid var(--border); }
+    .spec-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border);
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row dt { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .spec-row dd { font-size: 13px; font-weight: 500; color: var(--navy); text-align: right; min-width: 0; }
+    .spec-row.highlight dd { color: var(--clay); }
 
     /* ─── PASEK AKCJI FORMULARZA ─── */
     .form-actions {
@@ -639,6 +652,30 @@
           <input type="date" id="f-data-wydarzenia">
         </div>
 
+        <!-- Pola turniejowe. Osobne rubryki, a nie jeden opis, bo tylko
+             wtedy strona pokaże je na karcie jako czytelną listę. -->
+        <div id="turniej-extra" hidden>
+          <div class="field">
+            <label for="f-kategoria">Kategoria <span class="hint">np. singiel open, debel mikst, +45</span></label>
+            <input type="text" id="f-kategoria" maxlength="80">
+          </div>
+
+          <div class="field">
+            <label for="f-format">Format rozgrywek <span class="hint">np. system grupowy, mecze do dwóch wygranych setów</span></label>
+            <input type="text" id="f-format" maxlength="120">
+          </div>
+
+          <div class="field">
+            <label for="f-wpisowe">Wpisowe <span class="hint">wpisz razem z walutą, np. „60 zł od osoby"</span></label>
+            <input type="text" id="f-wpisowe" maxlength="60">
+          </div>
+
+          <div class="field">
+            <label for="f-zapisy-do">Zapisy do <span class="hint">ostatni dzień, w którym można się zgłosić</span></label>
+            <input type="date" id="f-zapisy-do">
+          </div>
+        </div>
+
         <div class="field" id="field-wazny-do" hidden>
           <label for="f-wazny-do">
             Promocja obowiązuje do
@@ -702,15 +739,13 @@ const AUTHOR_KEY  = 'korty_admin_autor';
    coś wypada — najczęściej wpisowe albo termin zapisów, czyli dokładnie to,
    o co potem dzwonią ludzie. Szkielet zamienia „napisz ogłoszenie" na
    „uzupełnij luki", co jest dużo łatwiejszym zadaniem. */
+/* Szablon celowo NIE powtarza tego, co ma własne rubryki (kategoria,
+   format, wpisowe, zapisy). Gdyby powtarzał, te same informacje żyłyby
+   w dwóch miejscach naraz i prędzej czy później zaczęłyby się różnić.
+   Zostaje to, na co nie ma osobnego pola. */
 const TURNIEJ_TEMPLATE =
-`Kategoria: (np. singiel open / +45 / debel mikst)
-Termin: (dzień i godzina rozpoczęcia)
-Format: (np. system grupowy, mecze do dwóch wygranych setów)
-
-Wpisowe: ... zł
-Zapisy: do (data) — telefonicznie lub w recepcji
+`Gdzie się zapisać: telefonicznie lub w recepcji.
 Limit miejsc: ...
-
 Nagrody: ...
 
 Gramy na kortach mączkowych, piłki zapewnia organizator.`;
@@ -995,6 +1030,10 @@ function openForm(post) {
   el('f-tytul').value = post ? post.tytul : '';
   el('f-tresc').value = post ? post.tresc : '';
   el('f-data-wydarzenia').value = post ? post.data_wydarzenia : '';
+  el('f-kategoria').value = post ? (post.kategoria || '') : '';
+  el('f-format').value    = post ? (post.format || '') : '';
+  el('f-wpisowe').value   = post ? (post.wpisowe || '') : '';
+  el('f-zapisy-do').value = post ? (post.zapisy_do || '') : '';
   el('f-wazny-do').value = post ? post.wazny_do : '';
   el('f-data-publikacji').value = post ? post.data_publikacji : todayIso();
   el('f-autor').value = post ? post.autor : (localStorage.getItem(AUTHOR_KEY) || '');
@@ -1023,6 +1062,7 @@ function applyType() {
     o.classList.toggle('active', o.dataset.type === currentType));
 
   el('field-data-wydarzenia').hidden = currentType !== 'turniej';
+  el('turniej-extra').hidden = currentType !== 'turniej';
   el('field-wazny-do').hidden = currentType !== 'promocja';
   el('template-bar').hidden = currentType !== 'turniej';
 
@@ -1045,7 +1085,8 @@ el('template-btn').addEventListener('click', () => {
   renderPreview();
 });
 
-['f-tytul', 'f-tresc', 'f-data-wydarzenia', 'f-wazny-do', 'f-data-publikacji']
+['f-tytul', 'f-tresc', 'f-data-wydarzenia', 'f-wazny-do', 'f-data-publikacji',
+ 'f-kategoria', 'f-format', 'f-wpisowe', 'f-zapisy-do']
   .forEach(id => el(id).addEventListener('input', renderPreview));
 
 /* =========================================================
@@ -1177,14 +1218,31 @@ function excerpt(text, maxChars) {
   return clean.slice(0, clean.lastIndexOf(' ', maxChars)) + '…';
 }
 
+/* Ta sama funkcja co na stronie — pomija pola niewypełnione. */
+function renderSpec(rows) {
+  const filled = rows.filter(r => r.value && String(r.value).trim() !== '');
+  if (filled.length === 0) return '';
+  return `<dl class="spec">` + filled.map(r => `
+    <div class="spec-row${r.highlight ? ' highlight' : ''}">
+      <dt>${escapeHtml(r.label)}</dt>
+      <dd>${escapeHtml(r.value)}</dd>
+    </div>`).join('') + `</dl>`;
+}
+
 function renderPreview() {
   const tytul = el('f-tytul').value.trim() || '(tytuł wpisu)';
   const tresc = el('f-tresc').value.trim();
   const dataPub = el('f-data-publikacji').value || todayIso();
 
   let extra = '';
-  if (currentType === 'turniej' && el('f-data-wydarzenia').value) {
-    extra = `<div class="news-extra"><i class="ti ti-calendar-event"></i> Termin: ${formatDate(el('f-data-wydarzenia').value)}</div>`;
+  if (currentType === 'turniej') {
+    extra = renderSpec([
+      { label: 'Termin',    value: formatDate(el('f-data-wydarzenia').value), highlight: true },
+      { label: 'Kategoria', value: el('f-kategoria').value.trim() },
+      { label: 'Format',    value: el('f-format').value.trim() },
+      { label: 'Wpisowe',   value: el('f-wpisowe').value.trim(), highlight: true },
+      { label: 'Zapisy do', value: formatDate(el('f-zapisy-do').value) },
+    ]);
   } else if (currentType === 'promocja' && el('f-wazny-do').value) {
     extra = `<div class="news-extra"><i class="ti ti-clock"></i> Obowiązuje do: ${formatDate(el('f-wazny-do').value)}</div>`;
   }
@@ -1265,6 +1323,10 @@ async function savePost(status) {
     wazny_do: currentType === 'promocja' ? el('f-wazny-do').value : '',
     zdjecia: photos,
     autor: autor,
+    kategoria: currentType === 'turniej' ? el('f-kategoria').value.trim() : '',
+    format:    currentType === 'turniej' ? el('f-format').value.trim() : '',
+    wpisowe:   currentType === 'turniej' ? el('f-wpisowe').value.trim() : '',
+    zapisy_do: currentType === 'turniej' ? el('f-zapisy-do').value : '',
   };
 
   const buttons = [el('save-draft-btn'), el('publish-btn')];

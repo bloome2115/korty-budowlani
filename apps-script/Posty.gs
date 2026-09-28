@@ -56,7 +56,7 @@ const POSTY_CONFIG = {
   MAX_IMAGE_BYTES: 8 * 1024 * 1024, // 8 MB po stronie serwera; panel i tak zmniejsza zdjęcia wcześniej
 };
 
-const POSTY_VERSION = '2026-09-13-a';
+const POSTY_VERSION = '2026-09-28-a';
 
 // Kolumny arkusza. KOLEJNOŚĆ MA ZNACZENIE — czyta ją cały ten plik.
 // Dopisując nową kolumnę, dodaj ją NA KOŃCU, nigdy w środku.
@@ -72,6 +72,14 @@ const POSTY_HEADERS = [
   'zdjecia',          // I — adresy z Drive, oddzielone przecinkiem
   'autor',            // J
   'zaktualizowano',   // K — automatyczny znacznik ostatniej zmiany
+  // ── Poniższe dotyczą wyłącznie wpisów typu "turniej" ──
+  // Osobne kolumny, a nie jedno pole tekstowe, bo tylko wtedy strona
+  // może te informacje WYŚWIETLIĆ JAKO LISTĘ. Z ciągłego zdania
+  // dałoby się je wyciągnąć jedynie zgadywaniem.
+  'kategoria',        // L — np. singiel open, debel mikst
+  'format',           // M — np. system grupowy, do dwóch wygranych setów
+  'wpisowe',          // N — tekst, nie liczba: bywa "60 zł od osoby"
+  'zapisy_do',        // O — data zamknięcia zapisów
 ];
 
 const POSTY_TYPES = ['ogloszenie', 'turniej', 'promocja', 'galeria'];
@@ -201,6 +209,24 @@ function getPostySheet_() {
     sheet.appendRow(POSTY_HEADERS);
     sheet.getRange(1, 1, 1, POSTY_HEADERS.length).setFontWeight('bold');
     sheet.setFrozenRows(1);
+    return sheet;
+  }
+
+  /* MIGRACJA — dopisuje kolumny, które doszły już po utworzeniu zakładki.
+     Bez tego arkusz założony we wrześniu nigdy nie dostałby kolumn
+     turniejowych: warunek wyżej tworzy nagłówki TYLKO przy zakładaniu
+     zakładki od zera. Zapis nowych pól trafiałby w pustkę, a odczyt
+     zwracałby undefined — i to bez żadnego komunikatu o błędzie.
+
+     Dlatego właśnie nowe kolumny dokładamy zawsze NA KOŃCU listy:
+     dopisanie w środku przesunęłoby wszystkie dane w istniejących
+     wierszach o jedną kolumnę w prawo. */
+  const currentLastCol = sheet.getLastColumn();
+  if (currentLastCol < POSTY_HEADERS.length) {
+    sheet.getRange(1, currentLastCol + 1, 1, POSTY_HEADERS.length - currentLastCol)
+      .setValues([POSTY_HEADERS.slice(currentLastCol)])
+      .setFontWeight('bold');
+    Logger.log('Migracja: dopisano kolumny ' + POSTY_HEADERS.slice(currentLastCol).join(', '));
   }
 
   return sheet;
@@ -227,6 +253,10 @@ function rowToPost_(row) {
     zdjecia: String(row[8] || '').split(',').map(s => s.trim()).filter(Boolean),
     autor: String(row[9] || ''),
     zaktualizowano: dateToIso_(row[10]),
+    kategoria: String(row[11] || ''),
+    format: String(row[12] || ''),
+    wpisowe: String(row[13] || ''),
+    zapisy_do: dateToIso_(row[14]),
   };
 }
 
@@ -336,6 +366,13 @@ function savePost_(post) {
     zdjecia.join(', '),
     String(post.autor || '').trim(),
     Utilities.formatDate(now, CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm'),
+    // Pola turniejowe zapisujemy tylko dla turnieju. Gdyby zostawały
+    // po zmianie typu wpisu, w arkuszu leżałyby dane, których strona
+    // nigdy nie pokaże — a ktoś czytający arkusz brałby je za prawdę.
+    typ === 'turniej' ? String(post.kategoria || '').trim() : '',
+    typ === 'turniej' ? String(post.format || '').trim() : '',
+    typ === 'turniej' ? String(post.wpisowe || '').trim() : '',
+    typ === 'turniej' ? String(post.zapisy_do || '').trim() : '',
   ];
 
   // Blokada na czas odczytu + zapisu. Dwie osoby zapisujące jednocześnie

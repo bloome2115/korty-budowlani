@@ -80,7 +80,10 @@ Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 3. **Stats bar** — 4 korty mączkowe (3 kryte w przygotowaniu) / 8:00–22:00 / gotówka i karta / od 1974
 4. **Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Liga (kotwica `#liga` jest na trzeciej karcie)
 5. **Cennik** — tabela; ⚠️ trzy pozycje mają `[do uzupełnienia]`
-6. **Aktualności** — 3 najnowsze wpisy; sekcja `hidden`, gdy brak wpisów
+6. **Aktualności** — 3 najnowsze wpisy, **jeden na rząd**: zdjęcie po lewej (38%),
+   treść po prawej, wyśrodkowana w pionie. Sekcja `hidden`, gdy brak wpisów.
+   Zdjęcia nieprzycinane, sufit wysokości 360 px, kliknięcie otwiera pełny rozmiar.
+   Wpis turniejowy pokazuje listę: termin, kategoria, format, wpisowe, zapisy do
 7. **O nas** — ⚠️ tekst jest SZKICEM, czeka na akceptację klienta
 8. **CTA** — granatowa sekcja z dużym przyciskiem
 9. **Footer** — loga, adres, godziny, kontakt (⚠️ telefon to atrapa), podpis Bloome
@@ -184,14 +187,15 @@ PL / EN przełączane w navbarze, strona zawsze startuje po polsku.
 - [x] Zebranie wymagań, wybór technologii, kierunek wizualny
 - [x] `rezerwacja.html` + `Code.gs` (zamrożone)
 - [x] Aktualizacja dokumentacji pod nowy zakres
-- [x] `Posty.gs` — backend aktualności (napisany, **nie wdrożony**)
+- [x] `Posty.gs` — backend aktualności, **wdrożony i sprawdzony na żywo 22.09.2026**
+      (wdrożenie „v4 - posty", Wersja 6; adres `/exec` bez zmian)
 - [x] `index.html` przerobiony na wizytówkę: widget wydarzeń, sekcja Aktualności,
       przełącznik rezerwacji, Cennik, O nas, wzmianki o hali
 - [x] `rezerwacja-wkrotce.html`
 
 ### ⏭️ Następne kroki
-- [ ] **Wdrożyć `Posty.gs`** — wkleić do Apps Script, wstawić łatkę do `doGet`/`doPost`,
-      ustawić `ADMIN_PASSWORD`, podać `DRIVE_FOLDER_ID`, uruchomić `setupPosty()`, nowe wdrożenie
+- [ ] Potwierdzić `ADMIN_PASSWORD` w Script Properties i `DRIVE_FOLDER_ID` w `POSTY_CONFIG`
+      (niepotrzebne do wyświetlania, konieczne do panelu i zdjęć)
 - [ ] Uzupełnić stawki w Cenniku i prawdziwy numer telefonu (2 miejsca + stopka)
 - [ ] Akceptacja tekstu „O nas" przez klienta
 - [ ] `aktualnosci.html` — obecnie martwy link z dwóch miejsc
@@ -253,3 +257,18 @@ Korty/
 - `rezerwacja.html` i `Code.gs` (część rezerwacyjna) zamrożone, nie usunięte
 - Sterowanie obiektem (Shelly, oświetlenie, ogrzewanie hali) to **osobny wątek** —
   decyzja o odpięciu go od systemu rezerwacji obroniła się przy zmianie systemu
+
+### ⚙️ Pułapka Apps Script — kosztowała nas wieczór, warto pamiętać
+**Zapisanie kodu nie tworzy wersji.** Wdrożenie wskazuje na zamrożoną wersję i trzyma
+się jej, dopóki mu tego nie zmienisz — można zapisywać plik sto razy, a `/exec` nadal
+serwuje stary kod. Nazwa wdrożenia („v4 - posty") też nie mówi prawdy o tym, co w nim
+jest; liczy się numer wersji pod spodem.
+
+Procedura po każdej zmianie w `.gs`:
+1. **Ctrl+S** w każdym zmienionym pliku osobno
+2. **Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: Nowa wersja → Wdróż**
+3. Sprawdź `…/exec?action=postyVersion`
+
+Diagnostyka, gdy coś nie gra: adres `/dev` (Wdróż → Przetestuj wdrożenia) zawsze
+uruchamia najnowszy **zapisany** kod. Jeśli `/dev` działa, a `/exec` nie — problem
+jest wyłącznie we wdrożeniu, nie w kodzie. To rozstrzyga w 30 sekund.
