@@ -133,7 +133,10 @@
       transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
     }
 
-    .news-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
+    /* BEZ efektu najechania. Podnoszenie się kafelka to obietnica
+       kliknięcia — a karta aktualności nigdzie nie prowadzi. Klikalne
+       jest tylko zdjęcie (powiększenie) i ono ma własny kursor.
+       Interfejs nie powinien zapraszać tam, gdzie nie ma wejścia. */
 
     /* Turniej, który się już odbył, jest przygaszony. Bez tego lista
        mieszałaby zapowiedzi z historią, a wpis sprzed miesiąca z napisem

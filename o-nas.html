@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O nas — Korty Budowlani Lublin</title>
+  <meta name="description" content="Korty Budowlani Lublin działają od 1974 roku. Poznaj klub, historię obiektu i trenerów GoRun Akademii Tenisa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --text:   #1A2744;
+      --muted:  #888;
+      --border: #eee;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    /* Ta sama reguła co w index.html i z tego samego powodu: `hidden`
+       przegrywa z własnym `display`, a nakładka powiększenia ma flex. */
+    [hidden] { display: none !important; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+    /* ─── NAVBAR ─── */
+    .navbar { background: var(--navy); height: 104px; display: flex; align-items: center; flex-shrink: 0; }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
+    .navbar-logos { display: flex; align-items: center; gap: 18px; }
+    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
+    .logos-divider { width: 2px; height: 62px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .navbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.7); font-size: 15px;
+      padding: 10px 18px; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .lang-switch {
+      display: flex; align-items: center; background: rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 4px; cursor: pointer; user-select: none;
+    }
+    .lang-switch span {
+      font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
+      color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s;
+    }
+    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ─── NAGŁÓWEK STRONY ─── */
+    main { flex: 1; padding: 46px 0 70px; }
+
+    .page-head { margin-bottom: 26px; }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 500; color: var(--clay);
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;
+    }
+
+    .page-head h1 { font-size: 34px; font-weight: 600; color: var(--navy); }
+    .page-head p { font-size: 15px; color: var(--muted); margin-top: 6px; }
+
+    .footer { background: var(--navy); padding: 26px 0; flex-shrink: 0; }
+    .footer .container {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+    .footer-bloome { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
+
+
+    /* ─── HISTORIA ─── */
+    .about-wrap {
+      display: grid; grid-template-columns: 1.35fr 1fr;
+      gap: 34px; align-items: start; margin-bottom: 54px;
+    }
+    .about-text { background: var(--white); border-radius: 14px; padding: 32px 34px; }
+    .about-text p { font-size: 15.5px; color: #444; margin-bottom: 15px; }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--navy); font-weight: 500; }
+
+    .about-facts { display: grid; gap: 12px; }
+    .about-fact {
+      background: var(--white); border-radius: 12px;
+      padding: 18px 20px; display: flex; gap: 15px; align-items: center;
+    }
+    .about-fact i { font-size: 23px; color: var(--clay); flex-shrink: 0; }
+    .about-fact-value { font-size: 15.5px; font-weight: 500; color: var(--navy); }
+    .about-fact-label { font-size: 12.5px; color: var(--muted); }
+
+    /* ─── KADRA ─── */
+    .sekcja-head { margin-bottom: 22px; }
+    .sekcja-head h2 { font-size: 24px; font-weight: 600; color: var(--navy); }
+    .sekcja-head p { font-size: 14.5px; color: var(--muted); margin-top: 5px; }
+
+    .kadra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 20px; margin-bottom: 54px;
+    }
+
+    .trener-card {
+      background: var(--white); border-radius: 14px;
+      padding: 28px 26px; display: flex; flex-direction: column;
+    }
+
+    /* Inicjały zamiast zdjęcia. Kółko ma dokładnie te wymiary, które
+       zajmie później fotografia, więc podmiana nie ruszy układu strony. */
+    .trener-avatar {
+      width: 74px; height: 74px; border-radius: 50%;
+      background: var(--navy); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 25px; font-weight: 500; letter-spacing: 0.5px;
+      margin-bottom: 16px; flex-shrink: 0; overflow: hidden;
+    }
+    .trener-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .trener-card h3 { font-size: 18px; font-weight: 600; color: var(--navy); }
+    .trener-rola {
+      font-size: 12px; font-weight: 500; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--clay); margin-top: 5px;
+    }
+    .trener-opis { font-size: 14.5px; color: #555; margin: 14px 0 18px; }
+
+    .trener-kontakt { margin-top: auto; display: grid; gap: 8px; }
+    .trener-kontakt a, .trener-kontakt span {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; color: #555;
+    }
+    .trener-kontakt a { transition: color 0.15s; }
+    .trener-kontakt a:hover { color: var(--clay); }
+    .trener-kontakt i { color: var(--clay); font-size: 16px; flex-shrink: 0; }
+
+    /* ─── PASEK KOŃCOWY ─── */
+    .cta-box {
+      background: var(--navy); border-radius: 14px;
+      padding: 34px 32px; text-align: center; color: #fff;
+    }
+    .cta-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .cta-box p { font-size: 14.5px; color: rgba(255,255,255,0.65); margin-bottom: 20px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--clay); color: #fff;
+      padding: 13px 26px; border-radius: 9px; font-size: 15px; font-weight: 500;
+      transition: background 0.15s;
+    }
+    .cta-btn:hover { background: #b0551f; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .navbar { height: 84px; }
+      .navbar-logos img { height: 64px; }
+      .logos-divider { height: 46px; }
+      .nav-back span { display: none; }
+      .page-head h1 { font-size: 26px; }
+      .about-wrap { grid-template-columns: 1fr; gap: 20px; }
+      .about-text { padding: 26px 22px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-logos">
+        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
+        <div class="logos-divider"></div>
+        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
+      </div>
+
+      <div class="navbar-right">
+        <div class="lang-switch" onclick="toggleLang()">
+          <span class="lang-pl-span active">PL</span>
+          <span class="lang-en-span">EN</span>
+        </div>
+        <a href="index.html" class="nav-back">
+          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="page-eyebrow" data-i18n="page_eyebrow">Kim jesteśmy</div>
+        <h1 data-i18n="page_title">O nas</h1>
+        <p data-i18n="page_sub">Korty przy Andrzeja Struga i ludzie, którzy je prowadzą.</p>
+      </div>
+
+      <div class="about-wrap">
+        <div class="about-text">
+          <p data-i18n-html="about_p1"></p>
+          <p data-i18n-html="about_p2"></p>
+          <p data-i18n-html="about_p3"></p>
+          <p data-i18n-html="about_p4"></p>
+        </div>
+
+        <div class="about-facts">
+          <div class="about-fact">
+            <i class="ti ti-award"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="fact1_value">Od 1974 roku</div>
+              <div class="about-fact-label" data-i18n="fact1_label">nieprzerwanej działalności</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-ball-tennis"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="fact2_value">4 korty mączkowe</div>
+              <div class="about-fact-label" data-i18n="fact2_label">otwarte codziennie</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-building-arch"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="fact3_value">3 korty kryte</div>
+              <div class="about-fact-label" data-i18n="fact3_label">w przygotowaniu</div>
+            </div>
+          </div>
+          <div class="about-fact">
+            <i class="ti ti-map-pin"></i>
+            <div>
+              <div class="about-fact-value" data-i18n="fact4_value">Andrzeja Struga 8</div>
+              <div class="about-fact-label" data-i18n="fact4_label">Lublin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sekcja-head" id="trenerzy">
+        <h2 data-i18n="kadra_title">Nasza kadra</h2>
+        <p data-i18n="kadra_sub">Trenerzy GoRun Akademii Tenisa — napisz albo zadzwoń bezpośrednio.</p>
+      </div>
+
+      <!-- Kafelki trenerów rysuje JavaScript z tablicy TRENERZY. -->
+      <div class="kadra-grid" id="kadra-grid"></div>
+
+      <div class="cta-box">
+        <h2 data-i18n="cta_title">Chcesz zacząć trenować?</h2>
+        <p data-i18n="cta_desc">Napisz do wybranego trenera albo zadzwoń do klubu — dobierzemy zajęcia do poziomu i wieku.</p>
+        <a href="index.html#kontakt" class="cta-btn">
+          <i class="ti ti-phone"></i> <span data-i18n="cta_btn">Kontakt</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa</div>
+      <div class="footer-bloome">Bloome</div>
+    </div>
+  </footer>
+
+<script>
+/* =========================================================
+   TRENERZY  —  TO JEST JEDYNE MIEJSCE DO EDYCJI
+
+   Jeden obiekt { ... } = jeden kafelek. Dopisanie trenera to
+   skopiowanie obiektu i zmiana treści — reszta strony sama się ułoży.
+
+   imie     — imię i nazwisko (z niego biorą się inicjały w kółku)
+   rola     — podpis pod nazwiskiem, np. "Trener główny"
+   opis     — 1-3 zdania; opis_en zostaw puste, jeśli ma zostać polski
+   telefon  — '' = wiersz się nie pokaże
+   email    — '' = wiersz się nie pokaże
+   zdjecie  — ścieżka do fotografii, np. 'assets/img/trener-jan.jpg'.
+              Puste = kółko z inicjałami. Zdjęcie podmienia się samo,
+              bez ruszania układu.
+   ========================================================= */
+const TRENERZY = [
+  {
+    imie: '[Imię i nazwisko]',
+    rola: 'Trener główny',
+    rola_en: 'Head coach',
+    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
+    opis_en: '',
+    telefon: '',
+    email: '',
+    zdjecie: '',
+  },
+  {
+    imie: '[Imię i nazwisko]',
+    rola: 'Trener',
+    rola_en: 'Coach',
+    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
+    opis_en: '',
+    telefon: '',
+    email: '',
+    zdjecie: '',
+  },
+  {
+    imie: '[Imię i nazwisko]',
+    rola: 'Trener',
+    rola_en: 'Coach',
+    opis: '[Krótki opis: doświadczenie, uprawnienia, z kim pracuje najchętniej — 1-3 zdania.]',
+    opis_en: '',
+    telefon: '',
+    email: '',
+    zdjecie: '',
+  },
+];
+
+/* =========================================================
+   TŁUMACZENIA
+   ========================================================= */
+const TRANSLATIONS = {
+  pl: {
+    nav_back: 'Strona główna',
+    page_eyebrow: 'Kim jesteśmy',
+    page_title: 'O nas',
+    page_sub: 'Korty przy Andrzeja Struga i ludzie, którzy je prowadzą.',
+    about_p1: '<strong>Budowlani Lublin</strong> to nazwa, którą lublinianie znają od pokoleń. Korty przy Andrzeja Struga działają nieprzerwanie od 1974 roku i przez ten czas przewinęło się przez nie kilka pokoleń tenisistów — od pierwszych lekcji po ligowe mecze.',
+    about_p2: 'Dziś obiektem zarządza <strong>GoRun Akademia Tenisa</strong>. Zachowujemy to, co w tym miejscu najlepsze — kameralną atmosferę i mączkę, na której naprawdę chce się grać — i dokładamy to, czego brakowało: trenerów z certyfikatami, ligę amatorską i turnieje dla graczy na każdym poziomie.',
+    about_p3: 'Cztery korty mączkowe są otwarte codziennie przez cały sezon. Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami. Prace już trwają — o terminie otwarcia poinformujemy w aktualnościach.',
+    about_p4: 'Jeśli szukasz miejsca, w którym można po prostu przyjść i zagrać, a przy okazji trafić na turniej albo ligę — to jest ten adres.',
+    fact1_value: 'Od 1974 roku', fact1_label: 'nieprzerwanej działalności',
+    fact2_value: '4 korty mączkowe', fact2_label: 'otwarte codziennie',
+    fact3_value: '3 korty kryte', fact3_label: 'w przygotowaniu',
+    fact4_value: 'Andrzeja Struga 8', fact4_label: 'Lublin',
+    kadra_title: 'Nasza kadra',
+    kadra_sub: 'Trenerzy GoRun Akademii Tenisa — napisz albo zadzwoń bezpośrednio.',
+    cta_title: 'Chcesz zacząć trenować?',
+    cta_desc: 'Napisz do wybranego trenera albo zadzwoń do klubu — dobierzemy zajęcia do poziomu i wieku.',
+    cta_btn: 'Kontakt',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+  en: {
+    nav_back: 'Home',
+    page_eyebrow: 'Who we are',
+    page_title: 'About us',
+    page_sub: 'The courts on Andrzeja Struga and the people who run them.',
+    about_p1: '<strong>Budowlani Lublin</strong> is a name the city has known for generations. The courts on Andrzeja Struga street have been running without a break since 1974, and several generations of players have passed through them — from first lessons to league matches.',
+    about_p2: 'Today the site is run by the <strong>GoRun Tennis Academy</strong>. We keep what is best about this place — its intimate feel and clay you actually want to play on — and add what was missing: certified coaches, an amateur league and tournaments for players at every level.',
+    about_p3: 'Four clay courts are open daily throughout the season. The next step is <strong>three indoor courts</strong>, so the season no longer ends with the first cold days. Work is under way — we will announce the opening date in the news section.',
+    about_p4: 'If you are looking for a place where you can simply turn up and play, and run into a tournament or a league along the way — this is the address.',
+    fact1_value: 'Since 1974', fact1_label: 'of continuous operation',
+    fact2_value: '4 clay courts', fact2_label: 'open daily',
+    fact3_value: '3 indoor courts', fact3_label: 'in preparation',
+    fact4_value: 'Andrzeja Struga 8', fact4_label: 'Lublin',
+    kadra_title: 'Our coaches',
+    kadra_sub: 'The GoRun Tennis Academy team — write or call them directly.',
+    cta_title: 'Want to start training?',
+    cta_desc: 'Write to a coach or call the club — we will match the sessions to your level and age.',
+    cta_btn: 'Contact',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+};
+
+let currentLang = 'pl';
+
+function t(key) {
+  return TRANSLATIONS[currentLang][key] !== undefined ? TRANSLATIONS[currentLang][key] : key;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Inicjały z imienia i nazwiska. Nawiasy kwadratowe z tekstu
+// zastępczego odpadają, żeby w kółku nie wylądowało "[I".
+function inicjaly(imie) {
+  return String(imie)
+    .replace(/[\[\]]/g, '')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(function (slowo) { return slowo.charAt(0).toUpperCase(); })
+    .join('');
+}
+
+function renderKadra() {
+  const grid = document.getElementById('kadra-grid');
+  const en = currentLang === 'en';
+
+  grid.innerHTML = TRENERZY.map(function (tr) {
+    // Literówka w ścieżce do zdjęcia nie może rozwalić kafelka: gdy plik
+    // się nie wczyta, kółko po cichu wraca do inicjałów. Pusty alt, bo
+    // inaczej przeglądarka wypisuje go w środku kółka zamiast obrazka.
+    const ini = escapeHtml(inicjaly(tr.imie));
+    const avatar = tr.zdjecie
+      ? '<div class="trener-avatar"><img src="' + escapeHtml(tr.zdjecie) + '" alt="" ' +
+        'onerror="this.parentNode.textContent=\'' + ini + '\'"></div>'
+      : '<div class="trener-avatar">' + ini + '</div>';
+
+    let kontakt = '';
+    if (tr.telefon) {
+      kontakt += '<a href="tel:' + escapeHtml(tr.telefon.replace(/\s/g, '')) + '">' +
+                 '<i class="ti ti-phone"></i>' + escapeHtml(tr.telefon) + '</a>';
+    }
+    if (tr.email) {
+      kontakt += '<a href="mailto:' + escapeHtml(tr.email) + '">' +
+                 '<i class="ti ti-mail"></i>' + escapeHtml(tr.email) + '</a>';
+    }
+
+    // opis_en jest opcjonalny — puste pole oznacza "zostaw polski",
+    // żeby nie zmuszać nikogo do tłumaczenia każdej biografii.
+    const opis = en && tr.opis_en ? tr.opis_en : tr.opis;
+    const rola = en && tr.rola_en ? tr.rola_en : tr.rola;
+
+    return '<article class="trener-card">' +
+      avatar +
+      '<h3>' + escapeHtml(tr.imie) + '</h3>' +
+      (rola ? '<div class="trener-rola">' + escapeHtml(rola) + '</div>' : '') +
+      '<p class="trener-opis">' + escapeHtml(opis) + '</p>' +
+      (kontakt ? '<div class="trener-kontakt">' + kontakt + '</div>' : '') +
+      '</article>';
+  }).join('');
+}
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.title = lang === 'pl'
+    ? 'O nas — Korty Budowlani Lublin'
+    : 'About us — Budowlani Lublin Tennis Courts';
+
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+    const key = el.getAttribute('data-i18n-html');
+    if (TRANSLATIONS[lang][key] !== undefined) el.innerHTML = TRANSLATIONS[lang][key];
+  });
+
+  renderKadra();
+}
+
+function toggleLang() {
+  document.querySelectorAll('.lang-pl-span').forEach(function (el) { el.classList.toggle('active'); });
+  document.querySelectorAll('.lang-en-span').forEach(function (el) { el.classList.toggle('active'); });
+  applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
+}
+
+applyLanguage('pl');
+</script>
+</body>
+</html>

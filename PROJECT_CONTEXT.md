@@ -1,7 +1,8 @@
 # 🎾 PROJECT CONTEXT — Korty Budowlani Lublin / GoRun Akademia Tenisa
 
 > Główny dokument ustaleń. Wklej na początku nowej rozmowy, żeby zachować kontekst.
-> **Wersja 3 — 19.09.2026.** Strona jest wizytówką, nie systemem rezerwacji.
+> **Wersja 4 — 28.09.2026.** Strona jest wizytówką, nie systemem rezerwacji.
+> Cały zakres kodu ukończony; zostały wyłącznie dane od klienta.
 > Uzasadnienie zwrotu: `claude/DECYZJE_wizytowka_i_posty.md`.
 
 ---
@@ -78,28 +79,50 @@ Roland Garros — elegancja, ceglana mączka, prestiż, jasność.
 1. **Navbar** — ciemny, oba loga, menu (Oferta / Cennik / Aktualności / Liga / O nas / Kontakt), przełącznik PL/EN, CTA
 2. **Hero** — zdjęcie kortu + gradient, nagłówek, dwa przyciski, **widget „Nadchodzące wydarzenia"** po prawej
 3. **Stats bar** — 4 korty mączkowe (3 kryte w przygotowaniu) / 8:00–22:00 / gotówka i karta / od 1974
-4. **Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Liga (kotwica `#liga` jest na trzeciej karcie)
+4. **Oferta** — 3 karty: Wynajem kortu / Lekcje tenisa / Liga. Ceny „od …".
+   Każda karta prowadzi dalej: wynajem → rezerwacja, lekcje → `o-nas.html#trenerzy`,
+   liga → `liga.html`
 5. **Cennik** — tabela; ⚠️ trzy pozycje mają `[do uzupełnienia]`
 6. **Aktualności** — 3 najnowsze wpisy, **jeden na rząd**: zdjęcie po lewej (38%),
    treść po prawej, wyśrodkowana w pionie. Sekcja `hidden`, gdy brak wpisów.
    Zdjęcia nieprzycinane, sufit wysokości 360 px, kliknięcie otwiera pełny rozmiar.
    Wpis turniejowy pokazuje listę: termin, kategoria, format, wpisowe, zapisy do
-7. **O nas** — ⚠️ tekst jest SZKICEM, czeka na akceptację klienta
+7. **O nas** — skrót (2 akapity + 4 fakty) z linkiem na `o-nas.html`.
+   ⚠️ tekst jest SZKICEM, czeka na akceptację klienta
 8. **CTA** — granatowa sekcja z dużym przyciskiem
 9. **Footer** — loga, adres, godziny, kontakt (⚠️ telefon to atrapa), podpis Bloome
+
+### `liga.html` — podstrona lig ✅ gotowa
+Trzy ligi Rakietmania + UKT Go Run (open, 40+, kobiet) jako równorzędne kafelki,
+każdy z przyciskiem na stronę ligi w kluby.org, plus sekcja „Jak dołączyć".
+Regulaminów NIE przepisujemy — żyją w kluby.org, a kopia na naszej stronie
+rozjechałaby się z oryginałem przy pierwszej zmianie sezonu.
+⚠️ Wszystkie trzy adresy `url` w tablicy `LIGI` są puste — przyciski pokazują
+„Zapisy wkrótce". Dopisanie czwartej ligi = jeden obiekt w tablicy `LIGI`.
+
+### `o-nas.html` — podstrona o klubie ✅ gotowa
+Historia obiektu (pełna wersja; strona główna ma tylko skrót), 4 fakty,
+sekcja **Nasza kadra** pod kotwicą `#trenerzy` i pasek kontaktowy.
+Trenerzy rysują się z tablicy `TRENERZY` — jeden obiekt to jeden kafelek.
+Bez zdjęcia kółko pokazuje inicjały; zdjęcie podmienia się bez ruszania układu,
+a zła ścieżka po cichu wraca do inicjałów.
+⚠️ Trzy kafelki to atrapy `[Imię i nazwisko]` — czekają na dane od klienta.
 
 ### `rezerwacja-wkrotce.html` — podstrona przejściowa ✅ gotowa
 Informuje, że rezerwacja online jest w przygotowaniu, i podaje numer telefonu jako
 drogę rezerwacji. Ma `noindex` — zniknie, gdy ruszy kluby.org, a zaindeksowany adres
 zostałby martwym linkiem w Google. ⚠️ Numer telefonu to atrapa.
 
-### `aktualnosci.html` — lista postów 🆕 do zbudowania
-Pełna lista wpisów z filtrowaniem po typie. Przyciski „Wszystkie aktualności"
-w `index.html` już do niej prowadzą — **dopóki nie powstanie, to martwy link**.
+### `aktualnosci.html` — pełna lista wpisów ✅ gotowa
+Wszystkie wpisy, **pełna treść** (nie skrót jak na stronie głównej), filtry po typie
+z licznikami. Pasek filtrów chowa się, gdy wszystkie wpisy są jednego typu.
+Turniej po terminie: przygaszony, z plakietką „Zakończony".
 
-### `admin.html` — panel obsługi 🆕 do zbudowania
-Logowanie hasłem, formularz dodawania/edycji postów, upload zdjęć (ze zmniejszaniem
-po stronie przeglądarki), publikacja i ukrywanie wpisów.
+### `admin.html` — panel obsługi ✅ gotowy
+Logowanie hasłem, cztery typy wpisów z polami zależnymi od typu, szablon ogłoszenia
+turniejowego, upload do 6 zdjęć ze zmniejszaniem w przeglądarce, podgląd karty
+na żywo, wyróżnianie, ukrywanie, trwałe usuwanie z potwierdzeniem, wyniki turnieju.
+Zmiany stanu działają natychmiast na ekranie, zapis leci w tle (patrz sekcja 10).
 
 ### `rezerwacja.html` — ❄️ ZAMROŻONE
 Zostaje w repo, znika z nawigacji. Nie rozwijamy, nie kasujemy.
@@ -162,7 +185,8 @@ Napis na przycisku nie zmienia się w żadnym z tych stanów.
 ### Aktualności
 Cztery typy wpisów (jeden model danych, różne pola opcjonalne):
 - **Ogłoszenie** — tytuł, treść, data publikacji
-- **Turniej / wydarzenie** — dodatkowo data wydarzenia; **tylko ten typ zasila widget w hero**
+- **Turniej / wydarzenie** — dodatkowo godzina, kategoria, format, wpisowe, zapisy do
+  oraz miejsca 1–3; **tylko ten typ zasila widget w hero**
 - **Promocja** — dodatkowo data ważności; po jej upływie wpis znika automatycznie
 - **Galeria / relacja** — wpis oparty o zdjęcia
 
@@ -173,11 +197,20 @@ Filtrowanie (status, data publikacji w przyszłości, wygasłe promocje) dzieje 
 - Autor: **osoba nietechniczna** (znajomy / recepcja), często z telefonu → panel musi być prosty i odporny na pomyłki
 - Wymagane: podgląd przed publikacją, edycja i ukrycie wpisu, czytelne komunikaty błędów
 - Logowanie hasłem współdzielonym; hasło w Script Properties, nigdy w kodzie strony
-- Usuwanie wpisu = zmiana statusu na `ukryty`, nigdy kasowanie wiersza
+- **Ukrycie** (odwracalne) i **trwałe usunięcie** (z potwierdzeniem) to dwie osobne
+  operacje. Mylenie ich kończy się tym, że ludzie boją się jednej i nadużywają drugiej
+- **Wyróżnienie** — wpis idzie na górę niezależnie od daty
+- Zdjęcia usuniętych wpisów zostają na Dysku (plik może być podlinkowany gdzie indziej)
+
+### Turniej przed terminem i po
+To samo miejsce na kafelku pokazuje co innego zależnie od tego, po której stronie
+daty jesteśmy: **przed** — plakat, **po** — podium zwycięzców (jeśli wyniki wpisane).
+Bez wyników plakat zostaje. Wystarczy samo pierwsze miejsce.
 
 ### Dwujęzyczność
 PL / EN przełączane w navbarze, strona zawsze startuje po polsku.
-⚠️ Nierozstrzygnięte: czy posty też mają być dwujęzyczne (podwaja pracę recepcji).
+**Rozstrzygnięte: posty tylko po polsku** — dwujęzyczne podwajałyby pracę recepcji
+przy każdym wpisie, co jest najkrótszą drogą do tego, że nikt nie doda żadnego.
 
 ---
 
@@ -193,15 +226,25 @@ PL / EN przełączane w navbarze, strona zawsze startuje po polsku.
       przełącznik rezerwacji, Cennik, O nas, wzmianki o hali
 - [x] `rezerwacja-wkrotce.html`
 
-### ⏭️ Następne kroki
-- [ ] Potwierdzić `ADMIN_PASSWORD` w Script Properties i `DRIVE_FOLDER_ID` w `POSTY_CONFIG`
-      (niepotrzebne do wyświetlania, konieczne do panelu i zdjęć)
-- [ ] Uzupełnić stawki w Cenniku i prawdziwy numer telefonu (2 miejsca + stopka)
+- [x] `aktualnosci.html` — pełna lista z filtrami
+- [x] `admin.html` — panel obsługi, wdrożony i używany
+- [x] Podium zwycięzców na zakończonych turniejach
+- [x] `ADMIN_PASSWORD` i `DRIVE_FOLDER_ID` w Script Properties
+- [x] `liga.html` i `o-nas.html` — dwie podstrony, wpięte w menu i w kafelki oferty
+
+**Kod jest skończony.** Wszystko, co zostało, to dane od klienta.
+
+### ⏭️ Następne kroki — wyłącznie treść
+- [ ] Prawdziwy numer telefonu (2 miejsca w `rezerwacja-wkrotce.html` + stopka `index.html`)
+- [ ] Prawdziwy adres e-mail (te same miejsca)
+- [ ] Trzy stawki w Cenniku oznaczone `[do uzupełnienia]`
 - [ ] Akceptacja tekstu „O nas" przez klienta
-- [ ] `aktualnosci.html` — obecnie martwy link z dwóch miejsc
-- [ ] `admin.html` — panel obsługi
+- [ ] Link do strony klubu na kluby.org → stała `REZERWACJA_URL` w `index.html`
+- [ ] Trzy adresy lig na kluby.org → pola `url` w tablicy `LIGI` w `liga.html`
+- [ ] Trenerzy: imiona, opisy, telefony/maile → tablica `TRENERZY` w `o-nas.html`
+- [ ] Zdjęcia trenerów (opcjonalnie — bez nich kółka pokazują inicjały)
 - [ ] Testy na telefonie z osobą, która realnie będzie dodawać posty
-- [ ] Wdrożenie: hosting, domena, przekazanie hasła
+- [ ] Domena (dziś `bloome2115.github.io/korty-budowlani`)
 
 ### ⚠️ Znane atrapy na stronie
 | Co | Gdzie |
@@ -210,7 +253,9 @@ PL / EN przełączane w navbarze, strona zawsze startuje po polsku.
 | `kontakt@kortylublin.pl` | stopka `index.html`, `rezerwacja-wkrotce.html` |
 | `[do uzupełnienia]` ×3 | tabela cennika w `index.html` |
 | Tekst „O nas" | szkic, niezaakceptowany |
-| Link do `aktualnosci.html` | strona nie istnieje |
+| `[Imię i nazwisko]` ×3 | tablica `TRENERZY` w `o-nas.html` |
+| Puste `url` ×3 | tablica `LIGI` w `liga.html` — przyciski „Zapisy wkrótce" |
+
 
 ---
 
@@ -227,8 +272,10 @@ Korty/
 │   └── DECYZJE_hala_i_sterowanie.md   ← częściowo nieaktualny (patrz nagłówek)
 ├── index.html                  ← strona główna ✅
 ├── rezerwacja-wkrotce.html     ← podstrona przejściowa ✅
-├── aktualnosci.html            ← lista postów (do stworzenia)
-├── admin.html                  ← panel obsługi (do stworzenia)
+├── aktualnosci.html            ← pełna lista wpisów ✅
+├── liga.html                   ← podstrona lig ✅
+├── o-nas.html                  ← podstrona o klubie i kadrze ✅
+├── admin.html                  ← panel obsługi ✅
 ├── rezerwacja.html             ← ZAMROŻONE
 ├── assets/img/
 │   ├── Budowlani_bez_tla.png
@@ -236,7 +283,8 @@ Korty/
 │   └── Zdjecie_kortu_2_poprawione.png
 ├── apps-script/
 │   └── Posty.gs                ← backend aktualności
-└── _archiwum/                  ← stare wersje, poza gitem (.gitignore)
+├── _archiwum/                  ← stare wersje, poza gitem (.gitignore)
+└── Claude outputs/             ← zrzuty z rozmowy, też warto dać do .gitignore
 ```
 
 `Code.gs` żyje wyłącznie w projekcie Apps Script i w projekcie Claude — nie ma go w repo.
@@ -272,3 +320,38 @@ Procedura po każdej zmianie w `.gs`:
 Diagnostyka, gdy coś nie gra: adres `/dev` (Wdróż → Przetestuj wdrożenia) zawsze
 uruchamia najnowszy **zapisany** kod. Jeśli `/dev` działa, a `/exec` nie — problem
 jest wyłącznie we wdrożeniu, nie w kodzie. To rozstrzyga w 30 sekund.
+
+---
+
+## 11. PUŁAPKI, KTÓRE NAS KOSZTOWAŁY CZAS
+
+Trzy rzeczy, które objawiały się jako „nie działa" bez żadnej wskazówki, gdzie szukać.
+Każda wróci przy kolejnym projekcie na tym stacku.
+
+### Arkusze same poprawiają to, co im wpiszesz
+Wpisane `14:00` przestaje być tekstem i staje się wartością czasu — zapisaną jako
+30 grudnia 1899, bo to zerowa data ich kalendarza. Na stronie pojawia się wtedy
+`Sat Dec 30 1899 14:00:00 GMT+0124`.
+
+**Zabezpieczenie dwustronne:** kolumny `godzina` i `wpisowe` mają wymuszony format
+tekstowy (przy każdym zapisie i na całej kolumnie przy `setupPosty`), a odczyt
+rozpoznaje obiekty daty i formatuje je z powrotem. Zasada ogólna:
+**przy zapisie bądź rygorystyczny, przy odczycie wyrozumiały.**
+
+### Konfiguracja w kodzie ginie przy podmianie pliku
+`DRIVE_FOLDER_ID` stało kiedyś w `POSTY_CONFIG`. Przy aktualizacji `Posty.gs`
+wkleja się cały plik — i ID zniknęło razem ze starą wersją, a upload zdjęć przestał
+działać bez widocznego powodu. Teraz siedzi w Script Properties, obok hasła.
+**Co różni się między instalacjami, nie należy do kodu.**
+
+### Numery kolumn liczone z nazw, nie wpisane ręcznie
+`hidePost_` zapisywało znacznik czasu do „ostatniej kolumny" — a ostatnia przestała
+być tą, o którą chodziło, gdy doszły pola turniejowe. Data lądowała w `zapisy_do`.
+Stała `COL` buduje numery z `POSTY_HEADERS`, więc taki błąd nie ma jak powstać.
+Stąd też reguła: **nowe kolumny dokładamy zawsze na końcu** — wstawienie w środku
+przesunęłoby dane we wszystkich istniejących wierszach.
+
+### I jedna zasada interfejsu
+Apps Script odpowiada 1–3 sekundy. Przyciski w panelu zmieniają stan **najpierw na
+ekranie, potem na serwerze** — inaczej kliknięcie wygląda na nieskuteczne i człowiek
+klika trzy razy. Przy odmowie serwera zmiana się cofa i pokazuje powód.

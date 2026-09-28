@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liga tenisa — Korty Budowlani Lublin</title>
+  <meta name="description" content="Amatorskie ligi tenisowe w Lublinie: liga open, liga 40+ i liga kobiet. Terminarz, tabela i zapisy online.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A2744;
+      --clay:   #C8622A;
+      --cream:  #F5F0E8;
+      --white:  #FFFFFF;
+      --text:   #1A2744;
+      --muted:  #888;
+      --border: #eee;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    /* Ta sama reguła co w index.html i z tego samego powodu: `hidden`
+       przegrywa z własnym `display`, a nakładka powiększenia ma flex. */
+    [hidden] { display: none !important; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+    /* ─── NAVBAR ─── */
+    .navbar { background: var(--navy); height: 104px; display: flex; align-items: center; flex-shrink: 0; }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
+    .navbar-logos { display: flex; align-items: center; gap: 18px; }
+    .navbar-logos img { height: 88px; width: auto; object-fit: contain; }
+    .logos-divider { width: 2px; height: 62px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .navbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.7); font-size: 15px;
+      padding: 10px 18px; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .lang-switch {
+      display: flex; align-items: center; background: rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 4px; cursor: pointer; user-select: none;
+    }
+    .lang-switch span {
+      font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
+      color: rgba(255,255,255,0.45); transition: background 0.2s, color 0.2s;
+    }
+    .lang-switch span.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ─── NAGŁÓWEK STRONY ─── */
+    main { flex: 1; padding: 46px 0 70px; }
+
+    .page-head { margin-bottom: 26px; }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 500; color: var(--clay);
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;
+    }
+
+    .page-head h1 { font-size: 34px; font-weight: 600; color: var(--navy); }
+    .page-head p { font-size: 15px; color: var(--muted); margin-top: 6px; }
+
+    .footer { background: var(--navy); padding: 26px 0; flex-shrink: 0; }
+    .footer .container {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+    .footer-bloome { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
+
+
+    /* ─── WSTĘP ─── */
+    .liga-intro {
+      background: var(--white); border-radius: 14px;
+      padding: 28px 30px; margin-bottom: 30px;
+      font-size: 15.5px; color: #444; max-width: 780px;
+    }
+    .liga-intro strong { color: var(--navy); font-weight: 500; }
+
+    /* ─── KARTY LIG ───
+       Trzy ligi to trzy równorzędne wejścia, więc dostają identyczne
+       kafelki obok siebie. Gdy dojdzie czwarta, siatka sama zawinie. */
+    .ligi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 22px;
+      margin-bottom: 54px;
+    }
+
+    .liga-card {
+      background: var(--white); border-radius: 14px;
+      padding: 30px 28px 28px;
+      display: flex; flex-direction: column;
+      border-top: 3px solid var(--clay);
+    }
+
+    .liga-badge {
+      display: inline-block; align-self: flex-start;
+      font-size: 11px; font-weight: 500; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--clay);
+      background: rgba(200,98,42,0.09);
+      padding: 5px 11px; border-radius: 20px; margin-bottom: 14px;
+    }
+
+    .liga-card h2 { font-size: 20px; font-weight: 600; color: var(--navy); line-height: 1.3; }
+    .liga-desc { font-size: 14.5px; color: #555; margin-top: 10px; }
+
+    .liga-facts { list-style: none; margin: 20px 0 24px; display: grid; gap: 9px; }
+    .liga-facts li { display: flex; gap: 10px; font-size: 14px; color: #555; align-items: flex-start; }
+    .liga-facts i { color: var(--clay); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+    /* margin-top:auto dosuwa przycisk do dołu, więc przyciski w trzech
+       kafelkach stoją w jednej linii nawet przy różnej długości opisów. */
+    .liga-btn {
+      margin-top: auto;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--navy); color: #fff;
+      padding: 14px 20px; border-radius: 9px;
+      font-size: 14.5px; font-weight: 500;
+      transition: background 0.15s;
+    }
+    .liga-btn:hover { background: #24345a; }
+
+    /* Liga bez adresu na kluby.org nie chowa się — pokazuje, że istnieje,
+       ale nie udaje, że da się już kliknąć. */
+    .liga-btn.soon { background: #ececec; color: #999; cursor: default; }
+    .liga-btn.soon:hover { background: #ececec; }
+
+    /* min-height rezerwuje miejsce na dwa wiersze przypisu. Bez tego
+       kafelek z krótszym przypisem podciąga swój przycisk wyżej i trzy
+       przyciski przestają stać w jednej linii — a długość tego zdania
+       zmienia się wraz z językiem i z tym, czy liga ma już adres. */
+    .liga-note {
+      font-size: 12.5px; color: var(--muted);
+      margin-top: 12px; text-align: center;
+      min-height: 40px;
+    }
+
+    /* ─── JAK DOŁĄCZYĆ ─── */
+    .kroki-head { margin-bottom: 22px; }
+    .kroki-head h2 { font-size: 24px; font-weight: 600; color: var(--navy); }
+
+    .kroki {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px; margin-bottom: 44px;
+    }
+    .krok { background: var(--white); border-radius: 14px; padding: 26px 24px; }
+    .krok-nr {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--clay); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 500; margin-bottom: 14px;
+    }
+    .krok h3 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 7px; }
+    .krok p { font-size: 14px; color: #666; }
+
+    /* ─── PASEK KOŃCOWY ─── */
+    .cta-box {
+      background: var(--navy); border-radius: 14px;
+      padding: 34px 32px; text-align: center; color: #fff;
+    }
+    .cta-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .cta-box p { font-size: 14.5px; color: rgba(255,255,255,0.65); margin-bottom: 20px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--clay); color: #fff;
+      padding: 13px 26px; border-radius: 9px; font-size: 15px; font-weight: 500;
+      transition: background 0.15s;
+    }
+    .cta-btn:hover { background: #b0551f; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .navbar { height: 84px; }
+      .navbar-logos img { height: 64px; }
+      .logos-divider { height: 46px; }
+      .nav-back span { display: none; }
+      .page-head h1 { font-size: 26px; }
+      .liga-intro { padding: 24px 22px; font-size: 15px; }
+      .liga-card { padding: 26px 22px 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-logos">
+        <a href="index.html"><img src="assets/img/Budowlani_bez_tla.png" alt="Budowlani Lublin"></a>
+        <div class="logos-divider"></div>
+        <a href="index.html"><img src="assets/img/GoRun_serwis_napis_jasny_bez_tla.png" alt="GoRun Akademia Tenisa"></a>
+      </div>
+
+      <div class="navbar-right">
+        <div class="lang-switch" onclick="toggleLang()">
+          <span class="lang-pl-span active">PL</span>
+          <span class="lang-en-span">EN</span>
+        </div>
+        <a href="index.html" class="nav-back">
+          <i class="ti ti-arrow-left"></i> <span data-i18n="nav_back">Strona główna</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="page-eyebrow" data-i18n="page_eyebrow">Rywalizacja</div>
+        <h1 data-i18n="page_title">Ligi tenisowe</h1>
+        <p data-i18n="page_sub">Trzy rozgrywki dla amatorów — wybierz tę dla siebie.</p>
+      </div>
+
+      <div class="liga-intro" data-i18n-html="intro"></div>
+
+      <!-- Kafelki lig rysuje JavaScript z tablicy LIGI. Dopisanie
+           czwartej ligi to jeden obiekt w tej tablicy, nie nowy HTML. -->
+      <div class="ligi-grid" id="ligi-grid"></div>
+
+      <div class="kroki-head">
+        <h2 data-i18n="kroki_title">Jak dołączyć</h2>
+      </div>
+
+      <div class="kroki">
+        <div class="krok">
+          <div class="krok-nr">1</div>
+          <h3 data-i18n="krok1_title">Wybierz ligę</h3>
+          <p data-i18n="krok1_desc">Open, 40+ albo liga kobiet — decyduje wiek, płeć i to, z kim chcesz grać.</p>
+        </div>
+        <div class="krok">
+          <div class="krok-nr">2</div>
+          <h3 data-i18n="krok2_title">Zapisz się na kluby.org</h3>
+          <p data-i18n="krok2_desc">Zapisy, regulamin, terminarz i tabela są prowadzone na stronie danej ligi w serwisie kluby.org.</p>
+        </div>
+        <div class="krok">
+          <div class="krok-nr">3</div>
+          <h3 data-i18n="krok3_title">Umawiaj mecze i graj</h3>
+          <p data-i18n="krok3_desc">Termin każdego meczu ustalacie między sobą, a kort rezerwujecie u nas. Wynik wpisujecie w systemie.</p>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <h2 data-i18n="cta_title">Masz pytania o ligę?</h2>
+        <p data-i18n="cta_desc">Zadzwoń albo napisz — pomożemy dobrać rozgrywki do Twojego poziomu.</p>
+        <a href="index.html#kontakt" class="cta-btn">
+          <i class="ti ti-phone"></i> <span data-i18n="cta_btn">Kontakt</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-copy" data-i18n="footer_copy">© 2026 Budowlani Lublin / GoRun Akademia Tenisa</div>
+      <div class="footer-bloome">Bloome</div>
+    </div>
+  </footer>
+
+<script>
+/* =========================================================
+   DANE LIG  —  TO JEST JEDYNE MIEJSCE DO EDYCJI
+
+   Żeby podmienić adres ligi, zmień pole `url`.
+   Pusty url ('') = przycisk nieaktywny z napisem "Zapisy wkrótce".
+   Żeby dodać kolejną ligę, skopiuj cały obiekt { ... } i zmień treść.
+   ========================================================= */
+const LIGI = [
+  {
+    badge:    'Liga open',
+    badge_en: 'Open league',
+    nazwa:    'Liga Rakietmania + UKT Go Run',
+    opis:     'Główne rozgrywki ligowe — otwarte dla wszystkich, bez ograniczeń wieku. Podział na grupy poziomów sprawia, że trafiasz na rywali w swoim przedziale.',
+    opis_en:  'The main league — open to everyone, no age limit. Players are split into skill groups, so you face opponents at your level.',
+    fakty: [
+      ['ti-users',        'Dla wszystkich, bez ograniczeń wieku',      'Open to all ages'],
+      ['ti-chart-bar',    'Podział na grupy poziomów',                  'Split into skill groups'],
+      ['ti-calendar',     'Mecze w terminach ustalanych przez graczy',  'Match dates agreed between players'],
+    ],
+    url: '',
+  },
+  {
+    badge:    'Liga 40+',
+    badge_en: '40+ league',
+    nazwa:    'Liga 40+ Rakietmania + UKT Go Run',
+    opis:     'Rozgrywki dla graczy po czterdziestce. To samo tempo rywalizacji, ale w gronie rówieśników i bez presji tenisa juniorskiego.',
+    opis_en:  'League for players over forty. The same competitive format, among peers and without the pace of junior tennis.',
+    fakty: [
+      ['ti-user-check',   'Dla graczy powyżej 40. roku życia',          'For players aged 40 and over'],
+      ['ti-chart-bar',    'Podział na grupy poziomów',                  'Split into skill groups'],
+      ['ti-calendar',     'Mecze w terminach ustalanych przez graczy',  'Match dates agreed between players'],
+    ],
+    url: '',
+  },
+  {
+    badge:    'Liga kobiet',
+    badge_en: "Women's league",
+    nazwa:    'Liga Kobiet Rakietmania + UKT Go Run',
+    opis:     'Osobne rozgrywki dla tenisistek — od osób, które dopiero zaczynają regularnie grać, po zawodniczki z doświadczeniem turniejowym.',
+    opis_en:  'A separate league for women — from players just starting to compete regularly to those with tournament experience.',
+    fakty: [
+      ['ti-user-heart',   'Rozgrywki wyłącznie dla kobiet',             'Women only'],
+      ['ti-chart-bar',    'Każdy poziom zaawansowania',                 'All skill levels'],
+      ['ti-calendar',     'Mecze w terminach ustalanych przez graczy',  'Match dates agreed between players'],
+    ],
+    url: '',
+  },
+];
+
+/* =========================================================
+   TŁUMACZENIA
+   ========================================================= */
+const TRANSLATIONS = {
+  pl: {
+    nav_back: 'Strona główna',
+    page_eyebrow: 'Rywalizacja',
+    page_title: 'Ligi tenisowe',
+    page_sub: 'Trzy rozgrywki dla amatorów — wybierz tę dla siebie.',
+    intro: 'Przy kortach <strong>Budowlani Lublin</strong> działają trzy amatorskie ligi tenisowe prowadzone wspólnie przez <strong>Rakietmanię</strong> i <strong>UKT Go Run</strong>. Grasz przez cały sezon, w swoim tempie — terminy meczów ustalacie między sobą, a tabela, terminarz i regulamin każdej z lig prowadzone są w serwisie <strong>kluby.org</strong>.',
+    liga_btn: 'Tabela, terminarz i zapisy',
+    liga_soon: 'Zapisy wkrótce',
+    liga_note: 'Regulamin i aktualna tabela — na stronie ligi w kluby.org.',
+    liga_note_soon: 'Adres ligi w kluby.org pojawi się tu wkrótce.',
+    kroki_title: 'Jak dołączyć',
+    krok1_title: 'Wybierz ligę',
+    krok1_desc: 'Open, 40+ albo liga kobiet — decyduje wiek, płeć i to, z kim chcesz grać.',
+    krok2_title: 'Zapisz się na kluby.org',
+    krok2_desc: 'Zapisy, regulamin, terminarz i tabela są prowadzone na stronie danej ligi w serwisie kluby.org.',
+    krok3_title: 'Umawiaj mecze i graj',
+    krok3_desc: 'Termin każdego meczu ustalacie między sobą, a kort rezerwujecie u nas. Wynik wpisujecie w systemie.',
+    cta_title: 'Masz pytania o ligę?',
+    cta_desc: 'Zadzwoń albo napisz — pomożemy dobrać rozgrywki do Twojego poziomu.',
+    cta_btn: 'Kontakt',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+  en: {
+    nav_back: 'Home',
+    page_eyebrow: 'Competition',
+    page_title: 'Tennis leagues',
+    page_sub: 'Three amateur leagues — pick the one that fits you.',
+    intro: 'Three amateur tennis leagues run at the <strong>Budowlani Lublin</strong> courts, organised jointly by <strong>Rakietmania</strong> and <strong>UKT Go Run</strong>. You play through the whole season at your own pace — match dates are agreed between players, while the table, schedule and rules of each league are kept on <strong>kluby.org</strong>.',
+    liga_btn: 'Table, schedule and sign-up',
+    liga_soon: 'Sign-ups coming soon',
+    liga_note: 'Rules and the current table — on the league page at kluby.org.',
+    liga_note_soon: 'The kluby.org address for this league will appear here soon.',
+    kroki_title: 'How to join',
+    krok1_title: 'Pick a league',
+    krok1_desc: 'Open, 40+ or the women\'s league — it depends on your age, gender and who you want to play.',
+    krok2_title: 'Sign up on kluby.org',
+    krok2_desc: 'Sign-ups, rules, the schedule and the table are all kept on each league\'s page at kluby.org.',
+    krok3_title: 'Arrange matches and play',
+    krok3_desc: 'You agree each match date between yourselves and book the court with us. Results go into the system.',
+    cta_title: 'Questions about the leagues?',
+    cta_desc: 'Call or write — we will help you pick the right level.',
+    cta_btn: 'Contact',
+    footer_copy: '© 2026 Budowlani Lublin / GoRun Akademia Tenisa',
+  },
+};
+
+let currentLang = 'pl';
+
+function t(key) {
+  return TRANSLATIONS[currentLang][key] !== undefined ? TRANSLATIONS[currentLang][key] : key;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderLigi() {
+  const grid = document.getElementById('ligi-grid');
+  const en = currentLang === 'en';
+
+  grid.innerHTML = LIGI.map(function (liga) {
+    const fakty = liga.fakty.map(function (f) {
+      return '<li><i class="ti ' + f[0] + '"></i><span>' + escapeHtml(en ? f[2] : f[1]) + '</span></li>';
+    }).join('');
+
+    // Bez adresu w kluby.org przycisk jest martwy z wyglądu i z działania.
+    // Lepsze to niż link prowadzący donikąd.
+    const przycisk = liga.url
+      ? '<a class="liga-btn" href="' + escapeHtml(liga.url) + '" target="_blank" rel="noopener">' +
+        '<i class="ti ti-external-link"></i><span>' + t('liga_btn') + '</span></a>'
+      : '<span class="liga-btn soon"><i class="ti ti-clock"></i><span>' + t('liga_soon') + '</span></span>';
+
+    return '<article class="liga-card">' +
+      '<span class="liga-badge">' + escapeHtml(en ? liga.badge_en : liga.badge) + '</span>' +
+      '<h2>' + escapeHtml(liga.nazwa) + '</h2>' +
+      '<p class="liga-desc">' + escapeHtml(en ? liga.opis_en : liga.opis) + '</p>' +
+      '<ul class="liga-facts">' + fakty + '</ul>' +
+      przycisk +
+      '<p class="liga-note">' + (liga.url ? t('liga_note') : t('liga_note_soon')) + '</p>' +
+      '</article>';
+  }).join('');
+}
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.title = lang === 'pl'
+    ? 'Liga tenisa — Korty Budowlani Lublin'
+    : 'Tennis leagues — Budowlani Lublin Tennis Courts';
+
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang][key] !== undefined) el.textContent = TRANSLATIONS[lang][key];
+  });
+
+  // Osobny atrybut dla tekstów z pogrubieniami — textContent wypisałby
+  // tagi jako tekst, a innerHTML na wszystkim otwierałby furtkę.
+  document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+    const key = el.getAttribute('data-i18n-html');
+    if (TRANSLATIONS[lang][key] !== undefined) el.innerHTML = TRANSLATIONS[lang][key];
+  });
+
+  renderLigi();
+}
+
+function toggleLang() {
+  document.querySelectorAll('.lang-pl-span').forEach(function (el) { el.classList.toggle('active'); });
+  document.querySelectorAll('.lang-en-span').forEach(function (el) { el.classList.toggle('active'); });
+  applyLanguage(currentLang === 'pl' ? 'en' : 'pl');
+}
+
+applyLanguage('pl');
+</script>
+</body>
+</html>

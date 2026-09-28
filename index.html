@@ -706,6 +706,9 @@
     .card-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; flex: 1; }
     .card-price { margin-bottom: 20px; }
     .price-amount { font-size: 30px; font-weight: 500; color: var(--clay); }
+    /* „od" mniejsze i spokojniejsze niż kwota — niesie zastrzeżenie,
+       nie informację. Kwota ma zostać tym, co widać najpierw. */
+    .price-from { font-size: 15px; color: var(--muted); margin-right: 5px; }
     .price-per { font-size: 13px; color: #bbb; margin-left: 4px; }
 
     .card-features {
@@ -762,7 +765,10 @@
       transition: box-shadow 0.2s, transform 0.2s;
     }
 
-    .news-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.11); transform: translateY(-2px); }
+    /* BEZ efektu najechania. Podnoszenie się kafelka to obietnica
+       kliknięcia — a karta aktualności nigdzie nie prowadzi. Klikalne
+       jest tylko zdjęcie (powiększenie) i ono ma własny kursor.
+       Interfejs nie powinien zapraszać tam, gdzie nie ma wejścia. */
 
     /* Zdjęcie pokazujemy w CAŁOŚCI, bez kadrowania.
        Wcześniej ramka miała sztywne proporcje 16:10 i object-fit: cover,
@@ -1140,6 +1146,15 @@
     }
 
     .about-text p:last-child { margin-bottom: 0; }
+
+    /* Wejście na podstronę. Wygląda jak link, nie jak przycisk akcji —
+       nie konkuruje z rezerwacją, a mówi, że jest dalszy ciąg. */
+    .about-more {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 22px; font-size: 15px; font-weight: 500;
+      color: var(--clay); transition: gap 0.15s;
+    }
+    .about-more:hover { gap: 12px; }
     .about-text strong { color: var(--navy); font-weight: 500; }
 
     .about-facts {
@@ -1486,8 +1501,8 @@
           <li><a href="#oferta" data-i18n="nav_oferta">Oferta</a></li>
           <li><a href="#cennik" data-i18n="nav_cennik">Cennik</a></li>
           <li><a href="#aktualnosci" data-i18n="nav_aktualnosci">Aktualności</a></li>
-          <li><a href="#liga" data-i18n="nav_liga">Liga</a></li>
-          <li><a href="#o-nas" data-i18n="nav_o_nas">O nas</a></li>
+          <li><a href="liga.html" data-i18n="nav_liga">Liga</a></li>
+          <li><a href="o-nas.html" data-i18n="nav_o_nas">O nas</a></li>
           <li><a href="#kontakt" data-i18n="nav_kontakt">Kontakt</a></li>
         </ul>
 
@@ -1513,8 +1528,8 @@
       <a href="#oferta" onclick="toggleMenu()" data-i18n="nav_oferta">Oferta</a>
       <a href="#cennik" onclick="toggleMenu()" data-i18n="nav_cennik">Cennik</a>
       <a href="#aktualnosci" onclick="toggleMenu()" data-i18n="nav_aktualnosci">Aktualności</a>
-      <a href="#liga" onclick="toggleMenu()" data-i18n="nav_liga">Liga</a>
-      <a href="#o-nas" onclick="toggleMenu()" data-i18n="nav_o_nas">O nas</a>
+      <a href="liga.html" data-i18n="nav_liga">Liga</a>
+      <a href="o-nas.html" data-i18n="nav_o_nas">O nas</a>
       <a href="#kontakt" onclick="toggleMenu()" data-i18n="nav_kontakt">Kontakt</a>
       <div class="lang-switch" onclick="toggleLang()">
         <span class="lang-pl-span active">PL</span>
@@ -1610,6 +1625,7 @@
           <div class="card-title" data-i18n="card1_title">Wynajem kortu</div>
           <p class="card-desc" data-i18n="card1_desc">4 korty mączkowe dostępne codziennie, a wkrótce również 3 korty kryte. Zarezerwuj termin i przyjdź grać — bez zbędnych formalności.</p>
           <div class="card-price">
+            <span class="price-from" data-i18n="price_from">od</span>
             <span class="price-amount">60 zł</span>
             <span class="price-per" data-i18n="card1_price_per">/ godzina</span>
           </div>
@@ -1628,7 +1644,8 @@
           <div class="card-title" data-i18n="card2_title">Lekcje tenisa</div>
           <p class="card-desc" data-i18n="card2_desc">Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.</p>
           <div class="card-price">
-            <span class="price-amount">120 zł</span>
+            <span class="price-from" data-i18n="price_from">od</span>
+            <span class="price-amount">220 zł</span>
             <span class="price-per" data-i18n="card2_price_per">/ 60 min</span>
           </div>
           <ul class="card-features">
@@ -1637,10 +1654,10 @@
             <li><i class="ti ti-check"></i> <span data-i18n="card2_f3">Zajęcia grupowe i indywidualne</span></li>
             <li><i class="ti ti-check"></i> <span data-i18n="card2_f4">Piłki wliczone w cenę</span></li>
           </ul>
-          <a href="#kontakt"><button class="card-btn" data-i18n="card2_btn">Zapisz się →</button></a>
+          <a href="o-nas.html#trenerzy"><button class="card-btn" data-i18n="card2_btn">Poznaj trenerów →</button></a>
         </div>
 
-        <div class="card" id="liga">
+        <div class="card">
           <div class="card-icon"><i class="ti ti-trophy"></i></div>
           <div class="card-title" data-i18n="card3_title">Liga tenisa</div>
           <p class="card-desc" data-i18n="card3_desc">Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.</p>
@@ -1654,7 +1671,7 @@
             <li><i class="ti ti-check"></i> <span data-i18n="card3_f3">Podział na grupy poziomów</span></li>
             <li><i class="ti ti-check"></i> <span data-i18n="card3_f4">Nagrody dla najlepszych</span></li>
           </ul>
-          <a href="#kontakt"><button class="card-btn" data-i18n="card3_btn">Dołącz do ligi →</button></a>
+          <a href="liga.html"><button class="card-btn" data-i18n="card3_btn">Zobacz ligi →</button></a>
         </div>
       </div>
     </div>
@@ -1784,7 +1801,11 @@
         <div class="about-text">
           <p data-i18n-html="about_p1"><strong>Budowlani Lublin</strong> to nazwa, którą lublinianie znają od pokoleń. Korty przy Andrzeja Struga działają nieprzerwanie od 1974 roku i przez ten czas przewinęło się przez nie kilka pokoleń tenisistów — od pierwszych lekcji po ligowe mecze.</p>
           <p data-i18n-html="about_p2">Dziś obiektem zarządza <strong>GoRun Akademia Tenisa</strong>. Zachowujemy to, co w tym miejscu najlepsze — kameralną atmosferę i mączkę, na której naprawdę chce się grać — i dokładamy to, czego brakowało: trenerów z certyfikatami, ligę amatorską i turnieje dla graczy na każdym poziomie.</p>
-          <p data-i18n-html="about_p3">Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami. Prace już trwają — o terminie otwarcia poinformujemy w aktualnościach.</p>
+          <p data-i18n-html="about_p3">Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami.</p>
+
+          <a href="o-nas.html" class="about-more">
+            <span data-i18n="about_more">Poznaj nas i naszą kadrę</span> <i class="ti ti-arrow-right"></i>
+          </a>
         </div>
 
         <div class="about-facts">
@@ -1957,6 +1978,7 @@
         section_oferta_title: 'Nasza oferta',
         card1_title: 'Wynajem kortu',
         card1_desc: '4 korty mączkowe dostępne codziennie, a wkrótce również 3 korty kryte. Zarezerwuj termin i przyjdź grać — bez zbędnych formalności.',
+        price_from: 'od',
         card1_price_per: '/ godzina',
         card1_f1: 'Korty dostępne codziennie', card1_f2: '3 korty kryte — już wkrótce', card1_f3: 'Płatność na miejscu', card1_f4: 'Sprzęt do wypożyczenia',
         card1_btn: 'Zarezerwuj kort →',
@@ -1964,12 +1986,12 @@
         card2_desc: 'Indywidualne i grupowe zajęcia z certyfikowanymi trenerami GoRun Akademii Tenisa.',
         card2_price_per: '/ 60 min',
         card2_f1: 'Każdy poziom zaawansowania', card2_f2: 'Dzieci i dorośli', card2_f3: 'Zajęcia grupowe i indywidualne', card2_f4: 'Piłki wliczone w cenę',
-        card2_btn: 'Zapisz się →',
+        card2_btn: 'Poznaj trenerów →',
         card3_title: 'Liga tenisa',
         card3_desc: 'Rywalizuj z innymi graczami na podobnym poziomie. Sezonowa liga amatorska dla mieszkańców Lublina.',
         card3_price_per: '/ sezon',
         card3_f1: 'Mecze w dogodnych terminach', card3_f2: 'Tabela i statystyki online', card3_f3: 'Podział na grupy poziomów', card3_f4: 'Nagrody dla najlepszych',
-        card3_btn: 'Dołącz do ligi →',
+        card3_btn: 'Zobacz ligi →',
 
         section_news_eyebrow: 'Co u nas słychać',
         section_news_title: 'Aktualności',
@@ -1999,7 +2021,8 @@
         section_about_title: 'O nas',
         about_p1: '<strong>Budowlani Lublin</strong> to nazwa, którą lublinianie znają od pokoleń. Korty przy Andrzeja Struga działają nieprzerwanie od 1974 roku i przez ten czas przewinęło się przez nie kilka pokoleń tenisistów — od pierwszych lekcji po ligowe mecze.',
         about_p2: 'Dziś obiektem zarządza <strong>GoRun Akademia Tenisa</strong>. Zachowujemy to, co w tym miejscu najlepsze — kameralną atmosferę i mączkę, na której naprawdę chce się grać — i dokładamy to, czego brakowało: trenerów z certyfikatami, ligę amatorską i turnieje dla graczy na każdym poziomie.',
-        about_p3: 'Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami. Prace już trwają — o terminie otwarcia poinformujemy w aktualnościach.',
+        about_p3: 'Kolejny krok to <strong>trzy korty kryte</strong>, dzięki którym sezon przestanie kończyć się wraz z pierwszymi chłodami.',
+        about_more: 'Poznaj nas i naszą kadrę',
         about_fact1_value: 'Od 1974 roku', about_fact1_label: 'nieprzerwanej działalności',
         about_fact2_value: '4 korty mączkowe', about_fact2_label: 'otwarte codziennie',
         about_fact3_value: '3 korty kryte', about_fact3_label: 'w przygotowaniu',
@@ -2040,6 +2063,7 @@
         section_oferta_title: 'Our offer',
         card1_title: 'Court rental',
         card1_desc: '4 clay courts available every day, with 3 indoor courts coming soon. Book a slot and come play — no unnecessary formalities.',
+        price_from: 'from',
         card1_price_per: '/ hour',
         card1_f1: 'Courts open every day', card1_f2: '3 indoor courts — coming soon', card1_f3: 'Pay on arrival', card1_f4: 'Equipment rental available',
         card1_btn: 'Book a court →',
@@ -2047,12 +2071,12 @@
         card2_desc: 'Individual and group lessons with certified coaches from GoRun Tennis Academy.',
         card2_price_per: '/ 60 min',
         card2_f1: 'Every skill level', card2_f2: 'Kids and adults', card2_f3: 'Group and individual sessions', card2_f4: 'Balls included in the price',
-        card2_btn: 'Sign up →',
+        card2_btn: 'Meet the coaches →',
         card3_title: 'Tennis league',
         card3_desc: 'Compete against players at a similar level. A seasonal amateur league for Lublin residents.',
         card3_price_per: '/ season',
         card3_f1: 'Matches at convenient times', card3_f2: 'Online standings and stats', card3_f3: 'Skill-based groups', card3_f4: 'Prizes for top players',
-        card3_btn: 'Join the league →',
+        card3_btn: 'See the leagues →',
 
         section_news_eyebrow: "What's new",
         section_news_title: 'News',
@@ -2082,7 +2106,8 @@
         section_about_title: 'About us',
         about_p1: '<strong>Budowlani Lublin</strong> is a name Lublin has known for generations. The courts on Andrzeja Struga have been running without a break since 1974, and several generations of players have passed through them — from first lessons to league matches.',
         about_p2: 'Today the facility is managed by <strong>GoRun Tennis Academy</strong>. We keep what is best about this place — the relaxed atmosphere and clay you actually want to play on — and add what was missing: certified coaches, an amateur league, and tournaments for players at every level.',
-        about_p3: 'Next come <strong>three indoor courts</strong>, so the season no longer ends with the first cold days. Work is already under way — we will announce the opening date in the news section.',
+        about_p3: 'Next come <strong>three indoor courts</strong>, so the season no longer ends with the first cold days.',
+        about_more: 'Meet us and our coaches',
         about_fact1_value: 'Since 1974', about_fact1_label: 'without a break',
         about_fact2_value: '4 clay courts', about_fact2_label: 'open every day',
         about_fact3_value: '3 indoor courts', about_fact3_label: 'in preparation',
