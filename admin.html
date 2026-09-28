@@ -497,7 +497,7 @@
     }
 
     /* Specyfikacja turnieju — identycznie jak na stronie */
-    .spec { margin-top: 16px; border-top: 1px solid var(--border); }
+    .spec { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
     .spec-row {
       display: flex; align-items: baseline; justify-content: space-between;
       gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border);
@@ -506,6 +506,10 @@
     .spec-row dt { font-size: 12px; color: var(--muted); white-space: nowrap; }
     .spec-row dd { font-size: 13px; font-weight: 500; color: var(--navy); text-align: right; min-width: 0; }
     .spec-row.highlight dd { color: var(--clay); }
+    /* Podgląd pokazuje kartę w wąskiej kolumnie, więc lista zostaje
+       jednokolumnowa — tak jak wygląda na telefonie. Kolejność pozycji
+       jest ta sama co na stronie, więc recepcja widzi prawdziwy układ
+       treści, nawet jeśli nie prawdziwą liczbę kolumn. */
 
     /* ─── PASEK AKCJI FORMULARZA ─── */
     .form-actions {
@@ -789,6 +793,14 @@
         <!-- Pola turniejowe. Osobne rubryki, a nie jeden opis, bo tylko
              wtedy strona pokaże je na karcie jako czytelną listę. -->
         <div id="turniej-extra" hidden>
+          <div class="field">
+            <label for="f-godzina">
+              Godzina rozpoczęcia
+              <span class="hint">Przepisz z plakatu — może być „14:00", „14:00 / 15:00" albo „od 9:00".</span>
+            </label>
+            <input type="text" id="f-godzina" maxlength="40" placeholder="np. 14:00">
+          </div>
+
           <div class="field">
             <label for="f-kategoria">Kategoria <span class="hint">np. singiel open, debel mikst, +45</span></label>
             <input type="text" id="f-kategoria" maxlength="80">
@@ -1251,6 +1263,7 @@ function openForm(post) {
   el('f-tytul').value = post ? post.tytul : '';
   el('f-tresc').value = post ? post.tresc : '';
   el('f-data-wydarzenia').value = post ? post.data_wydarzenia : '';
+  el('f-godzina').value   = post ? (post.godzina || '') : '';
   el('f-kategoria').value = post ? (post.kategoria || '') : '';
   el('f-format').value    = post ? (post.format || '') : '';
   el('f-wpisowe').value   = post ? (post.wpisowe || '') : '';
@@ -1361,7 +1374,7 @@ el('template-btn').addEventListener('click', () => {
 });
 
 ['f-tytul', 'f-tresc', 'f-data-wydarzenia', 'f-wazny-do', 'f-data-publikacji',
- 'f-kategoria', 'f-format', 'f-wpisowe', 'f-zapisy-do']
+ 'f-godzina', 'f-kategoria', 'f-format', 'f-wpisowe', 'f-zapisy-do']
   .forEach(id => el(id).addEventListener('input', renderPreview));
 
 /* =========================================================
@@ -1512,11 +1525,12 @@ function renderPreview() {
   let extra = '';
   if (currentType === 'turniej') {
     extra = renderSpec([
-      { label: 'Termin',    value: formatDate(el('f-data-wydarzenia').value), highlight: true },
-      { label: 'Kategoria', value: el('f-kategoria').value.trim() },
-      { label: 'Format',    value: el('f-format').value.trim() },
-      { label: 'Wpisowe',   value: el('f-wpisowe').value.trim(), highlight: true },
-      { label: 'Zapisy do', value: formatDate(el('f-zapisy-do').value) },
+      { label: 'Termin',              value: formatDate(el('f-data-wydarzenia').value), highlight: true },
+      { label: 'Godzina rozpoczęcia', value: el('f-godzina').value.trim() },
+      { label: 'Zapisy do',           value: formatDate(el('f-zapisy-do').value) },
+      { label: 'Kategoria',           value: el('f-kategoria').value.trim() },
+      { label: 'Format',              value: el('f-format').value.trim() },
+      { label: 'Wpisowe',             value: el('f-wpisowe').value.trim(), highlight: true },
     ]);
   } else if (currentType === 'promocja' && el('f-wazny-do').value) {
     extra = `<div class="news-extra"><i class="ti ti-clock"></i> Obowiązuje do: ${formatDate(el('f-wazny-do').value)}</div>`;
@@ -1598,6 +1612,7 @@ async function savePost(status) {
     wazny_do: currentType === 'promocja' ? el('f-wazny-do').value : '',
     zdjecia: photos,
     autor: autor,
+    godzina:   currentType === 'turniej' ? el('f-godzina').value.trim() : '',
     kategoria: currentType === 'turniej' ? el('f-kategoria').value.trim() : '',
     format:    currentType === 'turniej' ? el('f-format').value.trim() : '',
     wpisowe:   currentType === 'turniej' ? el('f-wpisowe').value.trim() : '',

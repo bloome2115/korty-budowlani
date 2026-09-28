@@ -680,7 +680,9 @@
        a wtedy object-fit: cover przycina — świadomie, bo alternatywą
        byłaby dziura pod zdjęciem. */
     .news-media {
-      flex: 0 0 34%;
+      /* Szerokość ustawia JavaScript (patrz fitMedia) — 30% to wartość
+         na czas, zanim zdjęcie się wczyta i poznamy jego proporcje. */
+      flex: 0 0 30%;
       position: relative;
       overflow: hidden;
       background: #F0EBE3;
@@ -854,7 +856,8 @@
        pary nazwa-wartość. Czytnik ekranu ogłosi je wtedy jako „Wpisowe:
        60 zł", zamiast czytać dwa oderwane kawałki tekstu obok siebie. */
     .spec {
-      margin-top: 16px;
+      margin-top: 14px;
+      padding-top: 12px;
       border-top: 1px solid var(--border);
     }
 
@@ -863,11 +866,37 @@
       align-items: baseline;
       justify-content: space-between;
       gap: 14px;
-      padding: 9px 0;
+      padding: 7px 0;
       border-bottom: 1px solid var(--border);
     }
 
     .spec-row:last-child { border-bottom: none; }
+
+    /* DWIE KOLUMNY NA SZEROKIM EKRANIE.
+       Pięć wierszy jeden pod drugim to było główne źródło wysokości
+       kafelka turniejowego — a obok nich świeciło pustką pół szerokości
+       karty. W dwóch kolumnach ta sama treść zajmuje trzy wiersze zamiast
+       pięciu. Linie oddzielające znikają, bo przy nieparzystej liczbie
+       pozycji ostatnia zostawałaby z kreską w pół szerokości. */
+    @media (min-width: 901px) {
+      .news-card .spec {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 32px;
+        row-gap: 2px;
+        /* Wypełniamy KOLUMNAMI, nie wierszami. Dzięki temu w kodzie
+           pozycje stoją w kolejności logicznej (najpierw wszystko
+           o czasie, potem o rozgrywkach) — i tak też czytają się
+           na telefonie, gdzie kolumna jest jedna. Liczbę wierszy
+           podaje JavaScript, bo zależy od tego, ile pól wypełniono. */
+        grid-auto-flow: column;
+      }
+
+      .news-card .spec-row {
+        border-bottom: none;
+        padding: 5px 0;
+      }
+    }
 
     .spec-row dt {
       font-size: 12px;
@@ -1289,7 +1318,9 @@
          górze, treść pod spodem. Kolumna zdjęcia zajmująca 38% szerokości
          telefonu byłaby znaczkiem pocztowym obok ściany tekstu. */
       .news-card { flex-direction: column; }
-      .news-media { flex: 0 0 auto; width: 100%; }
+      /* flex-basis z JavaScriptu dotyczy układu poziomego — w pionie
+         kolumna ma zająć całą szerokość, więc go unieważniamy. */
+      .news-media { flex: 0 0 auto !important; width: 100%; }
       .news-body { padding: 22px 22px 24px; }
       .news-title { font-size: 18px; }
     }
@@ -1816,6 +1847,7 @@
         news_event_date: 'Termin:', news_valid_until: 'Obowiązuje do:',
         spec_termin: 'Termin', spec_kategoria: 'Kategoria', spec_format: 'Format',
         spec_wpisowe: 'Wpisowe', spec_zapisy: 'Zapisy do',
+        spec_godzina: 'Godzina rozpoczęcia',
 
         section_cennik_eyebrow: 'Przejrzyste stawki',
         section_cennik_title: 'Cennik',
@@ -1895,6 +1927,7 @@
         news_event_date: 'Date:', news_valid_until: 'Valid until:',
         spec_termin: 'Date', spec_kategoria: 'Category', spec_format: 'Format',
         spec_wpisowe: 'Entry fee', spec_zapisy: 'Sign-ups until',
+        spec_godzina: 'Start time',
 
         section_cennik_eyebrow: 'Transparent rates',
         section_cennik_title: 'Pricing',
@@ -2132,7 +2165,12 @@
       const filled = rows.filter(r => r.value && String(r.value).trim() !== '');
       if (filled.length === 0) return '';
 
-      return `<dl class="spec">` + filled.map(r => `
+      // Połowa pozycji w pierwszej kolumnie, reszta w drugiej. Przy
+      // nieparzystej liczbie dłuższa jest lewa — wzrok i tak wędruje
+      // od lewej, więc tam lepiej znosi jedną pozycję więcej.
+      const rowCount = Math.ceil(filled.length / 2);
+
+      return `<dl class="spec" style="grid-template-rows: repeat(${rowCount}, auto)">` + filled.map(r => `
         <div class="spec-row${r.highlight ? ' highlight' : ''}">
           <dt>${escapeHtml(r.label)}</dt>
           <dd>${escapeHtml(r.value)}</dd>
@@ -2176,12 +2214,15 @@
         // dzwonią — mają być do odczytania z karty, bez wchodzenia głębiej.
         let extra = '';
         if (post.typ === 'turniej') {
+          // Kolejność: lewa kolumna to kalendarz (kiedy przyjść, do kiedy
+          // się zapisać), prawa to zasady gry i koszt.
           extra = renderSpec([
             { label: t('spec_termin'),    value: formatDateLong(post.data_wydarzenia), highlight: true },
+            { label: t('spec_godzina'),   value: post.godzina },
+            { label: t('spec_zapisy'),    value: formatDateLong(post.zapisy_do) },
             { label: t('spec_kategoria'), value: post.kategoria },
             { label: t('spec_format'),    value: post.format },
             { label: t('spec_wpisowe'),   value: post.wpisowe, highlight: true },
-            { label: t('spec_zapisy'),    value: formatDateLong(post.zapisy_do) },
           ]);
         } else if (post.typ === 'promocja' && post.wazny_do) {
           extra = `<div class="news-extra"><i class="ti ti-clock"></i> ${t('news_valid_until')} ${formatDateLong(post.wazny_do)}</div>`;
@@ -2205,23 +2246,52 @@
       watchMediaImages();
     }
 
-    /* Nadaje kolumnie ze zdjęciem minimalną wysokość wyliczoną z prawdziwych
-       proporcji pliku. Dzięki temu zdjęcie mieści się w całości przy pełnej
-       szerokości kolumny, zamiast być przycinanym albo otoczonym pasami tła.
+    /* DOPASOWANIE ZDJĘCIA DO KAFELKA
+       ---------------------------------------------------------
+       Wcześniej to szerokość kolumny była ustalona (34%), a wysokość
+       wynikała ze zdjęcia — przez co pionowy plakat robił kafelek na
+       546 px, czyli o połowę za wysoki.
 
-       Górny sufit istnieje, bo bardzo wysoki plakat potrafiłby rozciągnąć
-       jeden rząd na półtora ekranu. Powyżej sufitu zdjęcie zostaje
-       przycięte — ale pełny rozmiar jest zawsze pod kliknięciem. */
-    const MAX_MEDIA_HEIGHT = 560;
+       Teraz jest odwrotnie: zakładamy DOCELOWĄ WYSOKOŚĆ, a szerokość
+       kolumny liczymy z proporcji zdjęcia. Plakat dostaje wąską kolumnę,
+       zdjęcie poziome szeroką — obie o tej samej wysokości. Dzięki temu
+       rząd ma przewidywalną wysokość, zdjęcie nadal wypełnia kolumnę
+       bez pasów tła i nadal nie jest przycinane.
 
-    function fitMediaHeights() {
+       Gdy policzona szerokość przekroczy sufit (bardzo szerokie zdjęcie),
+       zmniejszamy WYSOKOŚĆ zamiast przycinać — lepiej mieć niższy kafelek
+       niż ucięte zdjęcie. */
+    const MEDIA_TARGET_HEIGHT = 300;   // px — docelowa wysokość kafelka ze zdjęciem
+    const MEDIA_MAX_WIDTH = 0.42;      // maksymalny udział zdjęcia w szerokości kafelka
+
+    function fitMedia() {
       document.querySelectorAll('.news-media').forEach(media => {
         const img = media.querySelector('img');
-        if (!img || !img.naturalWidth) return;
-        const width = media.clientWidth;
-        if (!width) return;
-        const natural = img.naturalHeight / img.naturalWidth * width;
-        media.style.minHeight = Math.round(Math.min(natural, MAX_MEDIA_HEIGHT)) + 'px';
+        const card = media.closest('.news-card');
+        if (!img || !img.naturalWidth || !card) return;
+
+        const ratio = img.naturalWidth / img.naturalHeight;
+
+        // Na telefonie karta układa się w pion — zdjęcie jest wtedy na
+        // całą szerokość i wysokość wynika wprost z proporcji.
+        if (getComputedStyle(card).flexDirection === 'column') {
+          media.style.flexBasis = '';
+          const width = media.clientWidth;
+          if (width) media.style.minHeight = Math.round(width / ratio) + 'px';
+          return;
+        }
+
+        let width = ratio * MEDIA_TARGET_HEIGHT;
+        let height = MEDIA_TARGET_HEIGHT;
+
+        const maxWidth = card.clientWidth * MEDIA_MAX_WIDTH;
+        if (width > maxWidth) {
+          width = maxWidth;
+          height = width / ratio;
+        }
+
+        media.style.flexBasis = Math.round(width) + 'px';
+        media.style.minHeight = Math.round(height) + 'px';
       });
     }
 
@@ -2229,17 +2299,17 @@
     // z osobna, a nie raz po narysowaniu kart.
     function watchMediaImages() {
       document.querySelectorAll('.news-media img').forEach(img => {
-        if (img.complete) fitMediaHeights();
-        else img.addEventListener('load', fitMediaHeights, { once: true });
+        if (img.complete) fitMedia();
+        else img.addEventListener('load', fitMedia, { once: true });
       });
     }
 
-    // Zmiana szerokości okna zmienia szerokość kolumny, więc wysokość
-    // trzeba przeliczyć — inaczej po obróceniu telefonu zostaje stara.
+    // Zmiana szerokości okna zmienia dostępne miejsce, więc przeliczamy —
+    // inaczej po obróceniu telefonu zostają wymiary sprzed obrotu.
     let resizeTimer = null;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(fitMediaHeights, 150);
+      resizeTimer = setTimeout(fitMedia, 150);
     });
 
     /* =========================================================

@@ -61,7 +61,7 @@ const POSTY_CONFIG = {
   MAX_IMAGE_BYTES: 8 * 1024 * 1024, // 8 MB po stronie serwera; panel i tak zmniejsza zdjęcia wcześniej
 };
 
-const POSTY_VERSION = '2026-09-28-d';
+const POSTY_VERSION = '2026-09-28-e';
 
 // Kolumny arkusza. KOLEJNOŚĆ MA ZNACZENIE — czyta ją cały ten plik.
 // Dopisując nową kolumnę, dodaj ją NA KOŃCU, nigdy w środku.
@@ -86,6 +86,10 @@ const POSTY_HEADERS = [
   'wpisowe',          // N — tekst, nie liczba: bywa "60 zł od osoby"
   'zapisy_do',        // O — data zamknięcia zapisów
   'wyrozniony',       // P — "tak" = wpis idzie na górę niezależnie od daty
+  // Tekst, nie godzina: na plakatach bywa "14:00 / 15:00" albo "od 9:00".
+  // Sztywne pole czasu zmusiłoby recepcję do wybrania jednej wartości
+  // i przepisania plakatu na swoje — czyli do wprowadzenia rozbieżności.
+  'godzina',          // Q — godzina rozpoczęcia, tylko turniej
 ];
 
 /* Numery kolumn liczone z nazw, a nie wpisane ręcznie.
@@ -282,6 +286,7 @@ function rowToPost_(row) {
     // że zadziała. Wyrozumiałość przy czytaniu, konsekwencja przy zapisie.
     wyrozniony: ['tak', 'true', 'prawda', 'x', '1']
       .indexOf(String(row[COL.wyrozniony - 1] || '').trim().toLowerCase()) !== -1,
+    godzina: String(row[COL.godzina - 1] || '').trim(),
   };
 }
 
@@ -410,6 +415,7 @@ function savePost_(post) {
     typ === 'turniej' ? String(post.wpisowe || '').trim() : '',
     typ === 'turniej' ? String(post.zapisy_do || '').trim() : '',
     post.wyrozniony ? 'tak' : '',
+    typ === 'turniej' ? String(post.godzina || '').trim() : '',
   ];
 
   // Blokada na czas odczytu + zapisu. Dwie osoby zapisujące jednocześnie
